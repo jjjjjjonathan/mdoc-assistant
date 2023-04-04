@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Division {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name      String
+    teams     Team[]
+    matches   Match[]
+}
+
+model Team {
+    id            Int          @id @default(autoincrement())
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
+    name          String
+    divisionId    Int
+    division      Division     @relation(fields: [divisionId], references: [id])
+    rosterUrl     String       @unique
+    homeMatches   Match[]      @relation("homeTeam")
+    awayMatches   Match[]      @relation("awayTeam")
+    matchEvents   MatchEvent[]
+    players       Player[]
+    twitterHandle String
+}
+
+model Match {
+    id                Int          @id @default(autoincrement())
+    e2eNumber         Int
+    divisionId        Int
+    division          Division     @relation(fields: [divisionId], references: [id])
+    homeTeamId        Int
+    homeTeam          Team         @relation(fields: [homeTeamId], references: [id], name: "homeTeam")
+    awayTeamId        Int
+    awayTeam          Team         @relation(fields: [awayTeamId], references: [id], name: "awayTeam")
+    createdAt         DateTime     @default(now())
+    updatedAt         DateTime     @updatedAt
+    homeGoals         Int          @default(0)
+    homeShots         Int          @default(0)
+    homeShotsOnTarget Int          @default(0)
+    homeCorners       Int          @default(0)
+    homeOffsides      Int          @default(0)
+    homeFouls         Int          @default(0)
+    homeYellowCards   Int          @default(0)
+    homeRedCards      Int          @default(0)
+    awayGoals         Int          @default(0)
+    awayShots         Int          @default(0)
+    awayShotsOnTarget Int          @default(0)
+    awayCorners       Int          @default(0)
+    awayOffsides      Int          @default(0)
+    awayFouls         Int          @default(0)
+    awayYellowCards   Int          @default(0)
+    awayRedCards      Int          @default(0)
+    scheduledTime     DateTime
+    matchEvents       MatchEvent[]
+    players           Player[]
+}
+
+model EventType {
+    id          Int          @id @default(autoincrement())
+    name        String       @unique
+    matchEvents MatchEvent[]
+}
+
+model MatchEvent {
+    id          Int       @id @default(autoincrement())
+    matchId     Int
+    match       Match     @relation(fields: [matchId], references: [id])
+    teamId      Int
+    team        Team      @relation(fields: [teamId], references: [id])
+    eventTypeId Int
+    eventType   EventType @relation(fields: [eventTypeId], references: [id])
+}
+
+model Player {
+    id          Int    @id @default(autoincrement())
+    name        String
+    matchId     Int
+    match       Match  @relation(fields: [matchId], references: [id])
+    teamId      Int
+    team        Team   @relation(fields: [teamId], references: [id])
+    shirtNumber Int
+}
