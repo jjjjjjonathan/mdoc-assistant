@@ -19,8 +19,14 @@ const Home: NextPage = () => {
               <SignIn
                 appearance={{
                   elements: {
+                    card: "bg-base-300",
+                    headerTitle: "text-base-content",
+                    headerSubtitle: "text-base-content",
+                    formFieldLabel: "text-base-content",
+                    formFieldInput: "text-base-content bg-base-100",
                     formButtonPrimary:
-                      "bg-slate-200 hover:bg-red-200 text-sm normal-case",
+                      "bg-primary hover:bg-primary-focus text-primary-content",
+                    footerAction: "hidden",
                   },
                 }}
               />
