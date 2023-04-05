@@ -13,7 +13,7 @@ export default {
           primary: "#89b4fa", // blue
           secondary: "#f5c2e7", // pink
           accent: "#94e2d5", // teal
-          neutral: "#11111b", // crust
+          neutral: "#313244", // surface0
           "base-100": "#1e1e2e", // base
           info: "#74c7ec", // sapphire
           success: "#a6e3a1", // green
