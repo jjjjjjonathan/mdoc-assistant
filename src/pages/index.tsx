@@ -1,9 +1,9 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { SignIn, SignOutButton, useUser } from "@clerk/nextjs";
 
 const Home: NextPage = () => {
-  const user = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
 
   return (
     <>
@@ -13,10 +13,26 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center">
-        <div>
-          {!user.isSignedIn && <SignIn />}
-          {user.isSignedIn && <SignOutButton />}
-        </div>
+        {isLoaded && (
+          <div>
+            {!isSignedIn && (
+              <SignIn
+                appearance={{
+                  elements: {
+                    formButtonPrimary:
+                      "bg-slate-200 hover:bg-red-200 text-sm normal-case",
+                  },
+                }}
+              />
+            )}
+            {isSignedIn && (
+              <>
+                <p>{user.fullName}</p>
+                <SignOutButton />
+              </>
+            )}
+          </div>
+        )}
       </main>
     </>
   );
