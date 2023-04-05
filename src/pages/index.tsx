@@ -23,7 +23,7 @@ const Home: NextPage = () => {
                     headerTitle: "text-base-content",
                     headerSubtitle: "text-base-content",
                     formFieldLabel: "text-base-content",
-                    formFieldInput: "text-base-content bg-base-100",
+                    formFieldInput: "text-base-content bg-base-100 border-primary",
                     formButtonPrimary:
                       "bg-primary hover:bg-primary-focus text-primary-content",
                     footerAction: "hidden",
