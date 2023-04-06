@@ -46,11 +46,11 @@ import { getAuth } from "@clerk/nextjs/server";
  */
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
   const { req } = opts;
-  const { user } = getAuth(req);
+  const { userId } = getAuth(req);
 
   return {
     prisma,
-    currentUser: user,
+    currentUser: userId,
   };
 };
 

@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Login from "~/components/Login";
 import { useUser, SignOutButton } from "@clerk/nextjs";
+import MatchesList from "~/components/MatchesList";
 
 const Home: NextPage = () => {
   const { user, isSignedIn, isLoaded } = useUser();
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
         <>
           <p>{user.fullName}</p>
           <SignOutButton />
+          <MatchesList userId={user.id} />
         </>
       )}
     </>
