@@ -91,6 +91,13 @@ model Player {
     @@map("players")
 }
 
+enum Half {
+    FIRST_HALF
+    SECOND_HALF
+    EXTRA_TIME_1
+    EXTRA_TIME_2
+}
+
 model Goal {
     id       Int    @id @default(autoincrement())
     matchId  Int    @map("match_id")
@@ -99,7 +106,7 @@ model Goal {
     player   Player @relation(fields: [playerId], references: [id])
     teamId   Int    @map("team_id")
     team     Team   @relation(fields: [teamId], references: [id])
-    half     Int
+    half     Half
     minute   Int
 
     @@map("goals")
@@ -113,7 +120,7 @@ model YellowCard {
     player   Player @relation(fields: [playerId], references: [id])
     teamId   Int    @map("team_id")
     team     Team   @relation(fields: [teamId], references: [id])
-    half     Int
+    half     Half
     minute   Int
 
     @@map("yellow_cards")
@@ -127,7 +134,7 @@ model RedCard {
     player   Player @relation(fields: [playerId], references: [id])
     teamId   Int    @map("team_id")
     team     Team   @relation(fields: [teamId], references: [id])
-    half     Int
+    half     Half
     minute   Int
 
     @@map("red_cards")
@@ -143,7 +150,7 @@ model Substitution {
     playerIn    Player @relation(fields: [playerInId], references: [id], name: "playerIn")
     playerOutId Int    @map("player_out_id")
     playerOut   Player @relation(fields: [playerOutId], references: [id], name: "playerOut")
-    half        Int
+    half        Half
     minute      Int
 
     @@map("substitutions")
