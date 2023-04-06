@@ -2,7 +2,7 @@ import { SignIn } from "@clerk/nextjs";
 
 const Login = () => {
   return (
-    <div className="hero min-h-screen bg-base-100">
+    <header className="hero flex flex-col items-center justify-center bg-base-100">
       <div className="hero-content flex-col lg:flex-row-reverse lg:gap-x-11">
         <div className="text-center lg:text-left">
           <h1 className="text-5xl font-bold">Welcome to MDOC Assistant!</h1>
@@ -35,7 +35,7 @@ const Login = () => {
           }}
         />
       </div>
-    </div>
+    </header>
   );
 };
 
