@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+    provider        = "prisma-client-js"
+    previewFeatures = ["filteredRelationCount"]
 }
 
 datasource db {
@@ -22,85 +23,128 @@ model Division {
 }
 
 model Team {
-    id            Int          @id @default(autoincrement())
-    createdAt     DateTime     @default(now()) @map("created_at")
-    updatedAt     DateTime     @updatedAt @map("updated_at")
+    id            Int            @id @default(autoincrement())
+    createdAt     DateTime       @default(now()) @map("created_at")
+    updatedAt     DateTime       @updatedAt @map("updated_at")
     name          String
-    divisionId    Int          @map("division_id")
-    division      Division     @relation(fields: [divisionId], references: [id])
-    rosterUrl     String       @unique @map("roster_url")
-    homeMatches   Match[]      @relation("homeTeam")
-    awayMatches   Match[]      @relation("awayTeam") 
-    matchEvents   MatchEvent[]
+    divisionId    Int            @map("division_id")
+    division      Division       @relation(fields: [divisionId], references: [id])
+    rosterUrl     String         @unique @map("roster_url")
+    homeMatches   Match[]        @relation("homeTeam")
+    awayMatches   Match[]        @relation("awayTeam")
     players       Player[]
-    twitterHandle String       @map("twitter_handle")
+    twitterHandle String         @map("twitter_handle")
+    Goal          Goal[]
+    YellowCard    YellowCard[]
+    RedCard       RedCard[]
+    Substitution  Substitution[]
 
     @@map("teams")
 }
 
 model Match {
-    id                Int          @id @default(autoincrement())
-    userId            String       @map("user_id")
-    e2eNumber         Int          @map("e2e_number")
-    divisionId        Int          @map("division_id")
-    division          Division     @relation(fields: [divisionId], references: [id])
-    homeTeamId        Int          @map("home_team_id")
-    homeTeam          Team         @relation(fields: [homeTeamId], references: [id], name: "homeTeam")
-    awayTeamId        Int          @map("away_team_id")
-    awayTeam          Team         @relation(fields: [awayTeamId], references: [id], name: "awayTeam")
-    createdAt         DateTime     @default(now()) @map("created_at")
-    updatedAt         DateTime     @updatedAt @map("updated_at")
-    homeGoals         Int          @default(0)
-    homeShots         Int          @default(0)
-    homeShotsOnTarget Int          @default(0)
-    homeCorners       Int          @default(0)
-    homeOffsides      Int          @default(0)
-    homeFouls         Int          @default(0)
-    homeYellowCards   Int          @default(0)
-    homeRedCards      Int          @default(0)
-    awayGoals         Int          @default(0)
-    awayShots         Int          @default(0)
-    awayShotsOnTarget Int          @default(0)
-    awayCorners       Int          @default(0)
-    awayOffsides      Int          @default(0)
-    awayFouls         Int          @default(0)
-    awayYellowCards   Int          @default(0)
-    awayRedCards      Int          @default(0)
-    scheduledTime     DateTime     @map("scheduled_time")
-    matchEvents       MatchEvent[]
+    id                Int            @id @default(autoincrement())
+    userId            String         @map("user_id")
+    e2eNumber         Int            @map("e2e_number")
+    divisionId        Int            @map("division_id")
+    division          Division       @relation(fields: [divisionId], references: [id])
+    homeTeamId        Int            @map("home_team_id")
+    homeTeam          Team           @relation(fields: [homeTeamId], references: [id], name: "homeTeam")
+    awayTeamId        Int            @map("away_team_id")
+    awayTeam          Team           @relation(fields: [awayTeamId], references: [id], name: "awayTeam")
+    createdAt         DateTime       @default(now()) @map("created_at")
+    updatedAt         DateTime       @updatedAt @map("updated_at")
+    homeShots         Int            @default(0) @map("home_shots")
+    homeShotsOnTarget Int            @default(0) @map("home_shots_on_target")
+    homeCorners       Int            @default(0) @map("home_corners")
+    homeOffsides      Int            @default(0) @map("home_offsides")
+    homeFouls         Int            @default(0) @map("home_fouls")
+    awayShots         Int            @default(0) @map("away_shots")
+    awayShotsOnTarget Int            @default(0) @map("away_shots_on_target")
+    awayCorners       Int            @default(0) @map("away_corners")
+    awayOffsides      Int            @default(0) @map("away_offsides")
+    awayFouls         Int            @default(0) @map("away_fouls")
+    scheduledTime     DateTime       @map("scheduled_time")
     players           Player[]
+    Goal              Goal[]
+    YellowCard        YellowCard[]
+    RedCard           RedCard[]
+    Substitution      Substitution[]
 
     @@map("matches")
 }
 
-model EventType {
-    id          Int          @id @default(autoincrement())
-    name        String       @unique
-    matchEvents MatchEvent[]
-
-    @@map("event_types")
-}
-
-model MatchEvent {
-    id          Int       @id @default(autoincrement())
-    matchId     Int       @map("match_id")
-    match       Match     @relation(fields: [matchId], references: [id])
-    teamId      Int       @map("team_id")
-    team        Team      @relation(fields: [teamId], references: [id])
-    eventTypeId Int       @map("event_type_id")
-    eventType   EventType @relation(fields: [eventTypeId], references: [id])
-
-    @@map("match_events")
-}
-
 model Player {
+    id              Int            @id @default(autoincrement())
+    name            String
+    matchId         Int            @map("match_id")
+    match           Match          @relation(fields: [matchId], references: [id])
+    teamId          Int            @map("team_id")
+    team            Team           @relation(fields: [teamId], references: [id])
+    shirtNumber     Int
+    Goal            Goal[]
+    YellowCard      YellowCard[]
+    RedCard         RedCard[]
+    SubstitutionIn  Substitution[] @relation("playerIn")
+    SubstitutionOut Substitution[] @relation("playerOut")
+
+    @@map("players")
+}
+
+model Goal {
+    id       Int    @id @default(autoincrement())
+    matchId  Int    @map("match_id")
+    match    Match  @relation(fields: [matchId], references: [id])
+    playerId Int    @map("player_id")
+    player   Player @relation(fields: [playerId], references: [id])
+    teamId   Int    @map("team_id")
+    team     Team   @relation(fields: [teamId], references: [id])
+    half     Int
+    minute   Int
+
+    @@map("goals")
+}
+
+model YellowCard {
+    id       Int    @id @default(autoincrement())
+    matchId  Int    @map("match_id")
+    match    Match  @relation(fields: [matchId], references: [id])
+    playerId Int    @map("player_id")
+    player   Player @relation(fields: [playerId], references: [id])
+    teamId   Int    @map("team_id")
+    team     Team   @relation(fields: [teamId], references: [id])
+    half     Int
+    minute   Int
+
+    @@map("yellow_cards")
+}
+
+model RedCard {
+    id       Int    @id @default(autoincrement())
+    matchId  Int    @map("match_id")
+    match    Match  @relation(fields: [matchId], references: [id])
+    playerId Int    @map("player_id")
+    player   Player @relation(fields: [playerId], references: [id])
+    teamId   Int    @map("team_id")
+    team     Team   @relation(fields: [teamId], references: [id])
+    half     Int
+    minute   Int
+
+    @@map("red_cards")
+}
+
+model Substitution {
     id          Int    @id @default(autoincrement())
-    name        String
     matchId     Int    @map("match_id")
     match       Match  @relation(fields: [matchId], references: [id])
     teamId      Int    @map("team_id")
     team        Team   @relation(fields: [teamId], references: [id])
-    shirtNumber Int
+    playerInId  Int    @map("player_in_id")
+    playerIn    Player @relation(fields: [playerInId], references: [id], name: "playerIn")
+    playerOutId Int    @map("player_out_id")
+    playerOut   Player @relation(fields: [playerOutId], references: [id], name: "playerOut")
+    half        Int
+    minute      Int
 
-    @@map("players")
+    @@map("substitutions")
 }
