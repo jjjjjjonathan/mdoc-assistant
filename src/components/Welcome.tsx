@@ -1,11 +1,29 @@
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 
-const UpcomingMatch = ({ homeTeam }: { homeTeam: string }) => {
+type UpcomingMatchProps = {
+  homeTeam: string;
+  division: string;
+  awayTeam: string;
+  id: number;
+  scheduledTime: Date;
+};
+
+const UpcomingMatch = ({
+  homeTeam,
+  division,
+  awayTeam,
+  id,
+  scheduledTime,
+}: UpcomingMatchProps) => {
   return (
     <>
       <div className="divider" />
       <p>{homeTeam}</p>
+      <p>{awayTeam}</p>
+      <p>{division}</p>
+      <p>{id.toString(10)}</p>
+      <p>{scheduledTime.toISOString()}</p>
     </>
   );
 };
@@ -38,7 +56,14 @@ const Welcome = () => {
                 {data.length > 0 && "Here are your upcoming matches."}
               </h2>
               {data.map((match) => (
-                <UpcomingMatch homeTeam={match.homeTeam.name} key={match.id} />
+                <UpcomingMatch
+                  key={match.id}
+                  homeTeam={match.homeTeam.name}
+                  awayTeam={match.awayTeam.name}
+                  division={match.division.name}
+                  id={match.id}
+                  scheduledTime={match.scheduledTime}
+                />
               ))}
               <div className="divider" />
               <div className="card-actions flex-nowrap">

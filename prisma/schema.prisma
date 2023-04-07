@@ -66,10 +66,10 @@ model Match {
     awayFouls         Int            @default(0) @map("away_fouls")
     scheduledTime     DateTime       @map("scheduled_time")
     players           Player[]
-    Goal              Goal[]
-    YellowCard        YellowCard[]
-    RedCard           RedCard[]
-    Substitution      Substitution[]
+    goals             Goal[]
+    yellowCards       YellowCard[]
+    redCards          RedCard[]
+    subs              Substitution[]
 
     @@map("matches")
 }

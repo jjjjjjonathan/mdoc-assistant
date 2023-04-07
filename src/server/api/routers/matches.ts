@@ -29,12 +29,25 @@ export const matchesRouter = createTRPCRouter({
           },
         ],
       },
-      include: {
+      select: {
+        id: true,
+        scheduledTime: true,
         homeTeam: {
           select: {
             name: true,
           },
         },
+        awayTeam: {
+          select: {
+            name: true,
+          },
+        },
+        division: {
+          select: {
+            name: true,
+          },
+        },
+        goals: true,
       },
       orderBy: [{ scheduledTime: "asc" }],
       take: 2,
