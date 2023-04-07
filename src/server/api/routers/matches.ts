@@ -14,8 +14,33 @@ export const matchesRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.match.findMany();
+  getUpcomingUserMatches: privateProcedure.query(async ({ ctx }) => {
+    const userId = ctx.currentUser;
+    const timeTwoHoursLater = Date.now();
+    const isoTimeTwoHoursLater = new Date(timeTwoHoursLater).toISOString();
+    const matches = await ctx.prisma.match.findMany({
+      where: {
+        AND: [
+          { userId },
+          {
+            scheduledTime: {
+              gte: isoTimeTwoHoursLater,
+            },
+          },
+        ],
+      },
+      include: {
+        homeTeam: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: [{ scheduledTime: "asc" }],
+      take: 2,
+    });
+
+    return matches;
   }),
   getUserMatches: privateProcedure.query(async ({ ctx }) => {
     const userId = ctx.currentUser;

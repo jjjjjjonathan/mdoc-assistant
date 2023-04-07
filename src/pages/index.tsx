@@ -3,6 +3,7 @@ import Head from "next/head";
 import Login from "~/components/Login";
 import { useUser, SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import MatchesList from "~/components/MatchesList";
+import Welcome from "~/components/Welcome";
 
 const Home: NextPage = () => {
   const { user } = useUser();
@@ -18,9 +19,8 @@ const Home: NextPage = () => {
         <Login />
       </SignedOut>
       <SignedIn>
-        <p>{user?.fullName}</p>
+        <Welcome />
         <SignOutButton />
-        <MatchesList userId={user?.id} />
       </SignedIn>
     </>
   );
