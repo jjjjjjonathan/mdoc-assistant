@@ -1,19 +1,7 @@
 import { z } from "zod";
-
-import {
-  createTRPCRouter,
-  publicProcedure,
-  privateProcedure,
-} from "~/server/api/trpc";
+import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 
 export const matchesRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
   getUpcomingUserMatches: privateProcedure.query(async ({ ctx }) => {
     const userId = ctx.currentUser;
     const timeTwoHoursLater = Date.now();
@@ -47,7 +35,6 @@ export const matchesRouter = createTRPCRouter({
             name: true,
           },
         },
-        goals: true,
       },
       orderBy: [{ scheduledTime: "asc" }],
       take: 2,
@@ -55,6 +42,7 @@ export const matchesRouter = createTRPCRouter({
 
     return matches;
   }),
+
   getUserMatches: privateProcedure.query(async ({ ctx }) => {
     const userId = ctx.currentUser;
     const matches = await ctx.prisma.match.findMany({
@@ -70,4 +58,38 @@ export const matchesRouter = createTRPCRouter({
 
     return matches;
   }),
+
+  getUniqueMatch: privateProcedure
+    .input(z.object({ matchId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const match = await ctx.prisma.match.findUnique({
+        where: {
+          id: input.matchId,
+        },
+        select: {
+          homeTeam: {
+            select: {
+              name: true,
+            },
+          },
+          awayTeam: {
+            select: {
+              name: true,
+            },
+          },
+          homeShots: true,
+          homeShotsOnTarget: true,
+          homeCorners: true,
+          homeOffsides: true,
+          homeFouls: true,
+          awayShots: true,
+          awayShotsOnTarget: true,
+          awayCorners: true,
+          awayOffsides: true,
+          awayFouls: true,
+        },
+      });
+
+      return match;
+    }),
 });
