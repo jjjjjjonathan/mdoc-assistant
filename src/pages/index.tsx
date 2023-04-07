@@ -1,13 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Login from "~/components/Login";
-import { useUser, SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
-import MatchesList from "~/components/MatchesList";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Welcome from "~/components/Welcome";
 
 const Home: NextPage = () => {
-  const { user } = useUser();
-
   return (
     <>
       <Head>
@@ -20,7 +17,6 @@ const Home: NextPage = () => {
       </SignedOut>
       <SignedIn>
         <Welcome />
-        <SignOutButton />
       </SignedIn>
     </>
   );

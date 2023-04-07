@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/nextjs";
+import { useUser, SignOutButton } from "@clerk/nextjs";
 import Image from "next/image";
 
 const Navbar = () => {
@@ -79,7 +79,7 @@ const Navbar = () => {
                   <a>Settings</a>
                 </li>
                 <li>
-                  <a>Logout</a>
+                  <SignOutButton />
                 </li>
               </ul>
             </div>
