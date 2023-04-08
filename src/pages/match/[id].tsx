@@ -25,6 +25,11 @@ const MatchPage: NextPage = () => {
       <p>
         match page for {data.homeTeam.name} vs. {data.awayTeam.name}
       </p>
+      <p>
+        score is:{" "}
+        {data.goals.filter((goal) => goal.teamId === data.homeTeamId).length} -{" "}
+        {data.goals.filter((goal) => goal.teamId === data.awayTeamId).length}
+      </p>
     </>
   );
 };
