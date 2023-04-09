@@ -29,8 +29,16 @@ const UpcomingMatch = ({
 };
 
 const Welcome = () => {
+  const ctx = api.useContext();
   const { data, isLoading } = api.matches.getUpcomingUserMatches.useQuery();
   const { user, isSignedIn } = useUser();
+
+  const { mutate, isLoading: isCreatingNewMatch } =
+    api.matches.createNewMatch.useMutation({
+      onSuccess: () => {
+        void ctx.matches.getUpcomingUserMatches.invalidate();
+      },
+    });
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
@@ -70,7 +78,10 @@ const Welcome = () => {
                 <button className="btn-primary btn w-1/2 shrink text-primary-content">
                   View your matches
                 </button>
-                <button className="btn-secondary btn w-1/2 shrink text-secondary-content">
+                <button
+                  className="btn-secondary btn w-1/2 shrink text-secondary-content"
+                  onClick={() => mutate()}
+                >
                   Create a new match
                 </button>
               </div>
