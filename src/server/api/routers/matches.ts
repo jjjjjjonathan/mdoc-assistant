@@ -144,21 +144,31 @@ export const matchesRouter = createTRPCRouter({
       return match;
     }),
 
-  createNewMatch: privateProcedure.mutation(async ({ ctx }) => {
-    const userId = ctx.currentUser;
-    const timeTwoHoursLater = Date.now();
-    const isoTimeTwoHoursLater = new Date(timeTwoHoursLater).toISOString();
-    const match = await ctx.prisma.match.create({
-      data: {
-        userId,
-        e2eNumber: 11,
-        divisionId: 1,
-        homeTeamId: 1,
-        awayTeamId: 2,
-        scheduledTime: isoTimeTwoHoursLater,
-      },
-    });
+  createNewMatch: privateProcedure
+    .input(
+      z.object({
+        division: z.number(),
+        homeTeamId: z.number(),
+        awayTeamId: z.number(),
+        e2eNumber: z.number(),
+        scheduledTime: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.currentUser;
+      // const timeTwoHoursLater = Date.now();
+      // const isoTimeTwoHoursLater = new Date(timeTwoHoursLater).toISOString();
+      const match = await ctx.prisma.match.create({
+        data: {
+          userId,
+          e2eNumber: input.e2eNumber,
+          divisionId: input.division,
+          homeTeamId: input.homeTeamId,
+          awayTeamId: input.awayTeamId,
+          scheduledTime: input.scheduledTime,
+        },
+      });
 
-    return match;
-  }),
+      return match;
+    }),
 });
