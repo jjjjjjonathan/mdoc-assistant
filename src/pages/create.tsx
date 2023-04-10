@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { api } from "~/utils/api";
 import { useState } from "react";
+import classNames from "classnames";
 
 type Team = {
   id: number;
@@ -18,12 +19,11 @@ type NewMatchInput = {
 const CreateMatchPage: NextPage = () => {
   const { data, isLoading } = api.divisions.getFormDivisionAndTeams.useQuery();
 
-  const { mutate, isLoading: isCreatingNewMatch } =
-    api.matches.createNewMatch.useMutation({
-      onSuccess: () => {
-        console.log("new match created!");
-      },
-    });
+  const { mutate } = api.matches.createNewMatch.useMutation({
+    onSuccess: () => {
+      setButtonStatus("success");
+    },
+  });
 
   const createNewMatch = ({
     division,
@@ -41,6 +41,16 @@ const CreateMatchPage: NextPage = () => {
   const [awayTeamId, setAwayTeamId] = useState(0);
   const [e2eNumber, setE2eNumber] = useState("0");
   const [scheduledTime, setScheduledTime] = useState("");
+  const [buttonStatus, setButtonStatus] = useState<
+    "primary" | "loading" | "success" | "error"
+  >("primary");
+
+  const buttonClasses = classNames("btn", "btn-md", "w-36", {
+    "btn-primary": buttonStatus === "primary",
+    "btn-secondary": buttonStatus === "loading",
+    "btn-success": buttonStatus === "success",
+    "btn-error": buttonStatus === "error",
+  });
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>SOMETHING WENT WRONG</p>;
@@ -122,6 +132,7 @@ const CreateMatchPage: NextPage = () => {
         />
       </form>
       <button
+        className={buttonClasses}
         onClick={() =>
           createNewMatch({
             division,
@@ -132,7 +143,7 @@ const CreateMatchPage: NextPage = () => {
           })
         }
       >
-        SUBMIT
+        Create match
       </button>
     </>
   );
