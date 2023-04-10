@@ -38,6 +38,7 @@ model Team {
     YellowCard    YellowCard[]
     RedCard       RedCard[]
     Substitution  Substitution[]
+    logo          String?
 
     @@map("teams")
 }
