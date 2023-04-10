@@ -1,5 +1,6 @@
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 type UpcomingMatchProps = {
   homeTeam: string;
@@ -29,8 +30,16 @@ const UpcomingMatch = ({
 };
 
 const Welcome = () => {
+  const ctx = api.useContext();
   const { data, isLoading } = api.matches.getUpcomingUserMatches.useQuery();
   const { user, isSignedIn } = useUser();
+
+  const { mutate, isLoading: isCreatingNewMatch } =
+    api.matches.createNewMatch.useMutation({
+      onSuccess: () => {
+        void ctx.matches.getUpcomingUserMatches.invalidate();
+      },
+    });
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
@@ -67,12 +76,20 @@ const Welcome = () => {
               ))}
               <div className="divider" />
               <div className="card-actions flex-nowrap">
-                <button className="btn-primary btn w-1/2 shrink text-primary-content">
-                  View your matches
-                </button>
-                <button className="btn-secondary btn w-1/2 shrink text-secondary-content">
-                  Create a new match
-                </button>
+                <div className="w-1/2 shrink">
+                  <Link href="/match">
+                    <button className="btn-primary btn w-full text-primary-content">
+                      View your matches
+                    </button>
+                  </Link>
+                </div>
+                <div className="w-1/2 shrink">
+                  <Link href="/create">
+                    <button className="btn-secondary btn w-full text-secondary-content">
+                      Create a new match
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

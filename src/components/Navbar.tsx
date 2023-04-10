@@ -1,5 +1,6 @@
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 
 const Navbar = () => {
   const { isSignedIn } = useUser();
@@ -44,12 +45,14 @@ const Navbar = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <Image
-          src="/leagueLogo150px.png"
-          alt="League1 Ontario logo"
-          width={42}
-          height={42}
-        />
+        <Link href="/">
+          <Image
+            src="/leagueLogo150px.png"
+            alt="League1 Ontario logo"
+            width={42}
+            height={42}
+          />
+        </Link>
       </div>
       <div className="navbar-end items-center gap-x-2">
         {isSignedIn && (

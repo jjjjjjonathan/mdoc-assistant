@@ -88,7 +88,7 @@ async function main() {
               name: "ProStars FC",
               rosterUrl:
                 "https://www.league1ontario.com/roster/show/7815407?subseason=875807",
-              twitterHandle: "@ProStarsFC",
+              twitterHandle: "@ProStarsFC1",
             },
             {
               name: "Scrosoppi FC",
@@ -130,7 +130,7 @@ async function main() {
               name: "Windsor City FC",
               rosterUrl:
                 "https://www.league1ontario.com/roster/show/7815414?subseason=875807",
-              twitterHandle: "@WinCityFC1",
+              twitterHandle: "@WinTFC",
             },
             {
               name: "Woodbridge Strikers",
@@ -226,7 +226,7 @@ async function main() {
               name: "ProStars FC",
               rosterUrl:
                 "https://www.league1ontario.com/roster/show/7815444?subseason=875808",
-              twitterHandle: "@ProStarsFC",
+              twitterHandle: "@ProStarsFC1",
             },
             {
               name: "Simcoe County Rovers FC",
