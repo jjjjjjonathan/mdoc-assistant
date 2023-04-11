@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { api } from "~/utils/api";
 import { formatISO9075 } from "date-fns";
 
 type EditMatchModalProps = {
@@ -17,6 +16,16 @@ type EditMatchModalProps = {
     e2eNumber: number,
     scheduledTime: string
   ) => void;
+  divisionsAndTeams:
+    | {
+        teams: {
+          id: number;
+          name: string;
+        }[];
+        id: number;
+        name: string;
+      }[]
+    | undefined;
 };
 
 type Team = {
@@ -32,12 +41,11 @@ const EditMatchModal = ({
   e2e,
   scheduledTimeDate,
   onEditMatch,
+  divisionsAndTeams,
 }: EditMatchModalProps) => {
-  const { data } = api.divisions.getFormDivisionAndTeams.useQuery();
-
   const [division, setDivision] = useState(divisionId);
   const [teamsList, setTeamsList] = useState<Team[] | undefined>(
-    data?.find((div) => div.id === division)?.teams || []
+    divisionsAndTeams?.find((div) => div.id === division)?.teams
   );
   const [homeTeam, setHomeTeam] = useState(homeTeamId);
   const [awayTeam, setAwayTeam] = useState(awayTeamId);
@@ -63,7 +71,8 @@ const EditMatchModal = ({
                 const divId = parseInt(event.target.value, 10);
                 setDivision(divId);
                 setTeamsList(
-                  data?.find((division) => division.id === divId)?.teams
+                  divisionsAndTeams?.find((division) => division.id === divId)
+                    ?.teams
                 );
                 setHomeTeam(0);
                 setAwayTeam(0);
@@ -73,7 +82,7 @@ const EditMatchModal = ({
               <option disabled value={0}>
                 Pick a division.
               </option>
-              {data?.map((division) => (
+              {teamsList?.map((division) => (
                 <option value={division.id} key={division.id}>
                   {division.name}
                 </option>

@@ -31,6 +31,16 @@ type MatchListItemProps = {
     e2eNumber: number,
     scheduledTime: string
   ) => void;
+  divisionsAndTeams:
+    | {
+        teams: {
+          id: number;
+          name: string;
+        }[];
+        id: number;
+        name: string;
+      }[]
+    | undefined;
 };
 
 const MatchListItem = ({
@@ -42,6 +52,7 @@ const MatchListItem = ({
   onDeleteMatch,
   e2eNumber,
   onEditMatch,
+  divisionsAndTeams,
 }: MatchListItemProps) => {
   return (
     <>
@@ -106,6 +117,7 @@ const MatchListItem = ({
         e2e={e2eNumber.toString(10)}
         scheduledTimeDate={scheduledTime}
         onEditMatch={onEditMatch}
+        divisionsAndTeams={divisionsAndTeams}
       />
       <DeleteMatchModal
         id={id}

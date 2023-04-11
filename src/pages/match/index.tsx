@@ -16,6 +16,9 @@ const MatchList: NextPage = () => {
       },
     });
 
+  const { data: divisionsTeamsData } =
+    api.divisions.getFormDivisionAndTeams.useQuery();
+
   const updateCreatedMatch = (
     matchId: number,
     division: number,
@@ -69,6 +72,7 @@ const MatchList: NextPage = () => {
               onDeleteMatch={deleteCreatedMatch}
               e2eNumber={match.e2eNumber}
               onEditMatch={updateCreatedMatch}
+              divisionsAndTeams={divisionsTeamsData}
             />
           ))}
         </div>
