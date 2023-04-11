@@ -1,6 +1,8 @@
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
+import Image from "next/image";
+import { formatDistance } from "date-fns";
 
 type UpcomingMatchProps = {
   homeTeam: string;
@@ -8,6 +10,8 @@ type UpcomingMatchProps = {
   awayTeam: string;
   id: number;
   scheduledTime: Date;
+  homeLogo: string;
+  awayLogo: string;
 };
 
 const UpcomingMatch = ({
@@ -16,30 +20,49 @@ const UpcomingMatch = ({
   awayTeam,
   id,
   scheduledTime,
+  homeLogo,
+  awayLogo,
 }: UpcomingMatchProps) => {
   return (
     <>
       <div className="divider" />
-      <p>{homeTeam}</p>
-      <p>{awayTeam}</p>
-      <p>{division}</p>
-      <p>{id.toString(10)}</p>
-      <p>{scheduledTime.toISOString()}</p>
+      <Link href={`/match/${id}`}>
+        <div className="flex flex-col gap-y-2">
+          <p className="text-center text-xl">{division}</p>
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-col items-center gap-y-2">
+              <Image
+                src={`/team-logos/${homeLogo}.png`}
+                alt={`${homeTeam} logo`}
+                height={75}
+                width={75}
+              />
+              <p className="text-lg">{homeTeam}</p>
+            </div>
+            <p className="text-center">vs.</p>
+            <div className="flex flex-col items-center gap-y-2">
+              <Image
+                src={`/team-logos/${awayLogo}.png`}
+                alt={`${awayTeam} logo`}
+                height={75}
+                width={75}
+              />
+              <p className="text-lg">{awayTeam}</p>
+            </div>
+          </div>
+          <p>
+            Match{" "}
+            {formatDistance(scheduledTime, new Date(), { addSuffix: true })}.
+          </p>
+        </div>
+      </Link>
     </>
   );
 };
 
 const Welcome = () => {
-  const ctx = api.useContext();
   const { data, isLoading } = api.matches.getUpcomingUserMatches.useQuery();
   const { user, isSignedIn } = useUser();
-
-  const { mutate, isLoading: isCreatingNewMatch } =
-    api.matches.createNewMatch.useMutation({
-      onSuccess: () => {
-        void ctx.matches.getUpcomingUserMatches.invalidate();
-      },
-    });
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
@@ -72,6 +95,8 @@ const Welcome = () => {
                   division={match.division.name}
                   id={match.id}
                   scheduledTime={match.scheduledTime}
+                  homeLogo={match.homeTeam.logo}
+                  awayLogo={match.awayTeam.logo}
                 />
               ))}
               <div className="divider" />

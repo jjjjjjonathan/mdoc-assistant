@@ -23,16 +23,21 @@ export const matchesRouter = createTRPCRouter({
         homeTeam: {
           select: {
             name: true,
+            logo: true,
+            id: true,
           },
         },
         awayTeam: {
           select: {
             name: true,
+            logo: true,
+            id: true,
           },
         },
         division: {
           select: {
             name: true,
+            id: true,
           },
         },
       },
@@ -47,13 +52,32 @@ export const matchesRouter = createTRPCRouter({
     const userId = ctx.currentUser;
     const matches = await ctx.prisma.match.findMany({
       where: { userId },
-      include: {
+      select: {
+        id: true,
+        scheduledTime: true,
+        e2eNumber: true,
         homeTeam: {
           select: {
             name: true,
+            logo: true,
+            id: true,
+          },
+        },
+        awayTeam: {
+          select: {
+            name: true,
+            logo: true,
+            id: true,
+          },
+        },
+        division: {
+          select: {
+            name: true,
+            id: true,
           },
         },
       },
+      orderBy: [{ scheduledTime: "asc" }],
     });
 
     return matches;
@@ -144,7 +168,7 @@ export const matchesRouter = createTRPCRouter({
       return match;
     }),
 
-  createNewMatch: privateProcedure
+  createOrUpdateNewMatch: privateProcedure
     .input(
       z.object({
         division: z.number(),
@@ -152,20 +176,39 @@ export const matchesRouter = createTRPCRouter({
         awayTeamId: z.number(),
         e2eNumber: z.number(),
         scheduledTime: z.string(),
+        matchId: z.number().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.currentUser;
-      // const timeTwoHoursLater = Date.now();
-      // const isoTimeTwoHoursLater = new Date(timeTwoHoursLater).toISOString();
-      const match = await ctx.prisma.match.create({
-        data: {
+      const match = await ctx.prisma.match.upsert({
+        where: { id: input.matchId || 0 },
+        update: {
+          e2eNumber: input.e2eNumber,
+          divisionId: input.division,
+          homeTeamId: input.homeTeamId,
+          awayTeamId: input.awayTeamId,
+          scheduledTime: input.scheduledTime,
+        },
+        create: {
           userId,
           e2eNumber: input.e2eNumber,
           divisionId: input.division,
           homeTeamId: input.homeTeamId,
           awayTeamId: input.awayTeamId,
           scheduledTime: input.scheduledTime,
+        },
+      });
+
+      return match;
+    }),
+
+  deleteCreatedMatch: privateProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const match = await ctx.prisma.match.delete({
+        where: {
+          id: input.id,
         },
       });
 

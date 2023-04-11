@@ -19,7 +19,7 @@ type NewMatchInput = {
 const CreateMatchPage: NextPage = () => {
   const { data, isLoading } = api.divisions.getFormDivisionAndTeams.useQuery();
 
-  const { mutate } = api.matches.createNewMatch.useMutation({
+  const { mutate } = api.matches.createOrUpdateNewMatch.useMutation({
     onSuccess: () => {
       setButtonStatus("success");
     },
