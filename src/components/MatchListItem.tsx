@@ -8,15 +8,29 @@ type MatchListItemProps = {
   homeTeam: {
     logo: string;
     name: string;
+    id: number;
   };
   awayTeam: {
     logo: string;
     name: string;
+    id: number;
   };
   scheduledTime: Date;
-  division: string;
+  division: {
+    name: string;
+    id: number;
+  };
   id: number;
   onDeleteMatch: (id: number) => void;
+  e2eNumber: number;
+  onEditMatch: (
+    matchId: number,
+    division: number,
+    homeTeamId: number,
+    awayTeamId: number,
+    e2eNumber: number,
+    scheduledTime: string
+  ) => void;
 };
 
 const MatchListItem = ({
@@ -26,6 +40,8 @@ const MatchListItem = ({
   division,
   id,
   onDeleteMatch,
+  e2eNumber,
+  onEditMatch,
 }: MatchListItemProps) => {
   return (
     <>
@@ -64,25 +80,33 @@ const MatchListItem = ({
               <div className="flex flex-row gap-x-2">
                 <label
                   htmlFor={`edit-modal-${id}`}
-                  className="btn-warning btn-sm btn"
+                  className="btn-warning btn-sm btn text-warning-content hover:bg-warning-content hover:text-warning"
                   onClick={(event) => event.stopPropagation()}
                 >
                   Edit
                 </label>
                 <label
                   htmlFor={`delete-modal-${id}`}
-                  className="btn-error btn-sm btn"
+                  className="btn-error btn-sm btn text-error-content hover:bg-error-content hover:text-error"
                   onClick={(event) => event.stopPropagation()}
                 >
                   Delete
                 </label>
               </div>
-              <div className="badge-outline badge">{division}</div>
+              <div className="badge-outline badge">{division.name}</div>
             </div>
           </div>
         </div>
       </Link>
-      <EditMatchModal id={id} />
+      <EditMatchModal
+        matchId={id}
+        divisionId={division.id}
+        homeTeamId={homeTeam.id}
+        awayTeamId={awayTeam.id}
+        e2e={e2eNumber.toString(10)}
+        scheduledTimeDate={scheduledTime}
+        onEditMatch={onEditMatch}
+      />
       <DeleteMatchModal
         id={id}
         onDeleteMatch={onDeleteMatch}

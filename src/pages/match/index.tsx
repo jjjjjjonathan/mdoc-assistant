@@ -5,7 +5,34 @@ import MatchListItem from "~/components/MatchListItem";
 
 const MatchList: NextPage = () => {
   const ctx = api.useContext();
-  const { data, isLoading } = api.matches.getUserMatches.useQuery();
+
+  const { data: matchData, isLoading: isLoadingUserMatches } =
+    api.matches.getUserMatches.useQuery();
+
+  const { mutate: updateMatch, isLoading: isUpdatingMatch } =
+    api.matches.createOrUpdateNewMatch.useMutation({
+      onSuccess: () => {
+        void ctx.matches.getUserMatches.invalidate();
+      },
+    });
+
+  const updateCreatedMatch = (
+    matchId: number,
+    division: number,
+    homeTeamId: number,
+    awayTeamId: number,
+    e2eNumber: number,
+    scheduledTime: string
+  ) => {
+    updateMatch({
+      matchId,
+      division,
+      homeTeamId,
+      awayTeamId,
+      e2eNumber,
+      scheduledTime,
+    });
+  };
 
   const { mutate: deleteMatch, isLoading: isDeletingMatch } =
     api.matches.deleteCreatedMatch.useMutation({
@@ -18,8 +45,8 @@ const MatchList: NextPage = () => {
     deleteMatch({ id });
   };
 
-  if (isLoading) return <p>LOADING</p>;
-  if (!data) return <p>something went wrong</p>;
+  if (isLoadingUserMatches) return <p>LOADING</p>;
+  if (!matchData) return <p>something went wrong</p>;
 
   return (
     <>
@@ -31,15 +58,17 @@ const MatchList: NextPage = () => {
 
       <div className="container mx-auto my-10">
         <div className="grid grid-cols-1 gap-x-40 gap-y-10 p-1 lg:grid-cols-2 xl:grid-cols-3">
-          {data.map((match) => (
+          {matchData.map((match) => (
             <MatchListItem
               key={match.id}
               homeTeam={match.homeTeam}
               awayTeam={match.awayTeam}
               scheduledTime={match.scheduledTime}
-              division={match.division.name}
+              division={match.division}
               id={match.id}
               onDeleteMatch={deleteCreatedMatch}
+              e2eNumber={match.e2eNumber}
+              onEditMatch={updateCreatedMatch}
             />
           ))}
         </div>

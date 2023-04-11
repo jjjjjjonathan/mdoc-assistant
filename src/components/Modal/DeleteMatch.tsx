@@ -32,14 +32,17 @@ const DeleteMatchModal = ({
           <div className="modal-action">
             <label
               htmlFor={`delete-modal-${id}`}
-              className="btn-error btn"
+              className="btn-error btn text-error-content hover:bg-error-content hover:text-error"
               onClick={() => {
                 onDeleteMatch(id);
               }}
             >
               Yes, I&apos;m sure
             </label>
-            <label htmlFor={`delete-modal-${id}`} className="btn-warning btn">
+            <label
+              htmlFor={`delete-modal-${id}`}
+              className="btn-warning btn text-warning-content hover:bg-warning-content hover:text-warning"
+            >
               Cancel
             </label>
           </div>
