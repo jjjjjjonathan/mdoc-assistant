@@ -2,7 +2,7 @@ import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
-import { formatDistance } from "date-fns";
+import { formatDistance, format } from "date-fns";
 
 type UpcomingMatchProps = {
   homeTeam: string;
@@ -29,7 +29,7 @@ const UpcomingMatch = ({
       <Link href={`/match/${id}`}>
         <div className="flex flex-col gap-y-2">
           <p className="text-center text-xl">{division}</p>
-          <div className="flex flex-row items-center justify-between">
+          <div className="mt-4 flex flex-row items-center justify-around">
             <div className="flex flex-col items-center gap-y-2">
               <Image
                 src={`/team-logos/${homeLogo}.png`}
@@ -37,9 +37,8 @@ const UpcomingMatch = ({
                 height={75}
                 width={75}
               />
-              <p className="text-lg">{homeTeam}</p>
+              <p className="text-center text-sm">{homeTeam}</p>
             </div>
-            <p className="text-center">vs.</p>
             <div className="flex flex-col items-center gap-y-2">
               <Image
                 src={`/team-logos/${awayLogo}.png`}
@@ -47,12 +46,13 @@ const UpcomingMatch = ({
                 height={75}
                 width={75}
               />
-              <p className="text-lg">{awayTeam}</p>
+              <p className="text-center text-sm">{awayTeam}</p>
             </div>
           </div>
           <p>
             Match{" "}
-            {formatDistance(scheduledTime, new Date(), { addSuffix: true })}.
+            {formatDistance(scheduledTime, new Date(), { addSuffix: true })} on{" "}
+            {format(scheduledTime, "EEEE, LLLL d")}.
           </p>
         </div>
       </Link>
