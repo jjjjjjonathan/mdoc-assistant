@@ -186,4 +186,16 @@ export const matchesRouter = createTRPCRouter({
 
       return match;
     }),
+
+  deleteCreatedMatch: privateProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const match = await ctx.prisma.match.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      return match;
+    }),
 });

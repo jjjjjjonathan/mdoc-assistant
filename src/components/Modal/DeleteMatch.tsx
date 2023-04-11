@@ -1,14 +1,22 @@
+import { api } from "~/utils/api";
+import { useRef } from "react";
+
 type DeleteMatchModalProps = {
   id: number;
 };
 
 const DeleteMatchModal = ({ id }: DeleteMatchModalProps) => {
+  const deleteModalRef = useRef(null);
+
+  const { mutate } = api.matches.deleteCreatedMatch.useMutation();
+
   return (
     <>
       <input
         type="checkbox"
         id={`delete-modal-${id}`}
         className="modal-toggle"
+        ref={deleteModalRef}
       />
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-neutral-focus">
@@ -18,6 +26,14 @@ const DeleteMatchModal = ({ id }: DeleteMatchModalProps) => {
             subscription to use Wikipedia for free!
           </p>
           <div className="modal-action">
+            <button
+              className="btn-error btn"
+              onClick={() => {
+                mutate({ id });
+              }}
+            >
+              Yes, I&apos;m sure.
+            </button>
             <label htmlFor={`delete-modal-${id}`} className="btn">
               Yay!
             </label>
