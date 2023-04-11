@@ -82,7 +82,7 @@ const EditMatchModal = ({
               <option disabled value={0}>
                 Pick a division.
               </option>
-              {teamsList?.map((division) => (
+              {divisionsAndTeams?.map((division) => (
                 <option value={division.id} key={division.id}>
                   {division.name}
                 </option>
