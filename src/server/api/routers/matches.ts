@@ -49,13 +49,28 @@ export const matchesRouter = createTRPCRouter({
     const userId = ctx.currentUser;
     const matches = await ctx.prisma.match.findMany({
       where: { userId },
-      include: {
+      select: {
+        id: true,
+        scheduledTime: true,
         homeTeam: {
+          select: {
+            name: true,
+            logo: true,
+          },
+        },
+        awayTeam: {
+          select: {
+            name: true,
+            logo: true,
+          },
+        },
+        division: {
           select: {
             name: true,
           },
         },
       },
+      orderBy: [{ scheduledTime: "asc" }],
     });
 
     return matches;
@@ -158,8 +173,6 @@ export const matchesRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const userId = ctx.currentUser;
-      // const timeTwoHoursLater = Date.now();
-      // const isoTimeTwoHoursLater = new Date(timeTwoHoursLater).toISOString();
       const match = await ctx.prisma.match.create({
         data: {
           userId,
