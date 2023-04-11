@@ -23,11 +23,13 @@ export const matchesRouter = createTRPCRouter({
         homeTeam: {
           select: {
             name: true,
+            logo: true,
           },
         },
         awayTeam: {
           select: {
             name: true,
+            logo: true,
           },
         },
         division: {
