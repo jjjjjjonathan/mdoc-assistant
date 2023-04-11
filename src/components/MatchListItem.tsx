@@ -16,6 +16,7 @@ type MatchListItemProps = {
   scheduledTime: Date;
   division: string;
   id: number;
+  onDeleteMatch: (id: number) => void;
 };
 
 const MatchListItem = ({
@@ -24,6 +25,7 @@ const MatchListItem = ({
   scheduledTime,
   division,
   id,
+  onDeleteMatch,
 }: MatchListItemProps) => {
   return (
     <>
@@ -81,7 +83,12 @@ const MatchListItem = ({
         </div>
       </Link>
       <EditMatchModal id={id} />
-      <DeleteMatchModal id={id} />
+      <DeleteMatchModal
+        id={id}
+        onDeleteMatch={onDeleteMatch}
+        homeTeam={homeTeam.name}
+        awayTeam={awayTeam.name}
+      />
     </>
   );
 };

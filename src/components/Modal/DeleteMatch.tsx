@@ -1,41 +1,46 @@
-import { api } from "~/utils/api";
-import { useRef } from "react";
-
 type DeleteMatchModalProps = {
   id: number;
+  onDeleteMatch: (id: number) => void;
+  homeTeam: string;
+  awayTeam: string;
 };
 
-const DeleteMatchModal = ({ id }: DeleteMatchModalProps) => {
-  const deleteModalRef = useRef(null);
-
-  const { mutate } = api.matches.deleteCreatedMatch.useMutation();
-
+const DeleteMatchModal = ({
+  id,
+  onDeleteMatch,
+  homeTeam,
+  awayTeam,
+}: DeleteMatchModalProps) => {
   return (
     <>
       <input
         type="checkbox"
         id={`delete-modal-${id}`}
         className="modal-toggle"
-        ref={deleteModalRef}
       />
       <div className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-neutral-focus">
-          <h3 className="text-lg font-bold">DELETE MODAL for {id}</h3>
+          <h3 className="text-lg font-bold">Delete this match</h3>
           <p className="py-4">
-            You&apos;ve been selected for a chance to get one year of
-            subscription to use Wikipedia for free!
+            Are you sure you want to delete the match between {homeTeam} and{" "}
+            {awayTeam}?
+          </p>
+          <p className="">
+            You won&apos;t be able to undo this, and you&apos;ll have to
+            recreate this match.
           </p>
           <div className="modal-action">
-            <button
+            <label
+              htmlFor={`delete-modal-${id}`}
               className="btn-error btn"
               onClick={() => {
-                mutate({ id });
+                onDeleteMatch(id);
               }}
             >
-              Yes, I&apos;m sure.
-            </button>
-            <label htmlFor={`delete-modal-${id}`} className="btn">
-              Yay!
+              Yes, I&apos;m sure
+            </label>
+            <label htmlFor={`delete-modal-${id}`} className="btn-warning btn">
+              Cancel
             </label>
           </div>
         </div>

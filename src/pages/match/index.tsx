@@ -4,7 +4,19 @@ import Head from "next/head";
 import MatchListItem from "~/components/MatchListItem";
 
 const MatchList: NextPage = () => {
+  const ctx = api.useContext();
   const { data, isLoading } = api.matches.getUserMatches.useQuery();
+
+  const { mutate: deleteMatch, isLoading: isDeletingMatch } =
+    api.matches.deleteCreatedMatch.useMutation({
+      onSuccess: () => {
+        void ctx.matches.getUserMatches.invalidate();
+      },
+    });
+
+  const deleteCreatedMatch = (id: number) => {
+    deleteMatch({ id });
+  };
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
@@ -27,6 +39,7 @@ const MatchList: NextPage = () => {
               scheduledTime={match.scheduledTime}
               division={match.division.name}
               id={match.id}
+              onDeleteMatch={deleteCreatedMatch}
             />
           ))}
         </div>
