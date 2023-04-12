@@ -94,11 +94,13 @@ export const matchesRouter = createTRPCRouter({
           homeTeam: {
             select: {
               name: true,
+              rosterUrl: true,
             },
           },
           awayTeam: {
             select: {
               name: true,
+              rosterUrl: true,
             },
           },
           homeTeamId: true,
