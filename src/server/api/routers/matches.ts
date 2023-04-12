@@ -96,6 +96,7 @@ export const matchesRouter = createTRPCRouter({
               name: true,
               rosterUrl: true,
               xiGraphic: true,
+              hex: true,
             },
           },
           awayTeam: {
@@ -103,6 +104,7 @@ export const matchesRouter = createTRPCRouter({
               name: true,
               rosterUrl: true,
               xiGraphic: true,
+              hex: true,
             },
           },
           homeTeamId: true,

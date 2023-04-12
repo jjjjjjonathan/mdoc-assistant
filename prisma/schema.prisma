@@ -40,6 +40,7 @@ model Team {
     Substitution  Substitution[]
     logo          String
     xiGraphic     String         @map("xi_graphic")
+    hex           String
 
     @@map("teams")
 }

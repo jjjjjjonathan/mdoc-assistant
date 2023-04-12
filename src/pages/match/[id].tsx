@@ -63,6 +63,7 @@ const MatchPage: NextPage = () => {
           rosterUrl={data.homeTeam.rosterUrl}
           teamId={data.homeTeamId}
           xiGraphic={data.homeTeam.xiGraphic}
+          hex={data.homeTeam.hex}
         />
       )}
       {tab === 3 && (
@@ -70,6 +71,7 @@ const MatchPage: NextPage = () => {
           rosterUrl={data.awayTeam.rosterUrl}
           teamId={data.awayTeamId}
           xiGraphic={data.awayTeam.xiGraphic}
+          hex={data.awayTeam.hex}
         />
       )}
       {tab === 2 && <p> hello</p>}

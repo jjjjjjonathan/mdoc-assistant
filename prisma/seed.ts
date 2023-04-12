@@ -19,6 +19,7 @@ async function main() {
               twitterHandle: "@ALLIANCE_UTDFC",
               logo: "Alliance",
               xiGraphic: "alliance-men",
+              hex: "#4A5258",
             },
             {
               name: "Blue Devils FC",
@@ -27,6 +28,7 @@ async function main() {
               twitterHandle: "@TheBlueDevilsFC",
               logo: "OBD",
               xiGraphic: "obd-men",
+              hex: "#2D2C2E",
             },
             {
               name: "Burlington FC",
@@ -35,6 +37,7 @@ async function main() {
               twitterHandle: "@burlsoccer",
               logo: "Burlington",
               xiGraphic: "burl-men",
+              hex: "#EEB720",
             },
             {
               name: "BVB IA Waterloo",
@@ -43,6 +46,7 @@ async function main() {
               twitterHandle: "@bvbiawaterloo",
               logo: "BVB",
               xiGraphic: "bvb-men",
+              hex: "#E4D906",
             },
             {
               name: "Darby FC",
@@ -51,6 +55,7 @@ async function main() {
               twitterHandle: "@DarbyFCL1OM",
               logo: "Darby",
               xiGraphic: "darby-men",
+              hex: "#483F3A",
             },
             {
               name: "Electric City FC",
@@ -59,6 +64,7 @@ async function main() {
               twitterHandle: "@ElectricCityFC",
               logo: "ECFC",
               xiGraphic: "ecfc-men",
+              hex: "#566169",
             },
             {
               name: "FC London",
@@ -67,6 +73,7 @@ async function main() {
               twitterHandle: "@FCLondon",
               logo: "London",
               xiGraphic: "london-men",
+              hex: "#382E2D",
             },
             {
               name: "Guelph United",
@@ -75,6 +82,7 @@ async function main() {
               twitterHandle: "@guelphunitedfc",
               logo: "GuelphUnited",
               xiGraphic: "guelph-united",
+              hex: "#29292C",
             },
             {
               name: "Hamilton United",
@@ -83,6 +91,7 @@ async function main() {
               twitterHandle: "@HamutdElite",
               logo: "Hamilton",
               xiGraphic: "ham-men",
+              hex: "#676664",
             },
             {
               name: "Master's FA",
@@ -91,6 +100,7 @@ async function main() {
               twitterHandle: "@MastersFA",
               logo: "MFA",
               xiGraphic: "mfa",
+              hex: "#DFD2E6",
             },
             {
               name: "North Mississauga SC",
@@ -99,6 +109,7 @@ async function main() {
               twitterHandle: "@NMSC_Panthers",
               logo: "NMSC",
               xiGraphic: "northmiss-men",
+              hex: "#332E2E",
             },
             {
               name: "North Toronto Nitros",
@@ -107,6 +118,7 @@ async function main() {
               twitterHandle: "@NT_SoccerClub",
               logo: "Nitros",
               xiGraphic: "nt-men",
+              hex: "#575B62",
             },
             {
               name: "ProStars FC",
@@ -115,6 +127,7 @@ async function main() {
               twitterHandle: "@ProStarsFC1",
               logo: "ProStars",
               xiGraphic: "prostars-men",
+              hex: "#C73041",
             },
             {
               name: "Scrosoppi FC",
@@ -123,6 +136,7 @@ async function main() {
               twitterHandle: "@FcScrosoppi",
               logo: "Scrosoppi",
               xiGraphic: "scrosoppi",
+              hex: "#3D3F45",
             },
             {
               name: "Sigma FC",
@@ -131,6 +145,7 @@ async function main() {
               twitterHandle: "@SigmaFC",
               logo: "Sigma",
               xiGraphic: "sigma",
+              hex: "#8D9A9C",
             },
             {
               name: "Simcoe County Rovers FC",
@@ -139,6 +154,7 @@ async function main() {
               twitterHandle: "@RoversFC_L1O",
               logo: "Simcoe",
               xiGraphic: "scr-men",
+              hex: "#3B3735",
             },
             {
               name: "St. Catherines Roma Wolves",
@@ -147,6 +163,7 @@ async function main() {
               twitterHandle: "@stcromawolvesL1",
               logo: "StCatherines",
               xiGraphic: "stc-men",
+              hex: "#372D2C",
             },
             {
               name: "Unionville Milliken SC",
@@ -155,6 +172,7 @@ async function main() {
               twitterHandle: "@u_msc",
               logo: "UMSC",
               xiGraphic: "umsc-men",
+              hex: "#3A332E",
             },
             {
               name: "Vaughan Azzurri",
@@ -163,6 +181,7 @@ async function main() {
               twitterHandle: "@vaughansoccercl",
               logo: "Vaughan",
               xiGraphic: "vsc-men",
+              hex: "#666462",
             },
             {
               name: "Windsor City FC",
@@ -171,6 +190,7 @@ async function main() {
               twitterHandle: "@WinTFC",
               logo: "Windsor",
               xiGraphic: "windsor",
+              hex: "#363940",
             },
             {
               name: "Woodbridge Strikers",
@@ -179,6 +199,7 @@ async function main() {
               twitterHandle: "@WoodbridgeL1OM",
               logo: "Woodbridge",
               xiGraphic: "wood-men",
+              hex: "#3D3C33",
             },
           ],
         },
@@ -199,6 +220,7 @@ async function main() {
               twitterHandle: "@ALLIANCE_UTDFC",
               logo: "Alliance",
               xiGraphic: "alliance-women",
+              hex: "#4A5258",
             },
             {
               name: "Blue Devils FC",
@@ -207,6 +229,7 @@ async function main() {
               twitterHandle: "@TheBlueDevilsFC",
               logo: "OBD",
               xiGraphic: "obd-women",
+              hex: "#2D2C2E",
             },
             {
               name: "Burlington FC",
@@ -215,6 +238,7 @@ async function main() {
               twitterHandle: "@burlsoccer",
               logo: "Burlington",
               xiGraphic: "burl-women",
+              hex: "#EEB720",
             },
             {
               name: "BVB IA Waterloo",
@@ -223,6 +247,7 @@ async function main() {
               twitterHandle: "@bvbiawaterloo",
               logo: "BVB",
               xiGraphic: "bvb-women",
+              hex: "#E4D906",
             },
             {
               name: "Darby FC",
@@ -231,6 +256,7 @@ async function main() {
               twitterHandle: "@DARBYFCL1O",
               logo: "Darby",
               xiGraphic: "darby-women",
+              hex: "#483F3A",
             },
             {
               name: "Electric City FC",
@@ -239,6 +265,7 @@ async function main() {
               twitterHandle: "@ElectricCityFC",
               logo: "ECFC",
               xiGraphic: "ecfc-women",
+              hex: "#566169",
             },
             {
               name: "FC London",
@@ -247,6 +274,7 @@ async function main() {
               twitterHandle: "@FCLondon",
               logo: "London",
               xiGraphic: "london-women",
+              hex: "#382E2D",
             },
             {
               name: "Guelph Union",
@@ -255,6 +283,7 @@ async function main() {
               twitterHandle: "@GuelphUnion",
               logo: "GuelphUnion",
               xiGraphic: "guelph-union",
+              hex: "#29292C",
             },
             {
               name: "Hamilton United",
@@ -263,6 +292,7 @@ async function main() {
               twitterHandle: "@HamutdElite",
               logo: "Hamilton",
               xiGraphic: "ham-women",
+              hex: "#676664",
             },
             {
               name: "NDC-Ontario",
@@ -271,6 +301,7 @@ async function main() {
               twitterHandle: "@NDC_Ontario",
               logo: "NDC",
               xiGraphic: "ndc",
+              hex: "#61676B",
             },
             {
               name: "North Mississauga SC",
@@ -279,6 +310,7 @@ async function main() {
               twitterHandle: "@NMSC_Panthers",
               logo: "NMSC",
               xiGraphic: "northmiss-women",
+              hex: "#332E2E",
             },
             {
               name: "North Toronto Nitros",
@@ -287,6 +319,7 @@ async function main() {
               twitterHandle: "@NT_SoccerClub",
               logo: "Nitros",
               xiGraphic: "nt-women",
+              hex: "#575B62",
             },
             {
               name: "ProStars FC",
@@ -295,6 +328,7 @@ async function main() {
               twitterHandle: "@ProStarsFC1",
               logo: "ProStars",
               xiGraphic: "prostars-women",
+              hex: "#C73041",
             },
             {
               name: "Simcoe County Rovers FC",
@@ -303,6 +337,7 @@ async function main() {
               twitterHandle: "@RoversFC_L1O",
               logo: "Simcoe",
               xiGraphic: "scr-women",
+              hex: "#3B3735",
             },
             {
               name: "St. Catherines Roma Wolves",
@@ -311,6 +346,7 @@ async function main() {
               twitterHandle: "@stcromawolvesL1",
               logo: "StCatherines",
               xiGraphic: "stc-women",
+              hex: "#372D2C",
             },
             {
               name: "Tecumseh SC",
@@ -319,6 +355,7 @@ async function main() {
               twitterHandle: "@TecumsehLeague1",
               logo: "Tecumseh",
               xiGraphic: "tecumseh",
+              hex: "#CC143A",
             },
             {
               name: "Unionville Milliken SC",
@@ -327,6 +364,7 @@ async function main() {
               twitterHandle: "@u_msc",
               logo: "UMSC",
               xiGraphic: "umsc-women",
+              hex: "#3A332E",
             },
             {
               name: "Vaughan Azzurri",
@@ -335,6 +373,7 @@ async function main() {
               twitterHandle: "@vaughansoccercl",
               logo: "Vaughan",
               xiGraphic: "vsc-women",
+              hex: "#666462",
             },
             {
               name: "Woodbridge Strikers",
@@ -343,6 +382,7 @@ async function main() {
               twitterHandle: "@WoodbridgeL1OW",
               logo: "Woodbridge",
               xiGraphic: "wood-women",
+              hex: "#3D3C33",
             },
           ],
         },

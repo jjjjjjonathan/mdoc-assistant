@@ -55,6 +55,9 @@ dependencies:
   superjson:
     specifier: 1.12.2
     version: 1.12.2
+  tinycolor2:
+    specifier: ^1.6.0
+    version: 1.6.0
   zod:
     specifier: ^3.21.4
     version: 3.21.4
@@ -75,6 +78,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18.0.11
     version: 18.0.11
+  '@types/tinycolor2':
+    specifier: ^1.4.3
+    version: 1.4.3
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.56.0
     version: 5.57.1(@typescript-eslint/parser@5.57.1)(eslint@8.37.0)(typescript@5.0.3)
@@ -1236,6 +1242,10 @@ packages:
       '@types/mime': 3.0.1
       '@types/node': 18.15.11
     dev: false
+
+  /@types/tinycolor2@1.4.3:
+    resolution: {integrity: sha512-Kf1w9NE5HEgGxCRyIcRXR/ZYtDv0V8FVPtYHwLxl0O+maGX0erE77pQlD0gpP+/KByMZ87mOA79SjifhSB3PjQ==}
+    dev: true
 
   /@typescript-eslint/eslint-plugin@5.57.1(@typescript-eslint/parser@5.57.1)(eslint@8.37.0)(typescript@5.0.3):
     resolution: {integrity: sha512-1MeobQkQ9tztuleT3v72XmY0XuKXVXusAhryoLuU5YZ+mXoYKZP9SQ7Flulh1NX4DTjpGTc2b/eMu4u7M7dhnQ==}

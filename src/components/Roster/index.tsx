@@ -9,9 +9,10 @@ type RosterProps = {
   rosterUrl: string;
   teamId: number;
   xiGraphic: string;
+  hex: string;
 };
 
-const Roster = ({ rosterUrl, teamId, xiGraphic }: RosterProps) => {
+const Roster = ({ rosterUrl, teamId, xiGraphic, hex }: RosterProps) => {
   const { data, isLoading } = api.players.getTeamRoster.useQuery({ rosterUrl });
 
   const [base64, setBase64] = useState("");
@@ -71,7 +72,8 @@ const Roster = ({ rosterUrl, teamId, xiGraphic }: RosterProps) => {
     goalkeeperId: number,
     captainId: number,
     headCoachName: string,
-    teamId: number
+    teamId: number,
+    hex: string
   ) => {
     const mappedXI = startingXI.map((player) => {
       if (player.id === goalkeeperId) {
@@ -88,6 +90,7 @@ const Roster = ({ rosterUrl, teamId, xiGraphic }: RosterProps) => {
       headCoach: headCoachName,
       teamId,
       xiGraphic,
+      hex,
     });
   };
 
@@ -144,7 +147,8 @@ const Roster = ({ rosterUrl, teamId, xiGraphic }: RosterProps) => {
                   goalkeeper,
                   captain,
                   headCoach,
-                  teamId
+                  teamId,
+                  hex
                 );
               }}
               className="btn-primary btn text-primary-content"
