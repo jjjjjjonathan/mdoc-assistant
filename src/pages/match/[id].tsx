@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import { api } from "~/utils/api";
 import Roster from "~/components/Roster";
+import { useState } from "react";
+import classNames from "classnames";
 
 const MatchPage: NextPage = () => {
   const { id } = useRouter().query;
@@ -10,9 +12,22 @@ const MatchPage: NextPage = () => {
   const { data, isLoading } = api.matches.getUniqueMatch.useQuery({
     matchId: matchId || 0,
   });
+  const [tab, setTab] = useState(2);
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
+
+  const mainTabClasses = classNames("tab-bordered", "tab", {
+    "tab-active": tab === 2,
+  });
+
+  const homeTeamTabClasses = classNames("tab-bordered", "tab", {
+    "tab-active": tab === 1,
+  });
+
+  const awayTeamTabClasses = classNames("tab-bordered", "tab", {
+    "tab-active": tab === 3,
+  });
 
   return (
     <>
@@ -27,12 +42,25 @@ const MatchPage: NextPage = () => {
       <h1 className="text-4xl font-bold">
         {data.homeTeam.name} vs. {data.awayTeam.name}
       </h1>
+      <div className="tabs">
+        <button className={homeTeamTabClasses} onClick={() => setTab(1)}>
+          Home XI
+        </button>
+        <button className={mainTabClasses} onClick={() => setTab(2)}>
+          Main
+        </button>
+        <button className={awayTeamTabClasses} onClick={() => setTab(3)}>
+          Away XI
+        </button>
+      </div>
       <p>
         score is:{" "}
         {data.goals.filter((goal) => goal.teamId === data.homeTeamId).length} -{" "}
         {data.goals.filter((goal) => goal.teamId === data.awayTeamId).length}
       </p>
-      <Roster rosterUrl={data.homeTeam.rosterUrl} />
+      {tab === 1 && <Roster rosterUrl={data.homeTeam.rosterUrl} />}
+      {tab === 3 && <Roster rosterUrl={data.awayTeam.rosterUrl} />}
+      {tab === 2 && <p> hello</p>}
       {/* <Roster rosterUrl={data.awayTeam.rosterUrl} /> */}
     </>
   );

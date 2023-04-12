@@ -39,6 +39,7 @@ model Team {
     RedCard       RedCard[]
     Substitution  Substitution[]
     logo          String
+    xiGraphic     String         @map("xi_graphic")
 
     @@map("teams")
 }
