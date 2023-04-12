@@ -2,21 +2,14 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { api } from "~/utils/api";
+import Roster from "~/components/Roster";
 
 const MatchPage: NextPage = () => {
-  const ctx = api.useContext();
   const { id } = useRouter().query;
   const matchId = id ? (!Number.isNaN(+id) ? +id : 0) : undefined;
   const { data, isLoading } = api.matches.getUniqueMatch.useQuery({
     matchId: matchId || 0,
   });
-
-  const { mutate: loadRosters, isLoading: isLoadingRosterData } =
-    api.players.getTeamRoster.useMutation({
-      onSuccess: (rosterData) => {
-        console.log(rosterData);
-      },
-    });
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
@@ -39,12 +32,8 @@ const MatchPage: NextPage = () => {
         {data.goals.filter((goal) => goal.teamId === data.homeTeamId).length} -{" "}
         {data.goals.filter((goal) => goal.teamId === data.awayTeamId).length}
       </p>
-      <button
-        className="btn-accent btn"
-        onClick={() => loadRosters({ rosterUrl: data.homeTeam.rosterUrl })}
-      >
-        get home roster
-      </button>
+      <Roster rosterUrl={data.homeTeam.rosterUrl} />
+      {/* <Roster rosterUrl={data.awayTeam.rosterUrl} /> */}
     </>
   );
 };

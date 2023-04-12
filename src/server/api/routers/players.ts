@@ -3,7 +3,7 @@ import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import * as cheerio from "cheerio";
 import axios from "redaxios";
 
-type RosterPlayerType = {
+export type RosterPlayerType = {
   name: string;
   number: number;
   isGoalkeeper: boolean;
@@ -18,13 +18,13 @@ export const playersRouter = createTRPCRouter({
         rosterUrl: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const { data }: { data: string } = await axios(input.rosterUrl);
       const $ = cheerio.load(data);
-      const content: RosterPlayerType[] = [];
+      const roster: RosterPlayerType[] = [];
       $('tbody[id="rosterListingTableBodyPlayer"] > tr').each(function (id) {
         const name = $(this).find('td[class="name"] > a').text();
-        content.push({
+        roster.push({
           name: name.replace(/^\d[^A-Za-z]*/, ""),
           number: 0,
           isGoalkeeper: false,
@@ -32,6 +32,6 @@ export const playersRouter = createTRPCRouter({
           id,
         });
       });
-      return content;
+      return roster;
     }),
 });
