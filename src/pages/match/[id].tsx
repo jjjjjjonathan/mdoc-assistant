@@ -58,10 +58,21 @@ const MatchPage: NextPage = () => {
         {data.goals.filter((goal) => goal.teamId === data.homeTeamId).length} -{" "}
         {data.goals.filter((goal) => goal.teamId === data.awayTeamId).length}
       </p>
-      {tab === 1 && <Roster rosterUrl={data.homeTeam.rosterUrl} />}
-      {tab === 3 && <Roster rosterUrl={data.awayTeam.rosterUrl} />}
+      {tab === 1 && (
+        <Roster
+          rosterUrl={data.homeTeam.rosterUrl}
+          teamId={data.homeTeamId}
+          xiGraphic={data.homeTeam.xiGraphic}
+        />
+      )}
+      {tab === 3 && (
+        <Roster
+          rosterUrl={data.awayTeam.rosterUrl}
+          teamId={data.awayTeamId}
+          xiGraphic={data.awayTeam.xiGraphic}
+        />
+      )}
       {tab === 2 && <p> hello</p>}
-      {/* <Roster rosterUrl={data.awayTeam.rosterUrl} /> */}
     </>
   );
 };

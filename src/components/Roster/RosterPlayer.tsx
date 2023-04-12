@@ -14,6 +14,7 @@ type RosterPlayerProps = {
   changePlayerName: (id: number, name: string) => void;
   goalkeeper: number;
   changePlayerNumber: (id: number, newNumber: number) => void;
+  captain: number;
 };
 
 const RosterPlayer = ({
@@ -28,11 +29,13 @@ const RosterPlayer = ({
   id,
   goalkeeper,
   changePlayerNumber,
+  captain,
 }: RosterPlayerProps) => {
   const [selected, setSelected] = useState(false);
 
   const cardClasses = classNames("card w-full shadow-xl", {
     "bg-base-200 shadow-neutral-focus": selected,
+    hidden: startingXI.length >= 11 && !selected,
   });
 
   const extraInfoClasses = classNames("card-actions flex-col", {
@@ -100,6 +103,24 @@ const RosterPlayer = ({
                 }
                 if (!event.target.checked && goalkeeper === clickedId) {
                   updateGoalkeeper(-1);
+                }
+              }}
+            />
+          </div>
+          <div className="flex flex-row">
+            <label htmlFor="">Check if captain</label>
+            <input
+              name="captain-radio"
+              className="radio-primary radio mx-2"
+              type="radio"
+              value={id}
+              onChange={(event) => {
+                const clickedId = parseInt(event.target.value, 10);
+                if (event.target.checked && captain !== clickedId) {
+                  updateCaptain(clickedId);
+                }
+                if (!event.target.checked && captain === clickedId) {
+                  updateCaptain(-1);
                 }
               }}
             />

@@ -89,6 +89,8 @@ model Player {
     RedCard         RedCard[]
     SubstitutionIn  Substitution[] @relation("playerIn")
     SubstitutionOut Substitution[] @relation("playerOut")
+    isGoalkeeper    Boolean        @default(false)
+    isCaptain       Boolean        @default(false)
 
     @@map("players")
 }

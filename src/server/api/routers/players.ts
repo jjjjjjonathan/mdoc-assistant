@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import * as cheerio from "cheerio";
 import axios from "redaxios";
+import Jimp from "jimp";
 
 export type RosterPlayerType = {
   name: string;
@@ -33,5 +34,31 @@ export const playersRouter = createTRPCRouter({
         });
       });
       return roster;
+    }),
+
+  createTeamXI: privateProcedure
+    .input(
+      z.object({
+        startingXI: z
+          .object({
+            name: z.string(),
+            number: z.number(),
+            isGoalkeeper: z.boolean(),
+            isCaptain: z.boolean(),
+            id: z.number(),
+          })
+          .array(),
+        headCoach: z.string(),
+        teamId: z.number(),
+        xiGraphic: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.currentUser;
+      const graphic = await Jimp.read(
+        `public/xi-graphics/${input.xiGraphic}.png`
+      );
+
+      return await graphic.getBase64Async(Jimp.AUTO);
     }),
 });

@@ -2,13 +2,25 @@ import { api } from "~/utils/api";
 import { useState } from "react";
 import type { RosterPlayerType } from "~/server/api/routers/players";
 import RosterPlayer from "./RosterPlayer";
+import classNames from "classnames";
+import Image from "next/image";
 
 type RosterProps = {
   rosterUrl: string;
+  teamId: number;
+  xiGraphic: string;
 };
 
-const Roster = ({ rosterUrl }: RosterProps) => {
+const Roster = ({ rosterUrl, teamId, xiGraphic }: RosterProps) => {
   const { data, isLoading } = api.players.getTeamRoster.useQuery({ rosterUrl });
+
+  const [base64, setBase64] = useState("");
+
+  const { mutate: createTeamXI } = api.players.createTeamXI.useMutation({
+    onSuccess: (graphicData) => {
+      setBase64(graphicData);
+    },
+  });
 
   const [startingXI, setStartingXI] = useState<RosterPlayerType[]>([]);
   const addToStartingXI = (startingXI: RosterPlayerType[], id: number) => {
@@ -49,11 +61,45 @@ const Roster = ({ rosterUrl }: RosterProps) => {
     setCaptain(id);
   };
 
+  const [headCoach, setHeadCoach] = useState("");
+  const updateHeadCoach = (name: string) => {
+    setHeadCoach(name);
+  };
+
+  const submitRoster = (
+    startingXI: RosterPlayerType[],
+    goalkeeperId: number,
+    captainId: number,
+    headCoachName: string,
+    teamId: number
+  ) => {
+    const mappedXI = startingXI.map((player) => {
+      if (player.id === goalkeeperId) {
+        player.isGoalkeeper = true;
+      }
+      if (player.id === captainId) {
+        player.isCaptain = true;
+      }
+      return player;
+    });
+
+    createTeamXI({
+      startingXI: mappedXI,
+      headCoach: headCoachName,
+      teamId,
+      xiGraphic,
+    });
+  };
+
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
 
   return (
-    <form>
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+      }}
+    >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data.map((player) => (
           <RosterPlayer
@@ -69,9 +115,54 @@ const Roster = ({ rosterUrl }: RosterProps) => {
             changePlayerName={changePlayerName}
             changePlayerNumber={changePlayerNumber}
             goalkeeper={goalkeeper}
+            captain={captain}
           />
         ))}
+        <div
+          className={classNames(
+            "card w-full bg-base-200 shadow-xl shadow-neutral-focus",
+            { hidden: startingXI.length < 11 }
+          )}
+        >
+          <div className="card-body">
+            <h2 className="card-title">READY TO SUBMIT</h2>
+            <input
+              className="input-bordered input w-full max-w-xs"
+              placeholder="Type head coach's name"
+              type="text"
+              name=""
+              id=""
+              value={headCoach}
+              onChange={(event) => {
+                updateHeadCoach(event.target.value);
+              }}
+            />
+            <button
+              onClick={() => {
+                submitRoster(
+                  startingXI,
+                  goalkeeper,
+                  captain,
+                  headCoach,
+                  teamId
+                );
+              }}
+              className="btn-primary btn text-primary-content"
+              disabled={
+                !headCoach ||
+                startingXI.length < 11 ||
+                goalkeeper < 0 ||
+                captain < 0
+              }
+            >
+              Create XI
+            </button>
+          </div>
+        </div>
       </div>
+      {base64.length > 0 && (
+        <Image src={base64} alt="test" width={400} height={400} />
+      )}
     </form>
   );
 };
