@@ -26,11 +26,13 @@ const Roster = ({
 
   const [base64, setBase64] = useState("");
   const [altText, setAltText] = useState("");
+  const [modalStatus, setModalStatus] = useState(false);
 
   const { mutate: createTeamXI } = api.players.createTeamXI.useMutation({
     onSuccess: ({ base64, altText: lineupAltText }) => {
       setBase64(base64);
       setAltText(lineupAltText);
+      setModalStatus(true);
     },
   });
 
@@ -183,10 +185,41 @@ const Roster = ({
           </div>
         </div>
       </div>
-      {base64.length > 0 && (
+      {base64.length > 0 && modalStatus && (
         <>
-          <Image src={base64} alt="test" width={400} height={400} />
-          <p>{altText}</p>
+          <input
+            type="checkbox"
+            id="my-modal-6"
+            className="modal-toggle"
+            defaultChecked
+            onChange={(event) => setModalStatus(event.target.checked)}
+          />
+          <div className="modal modal-bottom sm:modal-middle">
+            <div className="modal-box">
+              <div className="flex flex-col gap-y-4">
+                <h3 className="text-lg font-bold">
+                  Starting XI graphic for {teamName}
+                </h3>
+                <Image
+                  src={base64}
+                  alt={altText}
+                  width={400}
+                  height={400}
+                  className="mx-auto"
+                />
+                <textarea
+                  value={altText}
+                  readOnly={true}
+                  className="textarea-bordered textarea w-full"
+                />
+              </div>
+              <div className="modal-action">
+                <label htmlFor="my-modal-6" className="btn">
+                  Close
+                </label>
+              </div>
+            </div>
+          </div>
         </>
       )}
     </form>
