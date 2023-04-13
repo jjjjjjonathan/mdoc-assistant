@@ -4,6 +4,7 @@ import type { RosterPlayerType } from "~/server/api/routers/players";
 import RosterPlayer from "./RosterPlayer";
 import classNames from "classnames";
 import TwitterGraphicModal from "../Modal/TwitterGraphic";
+import Loading from "../Loading";
 
 type RosterProps = {
   rosterUrl: string;
@@ -118,7 +119,7 @@ const Roster = ({
     });
   };
 
-  if (isLoading) return <p>LOADING</p>;
+  if (isLoading) return <Loading />;
   if (!data) return <p>something went wrong</p>;
 
   return (

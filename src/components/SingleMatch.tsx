@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { api } from "~/utils/api";
-import Image from "next/image";
 import TwitterGraphicModal from "./Modal/TwitterGraphic";
 
 type SingleMatchProps = {
@@ -24,6 +23,7 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
       onSuccess: ({ base64, altText }) => {
         setSrc(base64);
         setAltText(altText);
+        setModalStatus(true);
       },
     });
 
@@ -46,38 +46,41 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
 
   return (
     <form>
-      <div className="form-control w-full max-w-xs">
-        <label className="label">
-          <span className="label-text">How many goals for {homeTeam}?</span>
-        </label>
-        <input
-          type="number"
-          placeholder="Type score here"
-          className="input-bordered input w-full max-w-xs"
-          onChange={(event) => {
-            const score = parseInt(event.target.value, 10);
-            Number.isNaN(score) ? setHomeScore(-1) : setHomeScore(score);
-          }}
-        />
-      </div>
-      <div className="form-control w-full max-w-xs">
-        <label className="label">
-          <span className="label-text">How many goals for {awayTeam}?</span>
-        </label>
-        <input
-          type="number"
-          placeholder="Type score here"
-          className="input-bordered input w-full max-w-xs"
-          onChange={(event) => {
-            const score = parseInt(event.target.value, 10);
-            Number.isNaN(score) ? setAwayScore(-1) : setAwayScore(score);
-          }}
-        />
-      </div>
-      {homeScore >= 0 && awayScore >= 0 && (
+      <div className="flex flex-col gap-x-8 gap-y-4 px-4 sm:flex-row">
         <div className="form-control w-full max-w-xs">
           <label className="label">
-            <span className="label-text">Pick a file</span>
+            <span className="label-text">How many goals for {homeTeam}?</span>
+          </label>
+          <input
+            type="number"
+            placeholder={`Type home score here`}
+            className="input-bordered input w-full max-w-xs"
+            onChange={(event) => {
+              const score = parseInt(event.target.value, 10);
+              Number.isNaN(score) ? setHomeScore(-1) : setHomeScore(score);
+            }}
+          />
+        </div>
+        <div className="form-control w-full max-w-xs">
+          <label className="label">
+            <span className="label-text">How many goals for {awayTeam}?</span>
+          </label>
+          <input
+            type="number"
+            placeholder="Type away score here"
+            className="input-bordered input w-full max-w-xs"
+            onChange={(event) => {
+              const score = parseInt(event.target.value, 10);
+              Number.isNaN(score) ? setAwayScore(-1) : setAwayScore(score);
+            }}
+          />
+        </div>
+      </div>
+
+      {homeScore >= 0 && awayScore >= 0 && (
+        <div className="form-control mx-auto w-full max-w-xs pt-10">
+          <label className="label">
+            <span className="label-text">Upload the final score graphic</span>
           </label>
           <input
             type="file"
@@ -101,7 +104,7 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
           />
         </div>
       )}
-      {src.length > 0 && (
+      {src.length > 0 && modalStatus && (
         <TwitterGraphicModal
           base64={src}
           altText={altText}

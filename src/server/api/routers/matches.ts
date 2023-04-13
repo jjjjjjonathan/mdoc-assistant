@@ -272,7 +272,7 @@ export const matchesRouter = createTRPCRouter({
         1080
       );
       const base64 = await graphic.getBase64Async(Jimp.AUTO);
-      const altText = `Full time between ${input.homeTeam} and ${input.awayTeam} in the ${input.division}. The final score is: ${input.homeTeam}: ${input.homeScore}, ${input.awayTeam}: ${input.awayScore}.`;
+      const altText = `Full time between ${input.homeTeam} and ${input.awayTeam} in League1 Ontario's ${input.division}. The final score is ${input.homeTeam}: ${input.homeScore}, ${input.awayTeam}: ${input.awayScore}.`;
       return { base64, altText };
     }),
 });
