@@ -127,14 +127,14 @@ const Roster = ({
       onSubmit={(event) => {
         event.preventDefault();
       }}
+      className="py-4"
     >
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {data.map((player) => (
           <RosterPlayer
             key={player.id}
             id={player.id}
             name={player.name}
-            number={player.number}
             startingXI={startingXI}
             addToStartingXI={addToStartingXI}
             removeFromStartingXI={removeFromStartingXI}
@@ -147,10 +147,9 @@ const Roster = ({
           />
         ))}
         <div
-          className={classNames(
-            "card w-full bg-base-200 shadow-xl shadow-neutral-focus",
-            { hidden: startingXI.length < 11 }
-          )}
+          className={classNames("card w-full bg-neutral", {
+            hidden: startingXI.length < 11,
+          })}
         >
           <div className="card-body">
             <h2 className="card-title">READY TO SUBMIT</h2>

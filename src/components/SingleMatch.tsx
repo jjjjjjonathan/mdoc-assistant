@@ -46,7 +46,7 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
 
   return (
     <form>
-      <div className="flex flex-col gap-x-8 gap-y-4 px-4 sm:flex-row">
+      <div className="mx-auto flex w-full flex-col items-center gap-x-8 gap-y-4 px-2 sm:flex-row">
         <div className="form-control w-full max-w-xs">
           <label className="label">
             <span className="label-text">How many goals for {homeTeam}?</span>

@@ -4,7 +4,6 @@ import classNames from "classnames";
 
 type RosterPlayerProps = {
   name: string;
-  number: number;
   startingXI: RosterPlayerType[];
   addToStartingXI: (startingXI: RosterPlayerType[], id: number) => void;
   removeFromStartingXI: (id: number) => void;
@@ -19,7 +18,6 @@ type RosterPlayerProps = {
 
 const RosterPlayer = ({
   name,
-  number,
   startingXI,
   addToStartingXI,
   removeFromStartingXI,
@@ -33,22 +31,16 @@ const RosterPlayer = ({
 }: RosterPlayerProps) => {
   const [selected, setSelected] = useState(false);
 
-  const cardClasses = classNames("card w-full shadow-xl", {
-    "bg-base-200 shadow-neutral-focus": selected,
+  const cardClasses = classNames("card w-full bg-neutral", {
     hidden: startingXI.length >= 11 && !selected,
-  });
-
-  const extraInfoClasses = classNames("card-actions flex-col", {
-    invisible: !selected,
-    visible: selected,
   });
 
   return (
     <div className={cardClasses}>
-      <div className={classNames("card-body", { "pt-5": selected })}>
+      <div className="card-body">
         {selected ? (
           <input
-            className="input-ghost input card-title p-0 text-primary"
+            className="input-bordered input-ghost input h-12"
             type="text"
             defaultValue={name}
             onChange={(event) => {
@@ -56,14 +48,16 @@ const RosterPlayer = ({
             }}
           />
         ) : (
-          <h2 className="card-title">{name}</h2>
+          <h2 className="card-title h-12 sm:w-96">{name}</h2>
         )}
       </div>
-      <div className="flex flex-row">
-        <label htmlFor="">Starter?</label>
+      <div className="mx-auto grid grid-cols-2 gap-4 pb-6">
+        <label htmlFor="" className="place-self-end self-center">
+          Starter:
+        </label>
 
         <input
-          className="toggle-primary toggle mx-2"
+          className="toggle-primary toggle place-self-center"
           disabled={
             startingXI.filter((player) => player.id === id).length <= 0 &&
             startingXI.length >= 11
@@ -88,55 +82,56 @@ const RosterPlayer = ({
             }
           }}
         />
-        <div className={extraInfoClasses}>
-          <div className="flex flex-row">
-            <label htmlFor="">Check if goalkeeper</label>
-            <input
-              name="gk-radio"
-              className="radio-primary radio mx-2"
-              type="radio"
-              value={id}
-              onChange={(event) => {
-                const clickedId = parseInt(event.target.value, 10);
-                if (event.target.checked && goalkeeper !== clickedId) {
-                  updateGoalkeeper(clickedId);
-                }
-                if (!event.target.checked && goalkeeper === clickedId) {
-                  updateGoalkeeper(-1);
-                }
-              }}
-            />
-          </div>
-          <div className="flex flex-row">
-            <label htmlFor="">Check if captain</label>
-            <input
-              name="captain-radio"
-              className="radio-primary radio mx-2"
-              type="radio"
-              value={id}
-              onChange={(event) => {
-                const clickedId = parseInt(event.target.value, 10);
-                if (event.target.checked && captain !== clickedId) {
-                  updateCaptain(clickedId);
-                }
-                if (!event.target.checked && captain === clickedId) {
-                  updateCaptain(-1);
-                }
-              }}
-            />
-          </div>
-          <div>
-            <label htmlFor="">Shirt number:</label>
-            <input
-              type="text"
-              className="input-bordered input-primary input mx-2 h-12 w-16 text-center"
-              onChange={(e) => {
-                const newNumber = parseInt(e.target.value, 10);
-                changePlayerNumber(id, newNumber);
-              }}
-            />
-          </div>
-        </div>
+        <label htmlFor="" className="place-self-end self-center">
+          Goalkeeper:
+        </label>
+        <input
+          disabled={!selected}
+          name="gk-radio"
+          className="radio-secondary radio place-self-center"
+          type="radio"
+          value={id}
+          onChange={(event) => {
+            const clickedId = parseInt(event.target.value, 10);
+            if (event.target.checked && goalkeeper !== clickedId) {
+              updateGoalkeeper(clickedId);
+            }
+            if (!event.target.checked && goalkeeper === clickedId) {
+              updateGoalkeeper(-1);
+            }
+          }}
+        />
+        <label htmlFor="" className="place-self-end self-center">
+          Captain:
+        </label>
+        <input
+          disabled={!selected}
+          name="captain-radio"
+          className="radio-accent radio place-self-center"
+          type="radio"
+          value={id}
+          onChange={(event) => {
+            const clickedId = parseInt(event.target.value, 10);
+            if (event.target.checked && captain !== clickedId) {
+              updateCaptain(clickedId);
+            }
+            if (!event.target.checked && captain === clickedId) {
+              updateCaptain(-1);
+            }
+          }}
+        />
+        <label htmlFor="" className="place-self-end self-center">
+          Shirt number:
+        </label>
+        <input
+          disabled={!selected}
+          type="text"
+          className="input-bordered input-info input h-12 w-16 place-self-center text-center"
+          onChange={(e) => {
+            const newNumber = parseInt(e.target.value, 10);
+            changePlayerNumber(id, newNumber);
+          }}
+        />
       </div>
     </div>
   );
