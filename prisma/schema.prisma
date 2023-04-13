@@ -39,6 +39,9 @@ model Team {
     RedCard       RedCard[]
     Substitution  Substitution[]
     logo          String
+    xiGraphic     String         @map("xi_graphic")
+    hex           String
+    coachHex      String         @map("coach_hex")
 
     @@map("teams")
 }
@@ -88,6 +91,8 @@ model Player {
     RedCard         RedCard[]
     SubstitutionIn  Substitution[] @relation("playerIn")
     SubstitutionOut Substitution[] @relation("playerOut")
+    isGoalkeeper    Boolean        @default(false)
+    isCaptain       Boolean        @default(false)
 
     @@map("players")
 }
