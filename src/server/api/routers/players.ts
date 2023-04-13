@@ -80,9 +80,6 @@ export const playersRouter = createTRPCRouter({
       let altText = `Starting eleven for ${input.teamName}: `;
       const altTextArray: string[] = [];
       for (const player of input.startingXI) {
-        if (player.isGoalkeeper) {
-          player.name += " (GK)";
-        }
         graphic.print(
           font,
           -435,
@@ -100,14 +97,18 @@ export const playersRouter = createTRPCRouter({
           140,
           i * 45 + 290,
           {
-            text: player.name,
+            text: player.isGoalkeeper ? `${player.name} (GK)` : player.name,
             alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
             alignmentY: Jimp.VERTICAL_ALIGN_TOP,
           },
           1080,
           1080
         );
-        altTextArray.push(`#${player.number} ${player.name}`);
+        altTextArray.push(
+          player.isGoalkeeper
+            ? `#${player.number} ${player.name} (goalkeeper)`
+            : `#${player.number} ${player.name}`
+        );
         i++;
       }
 

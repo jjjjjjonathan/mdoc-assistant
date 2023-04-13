@@ -3,7 +3,7 @@ import { useState } from "react";
 import type { RosterPlayerType } from "~/server/api/routers/players";
 import RosterPlayer from "./RosterPlayer";
 import classNames from "classnames";
-import Image from "next/image";
+import TwitterGraphicModal from "../Modal/TwitterGraphic";
 
 type RosterProps = {
   rosterUrl: string;
@@ -27,6 +27,9 @@ const Roster = ({
   const [base64, setBase64] = useState("");
   const [altText, setAltText] = useState("");
   const [modalStatus, setModalStatus] = useState(false);
+  const changeModalStatus = (checked: boolean) => {
+    setModalStatus(checked);
+  };
 
   const { mutate: createTeamXI } = api.players.createTeamXI.useMutation({
     onSuccess: ({ base64, altText: lineupAltText }) => {
@@ -186,41 +189,11 @@ const Roster = ({
         </div>
       </div>
       {base64.length > 0 && modalStatus && (
-        <>
-          <input
-            type="checkbox"
-            id="my-modal-6"
-            className="modal-toggle"
-            defaultChecked
-            onChange={(event) => setModalStatus(event.target.checked)}
-          />
-          <div className="modal modal-bottom sm:modal-middle">
-            <div className="modal-box">
-              <div className="flex flex-col gap-y-4">
-                <h3 className="text-lg font-bold">
-                  Starting XI graphic for {teamName}
-                </h3>
-                <Image
-                  src={base64}
-                  alt={altText}
-                  width={400}
-                  height={400}
-                  className="mx-auto"
-                />
-                <textarea
-                  value={altText}
-                  readOnly={true}
-                  className="textarea-bordered textarea w-full"
-                />
-              </div>
-              <div className="modal-action">
-                <label htmlFor="my-modal-6" className="btn">
-                  Close
-                </label>
-              </div>
-            </div>
-          </div>
-        </>
+        <TwitterGraphicModal
+          changeModalStatus={changeModalStatus}
+          base64={base64}
+          altText={altText}
+        />
       )}
     </form>
   );
