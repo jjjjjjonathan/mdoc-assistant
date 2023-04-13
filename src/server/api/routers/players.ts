@@ -4,6 +4,7 @@ import * as cheerio from "cheerio";
 import axios from "redaxios";
 import Jimp from "jimp";
 import tinycolor from "tinycolor2";
+import { isReadableWhiteFont } from "~/utils/helpers";
 
 export type RosterPlayerType = {
   name: string;
@@ -20,7 +21,7 @@ export const playersRouter = createTRPCRouter({
         rosterUrl: z.string(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const { data }: { data: string } = await axios(input.rosterUrl);
       const $ = cheerio.load(data);
       const roster: RosterPlayerType[] = [];
@@ -53,39 +54,80 @@ export const playersRouter = createTRPCRouter({
         teamId: z.number(),
         xiGraphic: z.string(),
         hex: z.string(),
+        teamName: z.string(),
+        coachHex: z.string(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
-      const userId = ctx.currentUser;
+    .mutation(async ({ input }) => {
       const graphic = await Jimp.read(
         `public/xi-graphics/${input.xiGraphic}.png`
       );
-      const font = tinycolor.isReadable(
-        tinycolor(input.hex),
-        tinycolor("FFFFFF"),
-        {
-          level: "AA",
-          size: "small",
-        }
-      )
-        ? await Jimp.loadFont("public/jimp-fonts/publicSansWhite.fnt")
-        : await Jimp.loadFont("public/jimp-fonts/publicSansBlack.fnt");
+      const publicSansWhite = await Jimp.loadFont(
+        "public/jimp-fonts/publicSansWhite.fnt"
+      );
+      const publicSansBlack = await Jimp.loadFont(
+        "public/jimp-fonts/publicSansBlack.fnt"
+      );
+      const hex = tinycolor(input.hex);
+      const coachHex = tinycolor(input.coachHex);
 
-      for (let i = 0; i < 11; i++) {
+      const font = isReadableWhiteFont(hex) ? publicSansWhite : publicSansBlack;
+      const coachFont = isReadableWhiteFont(coachHex)
+        ? publicSansWhite
+        : publicSansBlack;
+
+      let i = 0;
+      let altText = `Starting eleven for ${input.teamName}: `;
+      const altTextArray: string[] = [];
+      for (const player of input.startingXI) {
+        if (player.isGoalkeeper) {
+          player.name += " (GK)";
+        }
         graphic.print(
           font,
-          90,
-          i * 45 + 285,
+          -435,
+          i * 45 + 290,
           {
-            text: "88   Orlendis Benitez-Hernandez",
+            text: player.number.toString(10),
+            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentY: Jimp.VERTICAL_ALIGN_TOP,
+          },
+          1080,
+          1080
+        );
+        graphic.print(
+          font,
+          140,
+          i * 45 + 290,
+          {
+            text: player.name,
             alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
             alignmentY: Jimp.VERTICAL_ALIGN_TOP,
           },
           1080,
           1080
         );
+        altTextArray.push(`#${player.number} ${player.name}`);
+        i++;
       }
 
-      return await graphic.getBase64Async(Jimp.AUTO);
+      graphic.print(
+        coachFont,
+        90,
+        888,
+        {
+          text: input.headCoach,
+          alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
+          alignmentY: Jimp.VERTICAL_ALIGN_TOP,
+        },
+        1080,
+        1080
+      );
+      altTextArray.push(`and Head Coach ${input.headCoach}`);
+
+      const base64 = await graphic.getBase64Async(Jimp.AUTO);
+      altText += altTextArray.join(", ");
+
+      return { base64, altText };
     }),
 });

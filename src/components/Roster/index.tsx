@@ -10,16 +10,27 @@ type RosterProps = {
   teamId: number;
   xiGraphic: string;
   hex: string;
+  teamName: string;
+  coachHex: string;
 };
 
-const Roster = ({ rosterUrl, teamId, xiGraphic, hex }: RosterProps) => {
+const Roster = ({
+  rosterUrl,
+  teamId,
+  xiGraphic,
+  hex,
+  teamName,
+  coachHex,
+}: RosterProps) => {
   const { data, isLoading } = api.players.getTeamRoster.useQuery({ rosterUrl });
 
   const [base64, setBase64] = useState("");
+  const [altText, setAltText] = useState("");
 
   const { mutate: createTeamXI } = api.players.createTeamXI.useMutation({
-    onSuccess: (graphicData) => {
-      setBase64(graphicData);
+    onSuccess: ({ base64, altText: lineupAltText }) => {
+      setBase64(base64);
+      setAltText(lineupAltText);
     },
   });
 
@@ -85,12 +96,20 @@ const Roster = ({ rosterUrl, teamId, xiGraphic, hex }: RosterProps) => {
       return player;
     });
 
+    const sortedXI = mappedXI.sort((a, b) => {
+      if (a.isGoalkeeper) return -1;
+      if (b.isGoalkeeper) return 1;
+      return a.number - b.number;
+    });
+
     createTeamXI({
-      startingXI: mappedXI,
+      startingXI: sortedXI,
       headCoach: headCoachName,
       teamId,
       xiGraphic,
       hex,
+      teamName,
+      coachHex,
     });
   };
 
@@ -165,7 +184,10 @@ const Roster = ({ rosterUrl, teamId, xiGraphic, hex }: RosterProps) => {
         </div>
       </div>
       {base64.length > 0 && (
-        <Image src={base64} alt="test" width={400} height={400} />
+        <>
+          <Image src={base64} alt="test" width={400} height={400} />
+          <p>{altText}</p>
+        </>
       )}
     </form>
   );

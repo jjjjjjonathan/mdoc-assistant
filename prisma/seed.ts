@@ -20,6 +20,7 @@ async function main() {
               logo: "Alliance",
               xiGraphic: "alliance-men",
               hex: "#4A5258",
+              coachHex: "#C75F1E",
             },
             {
               name: "Blue Devils FC",
@@ -29,6 +30,7 @@ async function main() {
               logo: "OBD",
               xiGraphic: "obd-men",
               hex: "#2D2C2E",
+              coachHex: "#334087",
             },
             {
               name: "Burlington FC",
@@ -38,6 +40,7 @@ async function main() {
               logo: "Burlington",
               xiGraphic: "burl-men",
               hex: "#EEB720",
+              coachHex: "#346A8C",
             },
             {
               name: "BVB IA Waterloo",
@@ -47,6 +50,7 @@ async function main() {
               logo: "BVB",
               xiGraphic: "bvb-men",
               hex: "#E4D906",
+              coachHex: "#2A2701",
             },
             {
               name: "Darby FC",
@@ -56,6 +60,7 @@ async function main() {
               logo: "Darby",
               xiGraphic: "darby-men",
               hex: "#483F3A",
+              coachHex: "#26438A",
             },
             {
               name: "Electric City FC",
@@ -65,6 +70,7 @@ async function main() {
               logo: "ECFC",
               xiGraphic: "ecfc-men",
               hex: "#566169",
+              coachHex: "#E0A91D",
             },
             {
               name: "FC London",
@@ -74,6 +80,7 @@ async function main() {
               logo: "London",
               xiGraphic: "london-men",
               hex: "#382E2D",
+              coachHex: "#AE243B",
             },
             {
               name: "Guelph United",
@@ -83,6 +90,7 @@ async function main() {
               logo: "GuelphUnited",
               xiGraphic: "guelph-united",
               hex: "#29292C",
+              coachHex: "#C3182A",
             },
             {
               name: "Hamilton United",
@@ -92,6 +100,7 @@ async function main() {
               logo: "Hamilton",
               xiGraphic: "ham-men",
               hex: "#676664",
+              coachHex: "#D7450E",
             },
             {
               name: "Master's FA",
@@ -101,6 +110,7 @@ async function main() {
               logo: "MFA",
               xiGraphic: "mfa",
               hex: "#DFD2E6",
+              coachHex: "#C9383D",
             },
             {
               name: "North Mississauga SC",
@@ -110,6 +120,7 @@ async function main() {
               logo: "NMSC",
               xiGraphic: "northmiss-men",
               hex: "#332E2E",
+              coachHex: "#BE2428",
             },
             {
               name: "North Toronto Nitros",
@@ -119,6 +130,7 @@ async function main() {
               logo: "Nitros",
               xiGraphic: "nt-men",
               hex: "#575B62",
+              coachHex: "#3A5E2F",
             },
             {
               name: "ProStars FC",
@@ -128,6 +140,7 @@ async function main() {
               logo: "ProStars",
               xiGraphic: "prostars-men",
               hex: "#C73041",
+              coachHex: "#3A418A",
             },
             {
               name: "Scrosoppi FC",
@@ -137,6 +150,7 @@ async function main() {
               logo: "Scrosoppi",
               xiGraphic: "scrosoppi",
               hex: "#3D3F45",
+              coachHex: "#9A804F",
             },
             {
               name: "Sigma FC",
@@ -146,6 +160,7 @@ async function main() {
               logo: "Sigma",
               xiGraphic: "sigma",
               hex: "#8D9A9C",
+              coachHex: "#164884",
             },
             {
               name: "Simcoe County Rovers FC",
@@ -155,6 +170,7 @@ async function main() {
               logo: "Simcoe",
               xiGraphic: "scr-men",
               hex: "#3B3735",
+              coachHex: "#446485",
             },
             {
               name: "St. Catherines Roma Wolves",
@@ -164,6 +180,7 @@ async function main() {
               logo: "StCatherines",
               xiGraphic: "stc-men",
               hex: "#372D2C",
+              coachHex: "#861C1F",
             },
             {
               name: "Unionville Milliken SC",
@@ -173,6 +190,7 @@ async function main() {
               logo: "UMSC",
               xiGraphic: "umsc-men",
               hex: "#3A332E",
+              coachHex: "#CE1E22",
             },
             {
               name: "Vaughan Azzurri",
@@ -182,6 +200,7 @@ async function main() {
               logo: "Vaughan",
               xiGraphic: "vsc-men",
               hex: "#666462",
+              coachHex: "#D22324",
             },
             {
               name: "Windsor City FC",
@@ -191,6 +210,7 @@ async function main() {
               logo: "Windsor",
               xiGraphic: "windsor",
               hex: "#363940",
+              coachHex: "#9F222C",
             },
             {
               name: "Woodbridge Strikers",
@@ -200,6 +220,7 @@ async function main() {
               logo: "Woodbridge",
               xiGraphic: "wood-men",
               hex: "#3D3C33",
+              coachHex: "#1E4D90",
             },
           ],
         },
@@ -221,6 +242,7 @@ async function main() {
               logo: "Alliance",
               xiGraphic: "alliance-women",
               hex: "#4A5258",
+              coachHex: "#C75F1E",
             },
             {
               name: "Blue Devils FC",
@@ -230,6 +252,7 @@ async function main() {
               logo: "OBD",
               xiGraphic: "obd-women",
               hex: "#2D2C2E",
+              coachHex: "#334087",
             },
             {
               name: "Burlington FC",
@@ -239,6 +262,7 @@ async function main() {
               logo: "Burlington",
               xiGraphic: "burl-women",
               hex: "#EEB720",
+              coachHex: "#346A8C",
             },
             {
               name: "BVB IA Waterloo",
@@ -248,6 +272,7 @@ async function main() {
               logo: "BVB",
               xiGraphic: "bvb-women",
               hex: "#E4D906",
+              coachHex: "#2A2701",
             },
             {
               name: "Darby FC",
@@ -257,6 +282,7 @@ async function main() {
               logo: "Darby",
               xiGraphic: "darby-women",
               hex: "#483F3A",
+              coachHex: "#26438A",
             },
             {
               name: "Electric City FC",
@@ -266,6 +292,7 @@ async function main() {
               logo: "ECFC",
               xiGraphic: "ecfc-women",
               hex: "#566169",
+              coachHex: "#E0A91D",
             },
             {
               name: "FC London",
@@ -275,6 +302,7 @@ async function main() {
               logo: "London",
               xiGraphic: "london-women",
               hex: "#382E2D",
+              coachHex: "#AE243B",
             },
             {
               name: "Guelph Union",
@@ -284,6 +312,7 @@ async function main() {
               logo: "GuelphUnion",
               xiGraphic: "guelph-union",
               hex: "#29292C",
+              coachHex: "#C3182A",
             },
             {
               name: "Hamilton United",
@@ -293,6 +322,7 @@ async function main() {
               logo: "Hamilton",
               xiGraphic: "ham-women",
               hex: "#676664",
+              coachHex: "#D7450E",
             },
             {
               name: "NDC-Ontario",
@@ -302,6 +332,7 @@ async function main() {
               logo: "NDC",
               xiGraphic: "ndc",
               hex: "#61676B",
+              coachHex: "#AF221A",
             },
             {
               name: "North Mississauga SC",
@@ -311,6 +342,7 @@ async function main() {
               logo: "NMSC",
               xiGraphic: "northmiss-women",
               hex: "#332E2E",
+              coachHex: "#BE2428",
             },
             {
               name: "North Toronto Nitros",
@@ -320,6 +352,7 @@ async function main() {
               logo: "Nitros",
               xiGraphic: "nt-women",
               hex: "#575B62",
+              coachHex: "#3A5E2F",
             },
             {
               name: "ProStars FC",
@@ -329,6 +362,7 @@ async function main() {
               logo: "ProStars",
               xiGraphic: "prostars-women",
               hex: "#C73041",
+              coachHex: "#3A418A",
             },
             {
               name: "Simcoe County Rovers FC",
@@ -338,6 +372,7 @@ async function main() {
               logo: "Simcoe",
               xiGraphic: "scr-women",
               hex: "#3B3735",
+              coachHex: "#446485",
             },
             {
               name: "St. Catherines Roma Wolves",
@@ -347,6 +382,7 @@ async function main() {
               logo: "StCatherines",
               xiGraphic: "stc-women",
               hex: "#372D2C",
+              coachHex: "#861C1F",
             },
             {
               name: "Tecumseh SC",
@@ -356,6 +392,7 @@ async function main() {
               logo: "Tecumseh",
               xiGraphic: "tecumseh",
               hex: "#CC143A",
+              coachHex: "#2D2964",
             },
             {
               name: "Unionville Milliken SC",
@@ -365,6 +402,7 @@ async function main() {
               logo: "UMSC",
               xiGraphic: "umsc-women",
               hex: "#3A332E",
+              coachHex: "#CE1E22",
             },
             {
               name: "Vaughan Azzurri",
@@ -374,6 +412,7 @@ async function main() {
               logo: "Vaughan",
               xiGraphic: "vsc-women",
               hex: "#666462",
+              coachHex: "#D22324",
             },
             {
               name: "Woodbridge Strikers",
@@ -383,6 +422,7 @@ async function main() {
               logo: "Woodbridge",
               xiGraphic: "wood-women",
               hex: "#3D3C33",
+              coachHex: "#1E4D90",
             },
           ],
         },
