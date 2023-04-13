@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
+import Jimp from "jimp";
 
 export const matchesRouter = createTRPCRouter({
   getUpcomingUserMatches: privateProcedure.query(async ({ ctx }) => {
@@ -170,6 +171,11 @@ export const matchesRouter = createTRPCRouter({
               minute: true,
             },
           },
+          division: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
 
@@ -221,5 +227,52 @@ export const matchesRouter = createTRPCRouter({
       });
 
       return match;
+    }),
+
+  createFullTimeGraphic: privateProcedure
+    .input(
+      z.object({
+        homeScore: z.number(),
+        awayScore: z.number(),
+        base64: z.string(),
+        homeTeam: z.string(),
+        awayTeam: z.string(),
+        division: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const splitBase64 = input.base64.split(",");
+      const buffer = Buffer.from(splitBase64[1] as string, "base64");
+      const graphic = await Jimp.read(buffer);
+      const font = await Jimp.loadFont(
+        "./public/jimp-fonts/leagueSpartanBlack.fnt"
+      );
+      graphic.print(
+        font,
+        -125,
+        55,
+        {
+          text: input.homeScore.toString(10),
+          alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+          alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+        },
+        1080,
+        1080
+      );
+      graphic.print(
+        font,
+        -125,
+        285,
+        {
+          text: input.awayScore.toString(10),
+          alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+          alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+        },
+        1080,
+        1080
+      );
+      const base64 = await graphic.getBase64Async(Jimp.AUTO);
+      const altText = `Full time between ${input.homeTeam} and ${input.awayTeam} in the ${input.division}. The final score is: ${input.homeTeam}: ${input.homeScore}, ${input.awayTeam}: ${input.awayScore}.`;
+      return { base64, altText };
     }),
 });

@@ -8,7 +8,7 @@ async function main() {
   console.log("Start seeding men's division and teams...");
   await prisma.division.create({
     data: {
-      name: "Men's Division",
+      name: "Men's Premier Division",
       teams: {
         createMany: {
           data: [
@@ -230,7 +230,7 @@ async function main() {
   console.log("Start seeding women's division and teams...");
   await prisma.division.create({
     data: {
-      name: "Women's Division",
+      name: "Women's Premier Division",
       teams: {
         createMany: {
           data: [

@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import Roster from "~/components/Roster";
 import { useState } from "react";
 import classNames from "classnames";
+import SingleMatch from "~/components/SingleMatch";
 
 const MatchPage: NextPage = () => {
   const { id } = useRouter().query;
@@ -53,11 +54,11 @@ const MatchPage: NextPage = () => {
           Away XI
         </button>
       </div>
-      <p>
+      {/* <p>
         score is:{" "}
         {data.goals.filter((goal) => goal.teamId === data.homeTeamId).length} -{" "}
         {data.goals.filter((goal) => goal.teamId === data.awayTeamId).length}
-      </p>
+      </p> */}
       {tab === 1 && (
         <Roster
           rosterUrl={data.homeTeam.rosterUrl}
@@ -78,7 +79,13 @@ const MatchPage: NextPage = () => {
           coachHex={data.awayTeam.coachHex}
         />
       )}
-      {tab === 2 && <p> hello</p>}
+      {tab === 2 && (
+        <SingleMatch
+          homeTeam={data.homeTeam.name}
+          awayTeam={data.awayTeam.name}
+          division={data.division.name}
+        />
+      )}
     </>
   );
 };
