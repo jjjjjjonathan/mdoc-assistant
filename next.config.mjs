@@ -18,15 +18,5 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "www.gravatar.com",
-        port: "",
-        pathname: "/avatar?d=mp"
-      }
-    ]
-  }
 };
 export default config;
