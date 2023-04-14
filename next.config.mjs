@@ -1,5 +1,5 @@
-import path from "path";
-import { fileURLToPath } from "url";
+// import path from "path";
+// import { fileURLToPath } from "url";
 
 /**
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
@@ -7,8 +7,8 @@ import { fileURLToPath } from "url";
  */
 !process.env.SKIP_ENV_VALIDATION && (await import("./src/env.mjs"));
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -24,8 +24,8 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
-  serverRuntimeConfig: {
-    PROJECT_ROOT: __dirname
-  }
+  // serverRuntimeConfig: {
+  //   PROJECT_ROOT: __dirname
+  // }
 };
 export default config;

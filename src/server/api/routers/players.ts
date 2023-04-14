@@ -5,7 +5,7 @@ import axios from "redaxios";
 import Jimp from "jimp";
 import tinycolor from "tinycolor2";
 import { isReadableWhiteFont } from "~/utils/helpers";
-import { serverPath } from "~/utils/helpers";
+// import { serverPath } from "~/utils/helpers";
 
 export type RosterPlayerType = {
   name: string;
@@ -61,13 +61,13 @@ export const playersRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       const graphic = await Jimp.read(
-        serverPath(`public/xi-graphics/${input.xiGraphic}.png`)
+        `public/xi-graphics/${input.xiGraphic}.png`
       );
       const publicSansWhite = await Jimp.loadFont(
-        serverPath("public/jimp-fonts/publicSansWhite.fnt")
+        "public/jimp-fonts/publicSansWhite.fnt"
       );
       const publicSansBlack = await Jimp.loadFont(
-        serverPath("public/jimp-fonts/publicSansBlack.fnt")
+        "public/jimp-fonts/publicSansBlack.fnt"
       );
       const hex = tinycolor(input.hex);
       const coachHex = tinycolor(input.coachHex);
