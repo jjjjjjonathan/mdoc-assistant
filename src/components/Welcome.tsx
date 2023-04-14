@@ -3,6 +3,7 @@ import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
 import { formatDistance, format } from "date-fns";
+import Loading from "./Loading";
 
 type UpcomingMatchProps = {
   homeTeam: string;
@@ -64,7 +65,12 @@ const Welcome = () => {
   const { data, isLoading } = api.matches.getUpcomingUserMatches.useQuery();
   const { user, isSignedIn } = useUser();
 
-  if (isLoading) return <p>LOADING</p>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center">
+        <Loading />
+      </div>
+    );
   if (!data) return <p>something went wrong</p>;
 
   return (
@@ -76,9 +82,15 @@ const Welcome = () => {
               Hi{isSignedIn && <span>, {user.firstName}</span>}!
             </h1>
             <p className="py-6">
-              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-              excepturi exercitationem quasi. In deleniti eaque aut repudiandae
-              et a id nisi.
+              The profile icon on the top right contains your navigation. This
+              page will show your next two upcoming matches. Click on one to go
+              to where you can generate lineup and final score graphics for
+              Twitter.
+            </p>
+            <p>
+              Please remember to copy and paste the provided alt text for
+              Twitter to make the graphics accessible to those who need to use
+              screen readers and other assisted technologies.
             </p>
           </header>
           <div className="card w-full max-w-sm flex-shrink-0 bg-neutral shadow-2xl">

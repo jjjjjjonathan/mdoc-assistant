@@ -26,7 +26,7 @@ const DarkModeToggle = () => {
                 theme === "catppuccin-latte" ||
                 resolvedTheme === "light"
               ) {
-                setTheme("catppuccin-mocha");
+                setTheme("dark");
               }
               if (
                 theme === "catppuccin-mocha" ||

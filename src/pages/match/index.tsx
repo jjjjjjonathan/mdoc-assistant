@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import { api } from "~/utils/api";
 import Head from "next/head";
 import MatchListItem from "~/components/MatchListItem";
+import Loading from "~/components/Loading";
 
 const MatchList: NextPage = () => {
   const ctx = api.useContext();
@@ -48,7 +49,12 @@ const MatchList: NextPage = () => {
     deleteMatch({ id });
   };
 
-  if (isLoadingUserMatches) return <p>LOADING</p>;
+  if (isLoadingUserMatches)
+    return (
+      <div className="flex items-center justify-center">
+        <Loading />
+      </div>
+    );
   if (!matchData) return <p>something went wrong</p>;
 
   return (
