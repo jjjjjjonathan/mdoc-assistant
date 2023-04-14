@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import classNames from "classnames";
+import Loading from "~/components/Loading";
 
 type Team = {
   id: number;
@@ -39,7 +40,7 @@ const CreateMatchPage: NextPage = () => {
   const [teamsList, setTeamsList] = useState<Team[] | undefined>([]);
   const [homeTeamId, setHomeTeamId] = useState(0);
   const [awayTeamId, setAwayTeamId] = useState(0);
-  const [e2eNumber, setE2eNumber] = useState("0");
+  const [e2eNumber, setE2eNumber] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
   const [buttonStatus, setButtonStatus] = useState<
     "primary" | "loading" | "success" | "error"
@@ -52,12 +53,17 @@ const CreateMatchPage: NextPage = () => {
     "btn-error": buttonStatus === "error",
   });
 
-  if (isLoading) return <p>LOADING</p>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center">
+        <Loading />
+      </div>
+    );
   if (!data) return <p>SOMETHING WENT WRONG</p>;
 
   return (
     <>
-      <form action="">
+      <form className="flex flex-col items-center justify-center gap-6 px-4">
         <select
           className="select-bordered select w-full max-w-xs"
           onChange={(event) => {
@@ -130,21 +136,28 @@ const CreateMatchPage: NextPage = () => {
             setScheduledTime(date.toISOString());
           }}
         />
+        <button
+          disabled={
+            division <= 0 ||
+            homeTeamId <= 0 ||
+            awayTeamId <= 0 ||
+            !e2eNumber ||
+            !scheduledTime
+          }
+          className="btn-primary btn"
+          onClick={() =>
+            createNewMatch({
+              division,
+              homeTeamId,
+              awayTeamId,
+              e2eNumber: parseInt(e2eNumber, 10),
+              scheduledTime,
+            })
+          }
+        >
+          Create match
+        </button>
       </form>
-      <button
-        className={buttonClasses}
-        onClick={() =>
-          createNewMatch({
-            division,
-            homeTeamId,
-            awayTeamId,
-            e2eNumber: parseInt(e2eNumber, 10),
-            scheduledTime,
-          })
-        }
-      >
-        Create match
-      </button>
     </>
   );
 };
