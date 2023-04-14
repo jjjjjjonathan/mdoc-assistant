@@ -9,6 +9,19 @@ export default {
   daisyui: {
     themes: [
       {
+        "catppuccin-latte": {
+          primary: "#1e66f5", // blue
+          secondary: "#ea76cb", // pink
+          accent: "#179299", // teal
+          neutral: "#dce0e8", // crust
+          "base-100": "#eff1f5", // base
+          info: "#209fb5", // sapphire
+          success: "#40a02b", // green
+          warning: "#df8e1d", // yellow
+          error: "#d20f39", // red
+        },
+      },
+      {
         "catppuccin-mocha": {
           primary: "#89b4fa", // blue
           secondary: "#f5c2e7", // pink
@@ -22,5 +35,6 @@ export default {
         },
       },
     ],
+    darkTheme: "catppuccin-mocha",
   },
 } satisfies Config;
