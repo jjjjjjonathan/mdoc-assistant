@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import Jimp from "jimp";
+import { serverPath } from "~/utils/helpers";
 
 export const matchesRouter = createTRPCRouter({
   getUpcomingUserMatches: privateProcedure.query(async ({ ctx }) => {
@@ -245,7 +246,7 @@ export const matchesRouter = createTRPCRouter({
       const buffer = Buffer.from(splitBase64[1] as string, "base64");
       const graphic = await Jimp.read(buffer);
       const font = await Jimp.loadFont(
-        "./public/jimp-fonts/leagueSpartanBlack.fnt"
+        serverPath("public/jimp-fonts/leagueSpartanBlack.fnt")
       );
       graphic.print(
         font,
