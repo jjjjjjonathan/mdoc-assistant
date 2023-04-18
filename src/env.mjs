@@ -7,6 +7,8 @@ import { z } from "zod";
 const server = z.object({
   DATABASE_URL: z.string().url(),
   NODE_ENV: z.enum(["development", "test", "production"]),
+  JIMP_FONTS: z.string().url().startsWith("https://").endsWith("/"),
+  XI_GRAPHICS: z.string().url().startsWith("https://").endsWith("/"),
 });
 
 /**
@@ -26,6 +28,8 @@ const client = z.object({
 const processEnv = {
   DATABASE_URL: process.env.DATABASE_URL,
   NODE_ENV: process.env.NODE_ENV,
+  JIMP_FONTS: process.env.JIMP_FONTS,
+  XI_GRAPHICS: process.env.XI_GRAPHICS,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
