@@ -6,6 +6,6 @@ const white = tinycolor("#FFFFFF");
 export const isReadableWhiteFont = (hex: ColorInput) => {
   return tinycolor.isReadable(hex, white, {
     level: "AA",
-    size: "small",
+    size: "large",
   });
 };
