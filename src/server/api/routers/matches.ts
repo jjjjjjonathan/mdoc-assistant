@@ -246,7 +246,7 @@ export const matchesRouter = createTRPCRouter({
       const buffer = Buffer.from(splitBase64[1] as string, "base64");
       const graphic = await Jimp.read(buffer);
       const font = await Jimp.loadFont(
-        `${env.JIMP_FONTS}leagueSpartanWhite.fnt`
+        `${env.STATIC_FILES}jimp-fonts/leagueSpartanWhite.fnt`
       );
       graphic.print(
         font,

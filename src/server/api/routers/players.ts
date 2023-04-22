@@ -61,13 +61,13 @@ export const playersRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       const graphic = await Jimp.read(
-        `${env.XI_GRAPHICS}${input.xiGraphic}.png`
+        `${env.STATIC_FILES}xi-graphics/${input.xiGraphic}.png`
       );
       const publicSansWhite = await Jimp.loadFont(
-        `${env.JIMP_FONTS}publicSansWhite.fnt`
+        `${env.STATIC_FILES}jimp-fonts/publicSansWhite.fnt`
       );
       const publicSansBlack = await Jimp.loadFont(
-        `${env.JIMP_FONTS}publicSansBlack.fnt`
+        `${env.STATIC_FILES}jimp-fonts/publicSansBlack.fnt`
       );
       const hex = tinycolor(input.hex);
       const coachHex = tinycolor(input.coachHex);
