@@ -93,6 +93,7 @@ export const matchesRouter = createTRPCRouter({
           id: input.matchId,
         },
         select: {
+          scheduledTime: true,
           homeTeam: {
             select: {
               name: true,
@@ -112,66 +113,7 @@ export const matchesRouter = createTRPCRouter({
             },
           },
           homeTeamId: true,
-          homeShots: true,
-          homeShotsOnTarget: true,
-          homeCorners: true,
-          homeOffsides: true,
-          homeFouls: true,
           awayTeamId: true,
-          awayShots: true,
-          awayShotsOnTarget: true,
-          awayCorners: true,
-          awayOffsides: true,
-          awayFouls: true,
-          goals: {
-            select: {
-              teamId: true,
-              player: {
-                select: {
-                  name: true,
-                },
-              },
-              half: true,
-              minute: true,
-            },
-          },
-          yellowCards: {
-            select: {
-              teamId: true,
-              player: {
-                select: {
-                  name: true,
-                },
-              },
-              half: true,
-              minute: true,
-            },
-          },
-          redCards: {
-            select: {
-              teamId: true,
-              player: {
-                select: {
-                  name: true,
-                },
-              },
-              half: true,
-              minute: true,
-            },
-          },
-          subs: {
-            select: {
-              teamId: true,
-              playerIn: {
-                select: { name: true },
-              },
-              playerOut: {
-                select: { name: true },
-              },
-              half: true,
-              minute: true,
-            },
-          },
           division: {
             select: {
               name: true,
