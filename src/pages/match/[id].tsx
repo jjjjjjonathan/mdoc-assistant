@@ -6,6 +6,7 @@ import Roster from "~/components/Roster";
 import { useState } from "react";
 import classNames from "classnames";
 import SingleMatch from "~/components/SingleMatch";
+import TweetTemplate from "~/components/TweetTemplate";
 
 const MatchPage: NextPage = () => {
   const { id } = useRouter().query;
@@ -18,7 +19,7 @@ const MatchPage: NextPage = () => {
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
 
-  const mainTabClasses = classNames("tab-bordered", "tab", {
+  const finalScoreTabClasses = classNames("tab-bordered", "tab", {
     "tab-active": tab === 2,
   });
 
@@ -28,6 +29,10 @@ const MatchPage: NextPage = () => {
 
   const awayTeamTabClasses = classNames("tab-bordered", "tab", {
     "tab-active": tab === 3,
+  });
+
+  const tweetTemplateTabClasses = classNames("tab-bordered", "tab", {
+    "tab-active": tab === 4,
   });
 
   return (
@@ -41,14 +46,17 @@ const MatchPage: NextPage = () => {
       </Head>
       <div className="container mx-auto flex h-[calc(100vh-65px)] flex-col items-center gap-y-8 px-2 lg:pt-16">
         <div className="tabs">
+          <button className={tweetTemplateTabClasses} onClick={() => setTab(4)}>
+            Tweet Templates
+          </button>
           <button className={homeTeamTabClasses} onClick={() => setTab(1)}>
             Home XI
           </button>
-          <button className={mainTabClasses} onClick={() => setTab(2)}>
-            Main
-          </button>
           <button className={awayTeamTabClasses} onClick={() => setTab(3)}>
             Away XI
+          </button>
+          <button className={finalScoreTabClasses} onClick={() => setTab(2)}>
+            Final Score
           </button>
         </div>
 
@@ -94,13 +102,19 @@ const MatchPage: NextPage = () => {
             />
           </>
         )}
+        {tab === 4 && (
+          <>
+            <h1 className="text-center text-4xl font-bold">
+              {data.homeTeam.name} vs. {data.awayTeam.name}
+            </h1>
+            <TweetTemplate
+              homeTeamTwitter={data.homeTeam.twitterHandle}
+              awayTeamTwitter={data.awayTeam.twitterHandle}
+              division={data.division.name}
+            />
+          </>
+        )}
       </div>
-
-      {/* <p>
-        score is:{" "}
-        {data.goals.filter((goal) => goal.teamId === data.homeTeamId).length} -{" "}
-        {data.goals.filter((goal) => goal.teamId === data.awayTeamId).length}
-      </p> */}
     </>
   );
 };
