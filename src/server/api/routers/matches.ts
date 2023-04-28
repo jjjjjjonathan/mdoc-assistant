@@ -101,6 +101,7 @@ export const matchesRouter = createTRPCRouter({
               xiGraphic: true,
               hex: true,
               coachHex: true,
+              twitterHandle: true,
             },
           },
           awayTeam: {
@@ -110,6 +111,7 @@ export const matchesRouter = createTRPCRouter({
               xiGraphic: true,
               hex: true,
               coachHex: true,
+              twitterHandle: true,
             },
           },
           homeTeamId: true,
