@@ -14,7 +14,7 @@ const MatchPage: NextPage = () => {
   const { data, isLoading } = api.matches.getUniqueMatch.useQuery({
     matchId: matchId || 0,
   });
-  const [tab, setTab] = useState(2);
+  const [tab, setTab] = useState(4);
 
   if (isLoading) return <p>LOADING</p>;
   if (!data) return <p>something went wrong</p>;
