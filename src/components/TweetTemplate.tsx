@@ -53,7 +53,7 @@ const TweetTemplate = ({
       <input
         type="text"
         onChange={(event) => setMidMatchTweet(event.target.value)}
-        placeholder="What's happened in the match?"
+        placeholder="What happened in the match?"
         className="input-bordered input w-full"
       />
       <input
