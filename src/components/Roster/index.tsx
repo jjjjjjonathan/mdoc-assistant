@@ -37,6 +37,13 @@ const Roster = ({
       setBase64(base64);
       setAltText(lineupAltText);
       setModalStatus(true);
+      setStartingXI((prev) =>
+        prev.map((player) => ({
+          ...player,
+          isGoalkeeper: false,
+          isCaptain: false,
+        }))
+      );
     },
   });
 
