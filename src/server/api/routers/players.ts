@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 import axios from "redaxios";
 import Jimp from "jimp";
 import tinycolor from "tinycolor2";
-import { isReadableWhiteFont } from "~/utils/helpers";
+import { isReadableWhiteFont, addPlayerLabels } from "~/utils/helpers";
 import { env } from "~/env.mjs";
 
 export type RosterPlayerType = {
@@ -83,11 +83,11 @@ export const playersRouter = createTRPCRouter({
       for (const player of input.startingXI) {
         graphic.print(
           font,
-          -435,
+          75,
           i * 45 + 290,
           {
             text: player.number.toString(10),
-            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
             alignmentY: Jimp.VERTICAL_ALIGN_TOP,
           },
           1080,
@@ -95,10 +95,15 @@ export const playersRouter = createTRPCRouter({
         );
         graphic.print(
           font,
-          140,
+          118,
           i * 45 + 290,
           {
-            text: player.isGoalkeeper ? `${player.name} (GK)` : player.name,
+            text: addPlayerLabels(
+              player.name,
+              player.isGoalkeeper,
+              player.isCaptain,
+              false
+            ),
             alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
             alignmentY: Jimp.VERTICAL_ALIGN_TOP,
           },
@@ -106,9 +111,12 @@ export const playersRouter = createTRPCRouter({
           1080
         );
         altTextArray.push(
-          player.isGoalkeeper
-            ? `#${player.number} ${player.name} (goalkeeper)`
-            : `#${player.number} ${player.name}`
+          `#${player.number} ${addPlayerLabels(
+            player.name,
+            player.isGoalkeeper,
+            player.isCaptain,
+            true
+          )}`
         );
         i++;
       }

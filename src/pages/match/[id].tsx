@@ -7,6 +7,7 @@ import { useState } from "react";
 import classNames from "classnames";
 import SingleMatch from "~/components/SingleMatch";
 import TweetTemplate from "~/components/TweetTemplate";
+import Loading from "~/components/Loading";
 
 const MatchPage: NextPage = () => {
   const { id } = useRouter().query;
@@ -16,7 +17,7 @@ const MatchPage: NextPage = () => {
   });
   const [tab, setTab] = useState(4);
 
-  if (isLoading) return <p>LOADING</p>;
+  if (isLoading) return <Loading />;
   if (!data) return <p>something went wrong</p>;
 
   const finalScoreTabClasses = classNames("tab-bordered", "tab", {

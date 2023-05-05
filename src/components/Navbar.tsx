@@ -13,7 +13,7 @@ const Navbar = () => {
       <div className="navbar-center">
         <Link href="/">
           <Image
-            src="/leagueLogo150px.png"
+            src="/images/leagueLogo150px.png"
             alt="League1 Ontario logo"
             width={42}
             height={42}

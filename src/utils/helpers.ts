@@ -9,3 +9,28 @@ export const isReadableWhiteFont = (hex: ColorInput) => {
     size: "large",
   });
 };
+
+export const addPlayerLabels = (
+  name: string,
+  isGoalkeeper: boolean,
+  isCaptain: boolean,
+  isForAltText: boolean
+) => {
+  if (isGoalkeeper) {
+    if (isForAltText) {
+      name += " (goalkeeper)";
+    } else {
+      name += " (GK)";
+    }
+  }
+
+  if (isCaptain) {
+    if (isForAltText) {
+      name += " (captain)";
+    } else {
+      name += " (C)";
+    }
+  }
+
+  return name;
+};
