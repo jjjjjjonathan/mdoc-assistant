@@ -103,8 +103,6 @@ const Roster = ({
     });
 
     const sortedXI = mappedXI.sort((a, b) => {
-      if (a.isGoalkeeper) return -1;
-      if (b.isGoalkeeper) return 1;
       return a.number - b.number;
     });
 
