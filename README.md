@@ -1,28 +1,26 @@
-# Create T3 App
+# MDOC Assistant
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+[MDOC Assistant](https://mdoc.jcheng.ca) is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`. This is an updated version of my [`L1O-stats`](https://github.com/jjjjjjonathan/L1O-stats) from 2022.
 
-## What's next? How do I make an app with this?
+## What does this app do?
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+I created this app to simplify the tasks a Match-Day Operations Coordinator (MDOC) while on the sideline of a [League1 Ontario](https://www.league1ontario.com) match. Having to create image graphics through Canva or Photoshop can be difficult in high-pressure situations, especially for those who are not design or tech-savvy. This app can build the graphics for you once you submit information into a form. It is my hope that this would make it easier to complete these tasks in any weather (so if it's raining for example, you can still do everything from your phone as I made MDOC Assistant mobile-friendly).
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+Currently, a user (MDOC) can create their assigned matches to access the right information and graphics for each team participating in a match. Once a match is created, the user can use the provided tweet templates so the league can maintain a uniform style/voice on social media. You can also scrape the web pages of each roster to get player info to create starting lineup graphics with provided alt-text for screen readers. `TinyColor` is used to determine whether black or white font should be used in the created graphics to meet [WCAG 2 Color and Contrast Web Acessibility guidelines](https://webaim.org/resources/contrastchecker/).
+
+## Tech stack
 
 - [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
 - [Prisma](https://prisma.io)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+- [Clerk](https://clerk.com/)
+- [Jimp](https://github.com/jimp-dev/jimp)
+- [TinyColor](https://github.com/bgrins/TinyColor)
 
-## Learn More
+## What's next?
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- [ ] Add checklists for other MDOC tasks
+- [ ] Create invoices to send to the league for each match worked
+- [ ] Change layouts of pages
+- [ ] Upgrade to Next.js 13.4 app directory
