@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ClipboardCopyButton from "../ClipboardCopyButton";
 
 type TwitterGraphicModalProps = {
   changeModalStatus: (checked: boolean) => void;
@@ -43,6 +44,7 @@ const TwitterGraphicModal = ({
             />
           </div>
           <div className="modal-action">
+            <ClipboardCopyButton textToCopy={altText} textType="alt text" />
             <label htmlFor="my-modal-6" className="btn">
               Close
             </label>
