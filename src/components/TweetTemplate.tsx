@@ -1,4 +1,8 @@
 import { useState } from "react";
+import TextInput from "./Form/TextInput";
+import NumberInput from "./Form/NumberInput";
+import { generateKickoffTweet, generateMatchTweet } from "~/utils/helpers";
+import TextArea from "./Form/TextArea";
 
 type TweetTemplateProps = {
   homeTeamTwitter: string;
@@ -18,76 +22,81 @@ const TweetTemplate = ({
   const [awayScore, setAwayScore] = useState(0);
   const [midMatchTweet, setMidMatchTweet] = useState("");
 
+  const handleStadiumChange = (newStadium: string) => {
+    setStadium(newStadium);
+  };
+
+  const handleExtraContextChange = (newExtraContext: string) => {
+    setExtraContext(newExtraContext);
+  };
+
+  const handleMinuteChange = (newMinute: string) => {
+    setMinute(newMinute.length === 0 ? "0" : newMinute);
+  };
+
+  const handleMidMatchTweetChange = (newTweet: string) => {
+    setMidMatchTweet(newTweet);
+  };
+
+  const handleHomeScoreChange = (newScore: string) => {
+    setHomeScore(newScore.length === 0 ? 0 : parseInt(newScore, 10));
+  };
+
+  const handleAwayScoreChange = (newScore: string) => {
+    setAwayScore(newScore.length === 0 ? 0 : parseInt(newScore, 10));
+  };
+
   return (
     <div className="flex w-1/2 flex-col items-center gap-4">
       <h2 className="text-2xl font-semibold">Pre-match Tweet</h2>
-      <input
-        type="text"
-        onChange={(event) => setStadium(event.target.value)}
-        placeholder="Type the name of the field"
-        className="input-bordered input w-full"
+      <TextInput
+        handleChange={handleStadiumChange}
+        placeholder="Type the name of the field comp"
       />
-      <input
-        type="text"
-        onChange={(event) => setExtraContext(event.target.value)}
+      <TextInput
+        handleChange={handleExtraContextChange}
         placeholder="Optionally add context to the match"
-        className="input-bordered input w-full"
       />
-      <textarea
-        className="textarea-bordered textarea w-full"
-        value={`It’s 30 minutes to kick-off here at ${stadium}.\n\n${homeTeamTwitter} host ${awayTeamTwitter} in ${division} action.${
-          extraContext ? `\n\n${extraContext}` : ""
-        }\n\n#L1OLive #EveryPointMatters`}
-        readOnly={true}
-        hidden={!stadium}
-      />
+      {stadium ? (
+        <TextArea
+          text={generateKickoffTweet(
+            stadium,
+            homeTeamTwitter,
+            awayTeamTwitter,
+            division,
+            extraContext
+          )}
+        />
+      ) : null}
       <h2 className="text-2xl font-semibold">Match Update</h2>
-      <input
-        type="text"
-        onChange={(event) =>
-          setMinute(event.target.value.length === 0 ? "0" : event.target.value)
-        }
+      <TextInput
+        handleChange={handleMinuteChange}
         placeholder="Current minute of the match (or HT/FT)"
-        className="input-bordered input w-full"
       />
-      <input
-        type="text"
-        onChange={(event) => setMidMatchTweet(event.target.value)}
+      <TextInput
+        handleChange={handleMidMatchTweetChange}
         placeholder="What happened in the match?"
-        className="input-bordered input w-full"
       />
-      <input
-        type="number"
-        onChange={(event) =>
-          setHomeScore(
-            event.target.value.length === 0
-              ? 0
-              : parseInt(event.target.value, 10)
-          )
-        }
+      <NumberInput
+        handleChange={handleHomeScoreChange}
         placeholder={`Goals for ${homeTeamTwitter}`}
-        className="input-bordered input w-full"
       />
-      <input
-        type="number"
-        onChange={(event) =>
-          setAwayScore(
-            event.target.value.length === 0
-              ? 0
-              : parseInt(event.target.value, 10)
-          )
-        }
+      <NumberInput
+        handleChange={handleAwayScoreChange}
         placeholder={`Goals for ${awayTeamTwitter}`}
-        className="input-bordered input w-full"
       />
-      <textarea
-        className="textarea-bordered textarea w-full"
-        value={`${minute}' ${homeTeamTwitter} ${homeScore}-${awayScore} ${awayTeamTwitter}\n\n${midMatchTweet}\n\n#L1OLive${
-          minute === "HT" || minute === "FT" ? " #EveryPointMatters" : ""
-        }`}
-        readOnly={true}
-        hidden={minute.length === 0 || midMatchTweet.length === 0}
-      />
+      {minute && midMatchTweet.length > 0 ? (
+        <TextArea
+          text={generateMatchTweet(
+            minute,
+            homeTeamTwitter,
+            awayTeamTwitter,
+            homeScore,
+            awayScore,
+            midMatchTweet
+          )}
+        />
+      ) : null}
     </div>
   );
 };
