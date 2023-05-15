@@ -23,6 +23,7 @@
     "@trpc/server": "^10.18.0",
     "cheerio": "1.0.0-rc.12",
     "classnames": "^2.3.2",
+    "copy-to-clipboard": "^3.3.3",
     "daisyui": "^2.51.5",
     "date-fns": "^2.29.3",
     "jimp": "^0.22.7",
@@ -34,7 +35,6 @@
     "redaxios": "^0.5.1",
     "superjson": "1.12.2",
     "tinycolor2": "^1.6.0",
-    "use-copy": "^0.0.2",
     "zod": "^3.21.4"
   },
   "devDependencies": {

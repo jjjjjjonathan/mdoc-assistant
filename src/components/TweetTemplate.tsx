@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextInput from "./Form/TextInput";
 import NumberInput from "./Form/NumberInput";
 import { generateKickoffTweet, generateMatchTweet } from "~/utils/helpers";
 import TextArea from "./Form/TextArea";
+import ClipboardCopyButton from "./ClipboardCopyButton";
 
 type TweetTemplateProps = {
   homeTeamTwitter: string;
@@ -21,6 +22,40 @@ const TweetTemplate = ({
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
   const [midMatchTweet, setMidMatchTweet] = useState("");
+  const [preMatchTweet, setPreMatchTweet] = useState("");
+  const [matchTweet, setMatchTweet] = useState("");
+
+  useEffect(() => {
+    setPreMatchTweet(
+      generateKickoffTweet(
+        stadium,
+        homeTeamTwitter,
+        awayTeamTwitter,
+        division,
+        extraContext
+      )
+    );
+  }, [stadium, extraContext, homeTeamTwitter, awayTeamTwitter, division]);
+
+  useEffect(() => {
+    setMatchTweet(
+      generateMatchTweet(
+        minute,
+        homeTeamTwitter,
+        awayTeamTwitter,
+        homeScore,
+        awayScore,
+        midMatchTweet
+      )
+    );
+  }, [
+    minute,
+    homeTeamTwitter,
+    awayTeamTwitter,
+    homeScore,
+    awayScore,
+    midMatchTweet,
+  ]);
 
   const handleStadiumChange = (newStadium: string) => {
     setStadium(newStadium);
@@ -58,15 +93,13 @@ const TweetTemplate = ({
         placeholder="Optionally add context to the match"
       />
       {stadium ? (
-        <TextArea
-          text={generateKickoffTweet(
-            stadium,
-            homeTeamTwitter,
-            awayTeamTwitter,
-            division,
-            extraContext
-          )}
-        />
+        <>
+          <TextArea text={preMatchTweet} />
+          <ClipboardCopyButton
+            textToCopy={preMatchTweet}
+            textType="pre-match tweet"
+          />
+        </>
       ) : null}
       <h2 className="text-2xl font-semibold">Match Update</h2>
       <TextInput
@@ -85,17 +118,11 @@ const TweetTemplate = ({
         handleChange={handleAwayScoreChange}
         placeholder={`Goals for ${awayTeamTwitter}`}
       />
-      {minute && midMatchTweet.length > 0 ? (
-        <TextArea
-          text={generateMatchTweet(
-            minute,
-            homeTeamTwitter,
-            awayTeamTwitter,
-            homeScore,
-            awayScore,
-            midMatchTweet
-          )}
-        />
+      {minute.length > 0 && minute !== "0" && midMatchTweet.length > 0 ? (
+        <>
+          <TextArea text={matchTweet} />
+          <ClipboardCopyButton textToCopy={matchTweet} textType="match tweet" />
+        </>
       ) : null}
     </div>
   );

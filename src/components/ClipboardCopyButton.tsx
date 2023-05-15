@@ -1,4 +1,4 @@
-import useCopy from "use-copy";
+import useCopy from "~/hooks/useCopy";
 import classNames from "classnames";
 
 type ClipboardCopyButtonProps = {
