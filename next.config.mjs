@@ -19,5 +19,8 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    formats: ["image/avif", "image/webp"]
+  }
 };
 export default config;
