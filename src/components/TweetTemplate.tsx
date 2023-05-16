@@ -86,7 +86,7 @@ const TweetTemplate = ({
       <h2 className="text-2xl font-semibold">Pre-match Tweet</h2>
       <TextInput
         handleChange={handleStadiumChange}
-        placeholder="Type the name of the field comp"
+        placeholder="Type the name of the field"
       />
       <TextInput
         handleChange={handleExtraContextChange}
