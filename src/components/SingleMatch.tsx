@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { api } from "~/utils/api";
 import TwitterGraphicModal from "./Modal/TwitterGraphic";
+import NumberInput from "./Form/NumberInput";
 
 type SingleMatchProps = {
   homeTeam: string;
@@ -27,21 +28,39 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
       },
     });
 
-  const generateBase64 = (upload: File) => {
+  const generateBase64 = (upload: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(upload);
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        }
+      };
       reader.onerror = (error) => reject(error);
     });
   };
 
-  const testFn = async (
-    file: File | undefined
-  ): Promise<string | undefined> => {
-    if (file) {
-      return (await generateBase64(file)) as Promise<string>;
-    }
+  const generateTwitterGraphic = async (file: File) => {
+    const base64String = await generateBase64(file);
+    generateGraphic({
+      homeScore,
+      awayScore,
+      base64: base64String,
+      homeTeam,
+      awayTeam,
+      division,
+    });
+  };
+
+  const handleHomeScoreChange = (newHomeScore: string) => {
+    const score = parseInt(newHomeScore, 10);
+    Number.isNaN(score) ? setHomeScore(-1) : setHomeScore(score);
+  };
+
+  const handleAwayScoreChange = (newAwayScore: string) => {
+    const score = parseInt(newAwayScore, 10);
+    Number.isNaN(score) ? setAwayScore(-1) : setAwayScore(score);
   };
 
   return (
@@ -51,33 +70,23 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
           <label className="label">
             <span className="label-text">How many goals for {homeTeam}?</span>
           </label>
-          <input
-            type="number"
-            placeholder={`Type home score here`}
-            className="input-bordered input w-full max-w-xs"
-            onChange={(event) => {
-              const score = parseInt(event.target.value, 10);
-              Number.isNaN(score) ? setHomeScore(-1) : setHomeScore(score);
-            }}
+          <NumberInput
+            handleChange={handleHomeScoreChange}
+            placeholder="Type home score here"
           />
         </div>
         <div className="form-control w-full max-w-xs">
           <label className="label">
             <span className="label-text">How many goals for {awayTeam}?</span>
           </label>
-          <input
-            type="number"
+          <NumberInput
+            handleChange={handleAwayScoreChange}
             placeholder="Type away score here"
-            className="input-bordered input w-full max-w-xs"
-            onChange={(event) => {
-              const score = parseInt(event.target.value, 10);
-              Number.isNaN(score) ? setAwayScore(-1) : setAwayScore(score);
-            }}
           />
         </div>
       </div>
 
-      {homeScore >= 0 && awayScore >= 0 && (
+      {homeScore >= 0 && awayScore >= 0 ? (
         <div className="form-control mx-auto w-full max-w-xs pt-10">
           <label className="label">
             <span className="label-text">Upload the final score graphic</span>
@@ -86,31 +95,22 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
             type="file"
             className="file-input-bordered file-input w-full max-w-xs"
             onChange={(event) => {
-              if (event.target.files) {
-                testFn(event.target.files[0])
-                  .then((base64) => {
-                    generateGraphic({
-                      homeScore,
-                      awayScore,
-                      base64: base64 as string,
-                      homeTeam,
-                      awayTeam,
-                      division,
-                    });
-                  })
-                  .catch((error) => console.log(error));
+              if (event.target.files && event.target.files[0]) {
+                generateTwitterGraphic(event.target.files[0]).catch((error) =>
+                  console.error(error)
+                );
               }
             }}
           />
         </div>
-      )}
-      {src.length > 0 && modalStatus && (
+      ) : null}
+      {src.length > 0 && modalStatus ? (
         <TwitterGraphicModal
           base64={src}
           altText={altText}
           changeModalStatus={changeModalStatus}
         />
-      )}
+      ) : null}
     </form>
   );
 };

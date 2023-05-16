@@ -5,6 +5,7 @@ import RosterPlayer from "./RosterPlayer";
 import classNames from "classnames";
 import TwitterGraphicModal from "../Modal/TwitterGraphic";
 import Loading from "../Loading";
+import TextInput from "../Form/TextInput";
 
 type RosterProps = {
   rosterUrl: string;
@@ -32,20 +33,21 @@ const Roster = ({
     setModalStatus(checked);
   };
 
-  const { mutate: createTeamXI } = api.players.createTeamXI.useMutation({
-    onSuccess: ({ base64, altText: lineupAltText }) => {
-      setBase64(base64);
-      setAltText(lineupAltText);
-      setModalStatus(true);
-      setStartingXI((prev) =>
-        prev.map((player) => ({
-          ...player,
-          isGoalkeeper: false,
-          isCaptain: false,
-        }))
-      );
-    },
-  });
+  const { mutate: createTeamXI, isLoading: isLoadingGraphic } =
+    api.players.createTeamXI.useMutation({
+      onSuccess: ({ base64, altText: lineupAltText }) => {
+        setBase64(base64);
+        setAltText(lineupAltText);
+        setModalStatus(true);
+        setStartingXI((prev) =>
+          prev.map((player) => ({
+            ...player,
+            isGoalkeeper: false,
+            isCaptain: false,
+          }))
+        );
+      },
+    });
 
   const [startingXI, setStartingXI] = useState<RosterPlayerType[]>([]);
   const addToStartingXI = (startingXI: RosterPlayerType[], id: number) => {
@@ -124,6 +126,13 @@ const Roster = ({
     });
   };
 
+  const buttonClasses = classNames("btn", {
+    "btn-primary": !isLoadingGraphic,
+    "text-primary-content": !isLoadingGraphic,
+    "btn-secondary": isLoadingGraphic,
+    "text-secondary-content": isLoadingGraphic,
+  });
+
   if (isLoading) return <Loading />;
   if (!data) return <p>something went wrong</p>;
 
@@ -158,16 +167,9 @@ const Roster = ({
         >
           <div className="card-body">
             <h2 className="card-title">READY TO SUBMIT</h2>
-            <input
-              className="input-bordered input w-full max-w-xs"
+            <TextInput
+              handleChange={updateHeadCoach}
               placeholder="Type head coach's name"
-              type="text"
-              name=""
-              id=""
-              value={headCoach}
-              onChange={(event) => {
-                updateHeadCoach(event.target.value);
-              }}
             />
             <button
               onClick={() => {
@@ -180,7 +182,7 @@ const Roster = ({
                   hex
                 );
               }}
-              className="btn-primary btn text-primary-content"
+              className={buttonClasses}
               disabled={
                 !headCoach ||
                 startingXI.length < 11 ||
@@ -188,18 +190,18 @@ const Roster = ({
                 captain < 0
               }
             >
-              Create XI
+              {isLoadingGraphic ? "Creating XI..." : "Create XI"}
             </button>
           </div>
         </div>
       </div>
-      {base64.length > 0 && modalStatus && (
+      {base64.length > 0 && modalStatus ? (
         <TwitterGraphicModal
           changeModalStatus={changeModalStatus}
           base64={base64}
           altText={altText}
         />
-      )}
+      ) : null}
     </form>
   );
 };
