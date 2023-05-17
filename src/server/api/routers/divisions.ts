@@ -11,6 +11,9 @@ export const divisionsRouter = createTRPCRouter({
             id: true,
             name: true,
           },
+          orderBy: {
+            id: "asc",
+          },
         },
       },
     });
