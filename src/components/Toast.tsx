@@ -13,13 +13,13 @@ const Toast = ({ status, message }: ToastProps) => {
   });
   return (
     <div className="toast-start toast">
-      {status && (
+      {status === "success" || status === "warning" || status === "error" ? (
         <div className={alertClasses}>
           <div>
             <span>{message}</span>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };
