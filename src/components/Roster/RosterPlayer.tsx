@@ -5,15 +5,13 @@ import classNames from "classnames";
 type RosterPlayerProps = {
   name: string;
   startingXI: RosterPlayerType[];
-  addToStartingXI: (startingXI: RosterPlayerType[], id: number) => void;
+  addToStartingXI: (id: number) => void;
   removeFromStartingXI: (id: number) => void;
   updateGoalkeeper: (id: number) => void;
   updateCaptain: (id: number) => void;
   id: number;
   changePlayerName: (id: number, name: string) => void;
-  goalkeeper: number;
   changePlayerNumber: (id: number, newNumber: number) => void;
-  captain: number;
 };
 
 const RosterPlayer = ({
@@ -25,9 +23,7 @@ const RosterPlayer = ({
   updateCaptain,
   changePlayerName,
   id,
-  goalkeeper,
   changePlayerNumber,
-  captain,
 }: RosterPlayerProps) => {
   const [selected, setSelected] = useState(false);
 
@@ -70,7 +66,7 @@ const RosterPlayer = ({
               event.target.checked &&
               startingXI.filter((player) => player.id === clickedId).length <= 0
             ) {
-              addToStartingXI(startingXI, clickedId);
+              addToStartingXI(clickedId);
               setSelected(true);
             }
             if (
@@ -93,12 +89,7 @@ const RosterPlayer = ({
           value={id}
           onChange={(event) => {
             const clickedId = parseInt(event.target.value, 10);
-            if (event.target.checked && goalkeeper !== clickedId) {
-              updateGoalkeeper(clickedId);
-            }
-            if (!event.target.checked && goalkeeper === clickedId) {
-              updateGoalkeeper(-1);
-            }
+            updateGoalkeeper(clickedId);
           }}
         />
         <label htmlFor="" className="place-self-end self-center">
@@ -112,12 +103,7 @@ const RosterPlayer = ({
           value={id}
           onChange={(event) => {
             const clickedId = parseInt(event.target.value, 10);
-            if (event.target.checked && captain !== clickedId) {
-              updateCaptain(clickedId);
-            }
-            if (!event.target.checked && captain === clickedId) {
-              updateCaptain(-1);
-            }
+            updateCaptain(clickedId);
           }}
         />
         <label htmlFor="" className="place-self-end self-center">
@@ -127,8 +113,8 @@ const RosterPlayer = ({
           disabled={!selected}
           type="text"
           className="input-bordered input-info input h-12 w-16 place-self-center text-center"
-          onChange={(e) => {
-            const newNumber = parseInt(e.target.value, 10);
+          onChange={(event) => {
+            const newNumber = parseInt(event.target.value, 10);
             changePlayerNumber(id, newNumber);
           }}
         />
