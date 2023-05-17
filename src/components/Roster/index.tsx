@@ -7,6 +7,9 @@ import TwitterGraphicModal from "../Modal/TwitterGraphic";
 import Loading from "../Loading";
 import TextInput from "../Form/TextInput";
 import useStartersSelection from "~/hooks/useStartersSelection";
+import Toast from "../Toast";
+import useToast from "~/hooks/useToast";
+import { validatePlayerNumbers } from "~/utils/helpers";
 
 type RosterProps = {
   rosterUrl: string;
@@ -28,6 +31,7 @@ const Roster = ({
   const { data, isLoading } = api.players.getTeamRoster.useQuery({ rosterUrl });
 
   const { startingXI, dispatch } = useStartersSelection();
+  const { toastStatus, toastMessage, dispatchToast, clearToast } = useToast();
 
   const [base64, setBase64] = useState("");
   const [altText, setAltText] = useState("");
@@ -39,6 +43,7 @@ const Roster = ({
   const { mutate: createTeamXI, isLoading: isLoadingGraphic } =
     api.players.createTeamXI.useMutation({
       onSuccess: ({ base64, altText: lineupAltText }) => {
+        dispatchToast({ type: "CLEAR_TOAST", message: "" });
         setBase64(base64);
         setAltText(lineupAltText);
         setModalStatus(true);
@@ -115,27 +120,32 @@ const Roster = ({
     teamId: number,
     hex: string
   ) => {
-    const sortedXI = startingXI.sort((a, b) => {
-      return a.number - b.number;
+    dispatchToast({
+      type: "SET_WARNING",
+      message: "Creating your starting lineup graphic...",
     });
 
-    createTeamXI({
-      startingXI: sortedXI,
-      headCoach: headCoachName,
-      teamId,
-      xiGraphic,
-      hex,
-      teamName,
-      coachHex,
-    });
+    if (!validatePlayerNumbers(startingXI)) {
+      dispatchToast({
+        type: "SET_ERROR",
+        message: "Some players are missing shirt numbers!",
+      });
+    } else {
+      const sortedXI = startingXI.sort((a, b) => {
+        return a.number - b.number;
+      });
+
+      createTeamXI({
+        startingXI: sortedXI,
+        headCoach: headCoachName,
+        teamId,
+        xiGraphic,
+        hex,
+        teamName,
+        coachHex,
+      });
+    }
   };
-
-  const buttonClasses = classNames("btn", {
-    "btn-primary": !isLoadingGraphic,
-    "text-primary-content": !isLoadingGraphic,
-    "btn-secondary": isLoadingGraphic,
-    "text-secondary-content": isLoadingGraphic,
-  });
 
   if (isLoading) return <Loading />;
   if (!data) return <p>something went wrong</p>;
@@ -177,14 +187,21 @@ const Roster = ({
               onClick={() => {
                 submitRoster(startingXI, headCoach, teamId, hex);
               }}
-              className={buttonClasses}
-              disabled={!headCoach || startingXI.length < 11}
+              className="btn-primary btn text-primary-content"
+              disabled={
+                !headCoach || startingXI.length < 11 || isLoadingGraphic
+              }
             >
-              {isLoadingGraphic ? "Creating XI..." : "Create XI"}
+              Create XI
             </button>
           </div>
         </div>
       </div>
+      <Toast
+        status={toastStatus}
+        message={toastMessage}
+        clearToast={clearToast}
+      />
       {base64.length > 0 && modalStatus ? (
         <TwitterGraphicModal
           changeModalStatus={changeModalStatus}
