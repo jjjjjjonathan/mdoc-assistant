@@ -3,6 +3,7 @@ import { api } from "~/utils/api";
 import { useState, useEffect } from "react";
 import Loading from "~/components/Loading";
 import Head from "next/head";
+import useToast from "~/hooks/useToast";
 import Toast from "~/components/Toast";
 
 type Team = {
@@ -20,6 +21,8 @@ type NewMatchInput = {
 
 const CreateMatchPage: NextPage = () => {
   const { data, isLoading } = api.divisions.getFormDivisionAndTeams.useQuery();
+
+  const { toastStatus, toastMessage, dispatchToast } = useToast();
 
   const { mutate, isLoading: isCreatingMatch } =
     api.matches.createOrUpdateNewMatch.useMutation({
@@ -40,8 +43,7 @@ const CreateMatchPage: NextPage = () => {
   };
 
   const displaySuccessToast = () => {
-    setToastStatus("success");
-    setToastMessage("Match created!");
+    dispatchToast({ type: "SET_SUCCESS", message: "Match created!" });
   };
 
   const [division, setDivision] = useState(0);
@@ -50,8 +52,6 @@ const CreateMatchPage: NextPage = () => {
   const [awayTeamId, setAwayTeamId] = useState(0);
   const [e2eNumber, setE2eNumber] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
-  const [toastStatus, setToastStatus] = useState("");
-  const [toastMessage, setToastMessage] = useState("");
 
   const resetForm = () => {
     setDivision(0);
@@ -63,16 +63,14 @@ const CreateMatchPage: NextPage = () => {
   };
 
   const resetToast = () => {
-    setToastStatus("");
-    setToastMessage("");
+    dispatchToast({ type: "CLEAR_TOAST", message: "" });
   };
 
   useEffect(() => {
     if (isCreatingMatch) {
-      setToastStatus("warning");
-      setToastMessage("Creating your match...");
+      dispatchToast({ type: "SET_WARNING", message: "Creating your match..." });
     }
-  }, [isCreatingMatch]);
+  }, [isCreatingMatch, dispatchToast]);
 
   if (isLoading) {
     return (
