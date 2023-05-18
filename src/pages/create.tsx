@@ -22,7 +22,7 @@ type NewMatchInput = {
 const CreateMatchPage: NextPage = () => {
   const { data, isLoading } = api.divisions.getFormDivisionAndTeams.useQuery();
 
-  const { toastStatus, toastMessage, dispatchToast } = useToast();
+  const { toastStatus, toastMessage, dispatchToast, clearToast } = useToast();
 
   const { mutate, isLoading: isCreatingMatch } =
     api.matches.createOrUpdateNewMatch.useMutation({
@@ -188,7 +188,11 @@ const CreateMatchPage: NextPage = () => {
           Create match
         </button>
       </form>
-      <Toast status={toastStatus} message={toastMessage} />
+      <Toast
+        status={toastStatus}
+        message={toastMessage}
+        clearToast={clearToast}
+      />
     </>
   );
 };

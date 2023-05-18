@@ -30,7 +30,7 @@ export const playersRouter = createTRPCRouter({
         const name = $(this).find('td[class="name"] > a').text();
         roster.push({
           name: name.replace(/^\d[^A-Za-z]*/, ""),
-          number: 0,
+          number: NaN,
           isGoalkeeper: false,
           isCaptain: false,
           id,

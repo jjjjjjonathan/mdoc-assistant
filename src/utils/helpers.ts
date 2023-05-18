@@ -1,5 +1,6 @@
 import type { ColorInput } from "tinycolor2";
 import tinycolor from "tinycolor2";
+import type { RosterPlayerType } from "~/server/api/routers/players";
 
 const white = tinycolor("#FFFFFF");
 
@@ -58,4 +59,8 @@ export const generateMatchTweet = (
   return `${minute}' ${homeTeamTwitter} ${homeScore}-${awayScore} ${awayTeamTwitter}\n\n${midMatchTweet}\n\n#L1OLive${
     minute === "HT" || minute === "FT" ? " #EveryPointMatters" : ""
   }`;
+};
+
+export const validatePlayerNumbers = (players: RosterPlayerType[]) => {
+  return players.filter((player) => player.number >= 0).length === 11;
 };

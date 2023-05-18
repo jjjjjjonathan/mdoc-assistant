@@ -1,31 +1,35 @@
 import { useReducer } from "react";
-import type { ToastProps } from "~/components/Toast";
 
 type ToastActions = {
   type: "SET_SUCCESS" | "SET_WARNING" | "SET_ERROR" | "CLEAR_TOAST";
   message: string;
 };
 
+type ToastState = {
+  status: string;
+  message: string;
+};
+
 const useToast = () => {
   const reducers = {
-    SET_SUCCESS(state: ToastProps, action: ToastActions) {
+    SET_SUCCESS(state: ToastState, action: ToastActions) {
       return { ...state, status: "success", message: action.message };
     },
 
-    SET_WARNING(state: ToastProps, action: ToastActions) {
+    SET_WARNING(state: ToastState, action: ToastActions) {
       return { ...state, status: "warning", message: action.message };
     },
 
-    SET_ERROR(state: ToastProps, action: ToastActions) {
+    SET_ERROR(state: ToastState, action: ToastActions) {
       return { ...state, status: "error", message: action.message };
     },
 
-    CLEAR_TOAST(state: ToastProps, _action: ToastActions) {
+    CLEAR_TOAST(state: ToastState, _action: ToastActions) {
       return { ...state, status: "", message: "" };
     },
   };
 
-  const reducer = (state: ToastProps, action: ToastActions) => {
+  const reducer = (state: ToastState, action: ToastActions) => {
     return reducers[action.type](state, action) || state;
   };
 
@@ -34,10 +38,15 @@ const useToast = () => {
     message: "",
   });
 
+  const clearToast = () => {
+    dispatch({ type: "CLEAR_TOAST", message: "" });
+  };
+
   return {
     toastStatus: state.status,
     toastMessage: state.message,
     dispatchToast: dispatch,
+    clearToast,
   };
 };
 
