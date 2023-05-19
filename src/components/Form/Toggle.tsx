@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 type ToggleProps = {
   handleChange: (
     isStarter: boolean,
@@ -8,21 +6,25 @@ type ToggleProps = {
   ) => void;
   toggleSelected: (isSelected: boolean) => void;
   playerId: number;
+  checked: boolean;
 };
 
-const Toggle = ({ handleChange, toggleSelected, playerId }: ToggleProps) => {
-  const [toggled, setToggled] = useState(false);
+const Toggle = ({
+  handleChange,
+  toggleSelected,
+  playerId,
+  checked,
+}: ToggleProps) => {
   return (
     <input
       type="checkbox"
       className="toggle-primary toggle"
-      checked={toggled}
+      checked={checked}
       onChange={(event) => {
         console.log(
           `the toggled is checked, ${!!event.target.checked ? "yes" : "no"}`
         );
-        setToggled(!toggled);
-        handleChange(event.target.checked, toggleSelected, playerId);
+        handleChange(!!event.target.checked, toggleSelected, playerId);
       }}
     />
   );

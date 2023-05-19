@@ -11,10 +11,10 @@ import Toast from "../Toast";
 import useToast from "~/hooks/useToast";
 import { validatePlayerNumbers } from "~/utils/helpers";
 
-// import { createRosterColumns } from "./Columns";
-// import Table from "../Table";
-// import type { ColumnDef } from "@tanstack/react-table";
-// import Toggle from "../Form/Toggle";
+import { createRosterColumns } from "./Columns";
+import Table from "../Table";
+import type { ColumnDef } from "@tanstack/react-table";
+import Toggle from "../Form/Toggle";
 
 type RosterProps = {
   rosterUrl: string;
@@ -152,7 +152,7 @@ const Roster = ({
     }
   };
 
-  // const columns = createRosterColumns(addToStartingXI, removeFromStartingXI);
+  const columns = createRosterColumns(addToStartingXI, removeFromStartingXI);
 
   if (isLoading) return <Loading />;
   if (!data) return <p>something went wrong</p>;
@@ -216,7 +216,7 @@ const Roster = ({
           altText={altText}
         />
       ) : null}
-      {/* <Table columns={columns} data={data} /> */}
+      <Table columns={columns} data={data} />
     </form>
   );
 };

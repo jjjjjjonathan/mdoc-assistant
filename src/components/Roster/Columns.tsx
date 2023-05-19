@@ -12,6 +12,7 @@ export const createRosterColumns = (
     playerId: number
   ) => {
     console.log("just outside of if statement");
+    // debugger;
     if (isStarter) {
       console.log("isStarter is true", isStarter);
       addToStartingXI(playerId);
@@ -32,10 +33,17 @@ export const createRosterColumns = (
       accessorKey: "isStarter",
       header: "Starter",
       cell: ({ row }) => (
+        // <input
+        //   type="checkbox"
+        //   checked={row.getIsSelected()}
+        //   className="toggle-primary toggle"
+        //   onChange={handleStarterChange}
+        // />
         <Toggle
           handleChange={handleStarterChange}
           toggleSelected={row.toggleSelected}
           playerId={row.getValue("id")}
+          checked={row.getIsSelected()}
         />
       ),
     },
