@@ -63,7 +63,6 @@ const Roster = ({
 
   const addToStartingXI = (id: number) => {
     if (data) {
-      debugger;
       dispatch({
         type: "ADD_STARTER",
         payload: data.find((player) => player.id === id) as RosterPlayerType,
