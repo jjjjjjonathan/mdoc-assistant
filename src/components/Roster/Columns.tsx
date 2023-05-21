@@ -1,6 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { RosterPlayerType } from "~/server/api/routers/players";
 import Toggle from "../Form/Toggle";
+import TextInput from "../Form/TextInput";
 
 export const createRosterColumns = (
   addToStartingXI: (id: number) => void,
@@ -11,38 +12,24 @@ export const createRosterColumns = (
     toggleSelected: (isSelected: boolean) => void,
     playerId: number
   ) => {
-    console.log("just outside of if statement");
-    // debugger;
     if (isStarter) {
-      console.log("isStarter is true", isStarter);
       addToStartingXI(playerId);
       toggleSelected(!!isStarter);
     } else {
-      console.log("isStarter is false");
       removeFromStartingXI(playerId);
       toggleSelected(!!isStarter);
     }
   };
   return [
     {
-      id: "id",
-      accessorKey: "id",
-    },
-    {
       id: "starter",
       accessorKey: "isStarter",
       header: "Starter",
       cell: ({ row }) => (
-        // <input
-        //   type="checkbox"
-        //   checked={row.getIsSelected()}
-        //   className="toggle-primary toggle"
-        //   onChange={handleStarterChange}
-        // />
         <Toggle
           handleChange={handleStarterChange}
           toggleSelected={row.toggleSelected}
-          playerId={row.getValue("id")}
+          playerId={row.original.id}
           checked={row.getIsSelected()}
         />
       ),
@@ -50,9 +37,26 @@ export const createRosterColumns = (
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => (
-        <span>{row.getIsSelected() ? "SELECTED" : row.getValue("name")}</span>
-      ),
+      cell: ({ row }) => {
+        // const changeName = (name: string) => {
+        //   // row.original.setName(name);
+        //   console.log(row.original.setName);
+        // };
+
+        return (
+          <span>
+            {row.getIsSelected() ? (
+              <TextInput
+                placeholder="Type player's name"
+                initialValue={row.getValue("name")}
+                handleChange={undefined}
+              />
+            ) : (
+              row.getValue("name")
+            )}
+          </span>
+        );
+      },
     },
     {
       accessorKey: "number",
