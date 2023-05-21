@@ -9,12 +9,18 @@ import TextInput from "../Form/TextInput";
 import useStartersSelection from "~/hooks/useStartersSelection";
 import Toast from "../Toast";
 import useToast from "~/hooks/useToast";
-import { validatePlayerNumbers } from "~/utils/helpers";
+import {
+  validatePlayerNumbers,
+  validatePlayerNamesLength,
+  validateOneOrLessGoalkeeper,
+  validateOneOrLessCaptain,
+} from "~/utils/helpers";
 
 // import { createRosterColumns } from "./Columns";
 // import Table from "../Table";
 // import type { ColumnDef } from "@tanstack/react-table";
 // import Toggle from "../Form/Toggle";
+// // import { Player } from "~/server/api/routers/players";
 
 type RosterProps = {
   rosterUrl: string;
@@ -57,6 +63,7 @@ const Roster = ({
 
   const addToStartingXI = (id: number) => {
     if (data) {
+      debugger;
       dispatch({
         type: "ADD_STARTER",
         payload: data.find((player) => player.id === id) as RosterPlayerType,
@@ -135,6 +142,21 @@ const Roster = ({
         type: "SET_ERROR",
         message: "Some players are missing shirt numbers!",
       });
+    } else if (!validatePlayerNamesLength(startingXI)) {
+      dispatchToast({
+        type: "SET_ERROR",
+        message: "Some players need to have names!",
+      });
+    } else if (!validateOneOrLessCaptain) {
+      dispatchToast({
+        type: "SET_ERROR",
+        message: "Only select one captain or less!",
+      });
+    } else if (!validateOneOrLessGoalkeeper) {
+      dispatchToast({
+        type: "SET_ERROR",
+        message: "Only select one goalkeeper or less!",
+      });
     } else {
       const sortedXI = startingXI.sort((a, b) => {
         return a.number - b.number;
@@ -189,6 +211,7 @@ const Roster = ({
             <TextInput
               handleChange={updateHeadCoach}
               placeholder="Type head coach's name"
+              initialValue=""
             />
             <button
               onClick={() => {

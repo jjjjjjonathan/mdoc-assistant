@@ -12,17 +12,19 @@ type ReducerActions = {
   payload: RosterPlayerType;
 };
 
+type State = RosterPlayerType[];
+
 const useStartersSelection = () => {
   const reducers = {
-    ADD_STARTER(state: RosterPlayerType[], action: ReducerActions) {
+    ADD_STARTER(state: State, action: ReducerActions) {
       return [...state, action.payload];
     },
 
-    REMOVE_STARTER(state: RosterPlayerType[], action: ReducerActions) {
+    REMOVE_STARTER(state: State, action: ReducerActions) {
       return state.filter((player) => player.id !== action.payload.id);
     },
 
-    SET_GOALKEEPER(state: RosterPlayerType[], action: ReducerActions) {
+    SET_GOALKEEPER(state: State, action: ReducerActions) {
       return state.map((player) =>
         player.id === action.payload.id
           ? { ...player, isGoalkeeper: true }
@@ -30,7 +32,7 @@ const useStartersSelection = () => {
       );
     },
 
-    SET_CAPTAIN(state: RosterPlayerType[], action: ReducerActions) {
+    SET_CAPTAIN(state: State, action: ReducerActions) {
       return state.map((player) =>
         player.id === action.payload.id
           ? { ...player, isCaptain: true }
@@ -38,7 +40,7 @@ const useStartersSelection = () => {
       );
     },
 
-    CHANGE_NUMBER(state: RosterPlayerType[], action: ReducerActions) {
+    CHANGE_NUMBER(state: State, action: ReducerActions) {
       return state.map((player) =>
         player.id === action.payload.id
           ? { ...player, number: action.payload.number }
@@ -46,7 +48,7 @@ const useStartersSelection = () => {
       );
     },
 
-    CHANGE_NAME(state: RosterPlayerType[], action: ReducerActions) {
+    CHANGE_NAME(state: State, action: ReducerActions) {
       return state.map((player) =>
         player.id === action.payload.id
           ? { ...player, name: action.payload.name }
@@ -55,7 +57,7 @@ const useStartersSelection = () => {
     },
   };
 
-  const reducer = (state: RosterPlayerType[], action: ReducerActions) => {
+  const reducer = (state: State, action: ReducerActions) => {
     return reducers[action.type](state, action) || state;
   };
 

@@ -64,3 +64,15 @@ export const generateMatchTweet = (
 export const validatePlayerNumbers = (players: RosterPlayerType[]) => {
   return players.filter((player) => player.number >= 0).length === 11;
 };
+
+export const validatePlayerNamesLength = (players: RosterPlayerType[]) => {
+  return players.filter((player) => player.name.length > 0).length === 11;
+};
+
+export const validateOneOrLessGoalkeeper = (players: RosterPlayerType[]) => {
+  return players.filter((player) => player.isGoalkeeper).length <= 1;
+};
+
+export const validateOneOrLessCaptain = (players: RosterPlayerType[]) => {
+  return players.filter((player) => player.isCaptain).length <= 1;
+};

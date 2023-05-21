@@ -87,10 +87,12 @@ const TweetTemplate = ({
       <TextInput
         handleChange={handleStadiumChange}
         placeholder="Type the name of the field"
+        initialValue=""
       />
       <TextInput
         handleChange={handleExtraContextChange}
         placeholder="Optionally add context to the match"
+        initialValue=""
       />
       {stadium ? (
         <>
@@ -105,10 +107,12 @@ const TweetTemplate = ({
       <TextInput
         handleChange={handleMinuteChange}
         placeholder="Current minute of the match (or HT/FT)"
+        initialValue=""
       />
       <TextInput
         handleChange={handleMidMatchTweetChange}
         placeholder="What happened in the match?"
+        initialValue=""
       />
       <NumberInput
         handleChange={handleHomeScoreChange}
