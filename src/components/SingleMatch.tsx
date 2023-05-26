@@ -2,6 +2,8 @@ import { useState } from "react";
 import { api } from "~/utils/api";
 import TwitterGraphicModal from "./Modal/TwitterGraphic";
 import NumberInput from "./Form/NumberInput";
+import Toast from "./Toast";
+import useToast from "~/hooks/useToast";
 
 type SingleMatchProps = {
   homeTeam: string;
@@ -19,9 +21,12 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
     setModalStatus(checked);
   };
 
+  const { toastStatus, toastMessage, dispatchToast, clearToast } = useToast();
+
   const { mutate: generateGraphic } =
     api.matches.createFullTimeGraphic.useMutation({
       onSuccess: ({ base64, altText }) => {
+        clearToast();
         setSrc(base64);
         setAltText(altText);
         setModalStatus(true);
@@ -73,6 +78,7 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
           <NumberInput
             handleChange={handleHomeScoreChange}
             placeholder="Type home score here"
+            initialValue={NaN}
           />
         </div>
         <div className="form-control w-full max-w-xs">
@@ -82,6 +88,7 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
           <NumberInput
             handleChange={handleAwayScoreChange}
             placeholder="Type away score here"
+            initialValue={NaN}
           />
         </div>
       </div>
@@ -96,11 +103,20 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
             className="file-input-bordered file-input w-full max-w-xs"
             onChange={(event) => {
               if (event.target.files && event.target.files[0]) {
+                dispatchToast({
+                  type: "SET_WARNING",
+                  message: "Creating your final score graphic now...",
+                });
                 generateTwitterGraphic(event.target.files[0]).catch((error) =>
                   console.error(error)
                 );
               }
             }}
+          />
+          <Toast
+            status={toastStatus}
+            message={toastMessage}
+            clearToast={clearToast}
           />
         </div>
       ) : null}

@@ -117,10 +117,12 @@ const TweetTemplate = ({
       <NumberInput
         handleChange={handleHomeScoreChange}
         placeholder={`Goals for ${homeTeamTwitter}`}
+        initialValue={NaN}
       />
       <NumberInput
         handleChange={handleAwayScoreChange}
         placeholder={`Goals for ${awayTeamTwitter}`}
+        initialValue={NaN}
       />
       {minute.length > 0 && minute !== "0" && midMatchTweet.length > 0 ? (
         <>

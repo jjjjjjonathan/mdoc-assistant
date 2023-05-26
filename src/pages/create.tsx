@@ -50,7 +50,7 @@ const CreateMatchPage: NextPage = () => {
   const [teamsList, setTeamsList] = useState<Team[] | undefined>([]);
   const [homeTeamId, setHomeTeamId] = useState(0);
   const [awayTeamId, setAwayTeamId] = useState(0);
-  const [e2eNumber, setE2eNumber] = useState("");
+  const [e2eNumber, setE2eNumber] = useState(NaN);
   const [scheduledTime, setScheduledTime] = useState("");
 
   const resetForm = () => {
@@ -58,7 +58,7 @@ const CreateMatchPage: NextPage = () => {
     setTeamsList([]);
     setHomeTeamId(0);
     setAwayTeamId(0);
-    setE2eNumber("");
+    setE2eNumber(NaN);
     setScheduledTime("");
   };
 
@@ -152,8 +152,8 @@ const CreateMatchPage: NextPage = () => {
           type="number"
           placeholder="Type E2E ID here"
           className="input-bordered input w-full max-w-xs"
-          value={e2eNumber}
-          onChange={(event) => setE2eNumber(event.target.value)}
+          value={Number.isNaN(e2eNumber) ? "" : e2eNumber.toString(10)}
+          onChange={(event) => setE2eNumber(parseInt(event.target.value, 10))}
           onFocus={() => resetToast()}
         />
         <input
@@ -180,7 +180,7 @@ const CreateMatchPage: NextPage = () => {
               division,
               homeTeamId,
               awayTeamId,
-              e2eNumber: parseInt(e2eNumber, 10),
+              e2eNumber,
               scheduledTime,
             });
           }}

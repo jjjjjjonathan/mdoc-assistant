@@ -1,8 +1,6 @@
 import { api } from "~/utils/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { RosterPlayerType } from "~/server/api/routers/players";
-import RosterPlayer from "./RosterPlayer";
-import classNames from "classnames";
 import TwitterGraphicModal from "../Modal/TwitterGraphic";
 import Loading from "../Loading";
 import TextInput from "../Form/TextInput";
@@ -15,12 +13,7 @@ import {
   validateOneOrLessGoalkeeper,
   validateOneOrLessCaptain,
 } from "~/utils/helpers";
-
-// import { createRosterColumns } from "./Columns";
-// import Table from "../Table";
-// import type { ColumnDef } from "@tanstack/react-table";
-// import Toggle from "../Form/Toggle";
-// // import { Player } from "~/server/api/routers/players";
+import Table from "../Table";
 
 type RosterProps = {
   rosterUrl: string;
@@ -41,7 +34,7 @@ const Roster = ({
 }: RosterProps) => {
   const { data, isLoading } = api.players.getTeamRoster.useQuery({ rosterUrl });
 
-  const { startingXI, dispatch } = useStartersSelection();
+  const { startingXI, actions } = useStartersSelection();
   const { toastStatus, toastMessage, dispatchToast, clearToast } = useToast();
 
   const [base64, setBase64] = useState("");
@@ -60,65 +53,6 @@ const Roster = ({
         setModalStatus(true);
       },
     });
-
-  const addToStartingXI = (id: number) => {
-    if (data) {
-      dispatch({
-        type: "ADD_STARTER",
-        payload: data.find((player) => player.id === id) as RosterPlayerType,
-      });
-    }
-  };
-  const removeFromStartingXI = (id: number) => {
-    dispatch({
-      type: "REMOVE_STARTER",
-      payload: startingXI.find(
-        (player) => player.id === id
-      ) as RosterPlayerType,
-    });
-  };
-
-  const changePlayerName = (id: number, name: string) => {
-    const playerToChange = startingXI.find((player) => player.id === id);
-
-    if (playerToChange) {
-      dispatch({
-        type: "CHANGE_NAME",
-        payload: { ...playerToChange, name },
-      });
-    }
-  };
-
-  const changePlayerNumber = (id: number, newNumber: number) => {
-    const playerToChange = startingXI.find((player) => player.id === id);
-
-    if (playerToChange) {
-      dispatch({
-        type: "CHANGE_NUMBER",
-        payload: { ...playerToChange, number: newNumber },
-      });
-    }
-  };
-
-  const updateGoalkeeper = (id = -1) => {
-    const newGoalkeeper = startingXI.find((player) => player.id === id);
-    if (newGoalkeeper) {
-      dispatch({
-        type: "SET_GOALKEEPER",
-        payload: newGoalkeeper,
-      });
-    }
-  };
-
-  const updateCaptain = (id = -1) => {
-    const newCaptain = startingXI.find((player) => player.id === id);
-    if (newCaptain) {
-      dispatch({
-        type: "SET_CAPTAIN",
-        payload: newCaptain,
-      });
-    }
-  };
 
   const [headCoach, setHeadCoach] = useState("");
   const updateHeadCoach = (name: string) => {
@@ -173,7 +107,25 @@ const Roster = ({
     }
   };
 
-  // const columns = createRosterColumns(addToStartingXI, removeFromStartingXI);
+  const [playerSearch, setPlayerSearch] = useState("");
+  const [roster, setRoster] = useState(data);
+
+  useEffect(() => {
+    if (startingXI.length === 11) {
+      setRoster(
+        data?.filter((player) =>
+          startingXI.map((starter) => starter.id).includes(player.id)
+        )
+      );
+      setPlayerSearch("");
+    } else {
+      setRoster(
+        data?.filter((player) =>
+          player.name.toLowerCase().includes(playerSearch.toLowerCase())
+        )
+      );
+    }
+  }, [playerSearch, data, startingXI]);
 
   if (isLoading) return <Loading />;
   if (!data) return <p>something went wrong</p>;
@@ -185,7 +137,7 @@ const Roster = ({
       }}
       className="py-4"
     >
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {data.map((player) => (
           <RosterPlayer
             key={player.id}
@@ -225,7 +177,32 @@ const Roster = ({
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
+      <TextInput
+        initialValue={playerSearch}
+        placeholder="Search for a player"
+        handleChange={setPlayerSearch}
+        disabled={startingXI.length === 11}
+      />
+      <Table data={roster} actions={actions} startingLineup={startingXI} />
+      {startingXI.length === 11 ? (
+        <>
+          <TextInput
+            handleChange={updateHeadCoach}
+            placeholder="Type head coach's name"
+            initialValue=""
+          />
+          <button
+            onClick={() => {
+              submitRoster(startingXI, headCoach, teamId, hex);
+            }}
+            className="btn-primary btn text-primary-content"
+            disabled={!headCoach || startingXI.length < 11 || isLoadingGraphic}
+          >
+            Create XI
+          </button>
+        </>
+      ) : null}
       <Toast
         status={toastStatus}
         message={toastMessage}
@@ -238,7 +215,6 @@ const Roster = ({
           altText={altText}
         />
       ) : null}
-      {/* <Table columns={columns} data={data} /> */}
     </form>
   );
 };
