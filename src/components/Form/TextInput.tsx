@@ -4,12 +4,18 @@ type TextInputProps = {
   handleChange?: (text: string) => void;
   placeholder: string;
   initialValue: string;
+  handleNameChange?: (playerId: number, playerName: string) => void;
+  playerId?: number;
+  disabled?: boolean;
 };
 
 const TextInput = ({
   handleChange,
   placeholder,
   initialValue,
+  handleNameChange,
+  playerId,
+  disabled,
 }: TextInputProps) => {
   const [inputValue, setInputValue] = useState(initialValue);
   return (
@@ -20,10 +26,14 @@ const TextInput = ({
         if (handleChange) {
           handleChange(event.target.value);
         }
+        if (handleNameChange && playerId !== undefined) {
+          handleNameChange(playerId, event.target.value);
+        }
       }}
       placeholder={placeholder}
       className="input-bordered input w-full"
       value={inputValue}
+      disabled={disabled || false}
     />
   );
 };

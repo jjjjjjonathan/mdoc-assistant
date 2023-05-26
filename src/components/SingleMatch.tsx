@@ -73,6 +73,7 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
           <NumberInput
             handleChange={handleHomeScoreChange}
             placeholder="Type home score here"
+            initialValue={NaN}
           />
         </div>
         <div className="form-control w-full max-w-xs">
@@ -82,6 +83,7 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
           <NumberInput
             handleChange={handleAwayScoreChange}
             placeholder="Type away score here"
+            initialValue={NaN}
           />
         </div>
       </div>

@@ -1,18 +1,20 @@
+import type { RosterPlayerType } from "~/server/api/routers/players";
+
 type ToggleProps = {
   handleChange: (
     isStarter: boolean,
     toggleSelected: (isSelected: boolean) => void,
-    playerId: number
+    player: RosterPlayerType
   ) => void;
   toggleSelected: (isSelected: boolean) => void;
-  playerId: number;
+  player: RosterPlayerType;
   checked: boolean;
 };
 
 const Toggle = ({
   handleChange,
   toggleSelected,
-  playerId,
+  player,
   checked,
 }: ToggleProps) => {
   return (
@@ -24,7 +26,7 @@ const Toggle = ({
         console.log(
           `the toggled is checked, ${!!event.target.checked ? "yes" : "no"}`
         );
-        handleChange(!!event.target.checked, toggleSelected, playerId);
+        handleChange(!!event.target.checked, toggleSelected, player);
       }}
     />
   );

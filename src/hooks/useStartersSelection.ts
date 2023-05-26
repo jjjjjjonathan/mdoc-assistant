@@ -63,7 +63,49 @@ const useStartersSelection = () => {
 
   const [state, dispatch] = useReducer(reducer, []);
 
-  return { startingXI: state, dispatch };
+  const actions = {
+    addToStartingLineup(player: RosterPlayerType) {
+      dispatch({ type: "ADD_STARTER", payload: player });
+    },
+    removeFromStartingLineup(playerId: number) {
+      const playerToRemove = state.find((player) => player.id === playerId);
+      if (playerToRemove) {
+        dispatch({ type: "REMOVE_STARTER", payload: playerToRemove });
+      }
+    },
+    setGoalkeeper(playerId: number) {
+      const goalkeeper = state.find((player) => player.id === playerId);
+      if (goalkeeper) {
+        dispatch({ type: "SET_GOALKEEPER", payload: { ...goalkeeper } });
+      }
+    },
+    setCaptain(playerId: number) {
+      const captain = state.find((player) => player.id === playerId);
+      if (captain) {
+        dispatch({ type: "SET_CAPTAIN", payload: captain });
+      }
+    },
+    updateNumber(playerId: number, shirtNumber: number) {
+      const playerToUpdate = state.find((player) => player.id === playerId);
+      if (playerToUpdate) {
+        dispatch({
+          type: "CHANGE_NUMBER",
+          payload: { ...playerToUpdate, number: shirtNumber },
+        });
+      }
+    },
+    updateName(playerId: number, playerName: string) {
+      const playerToUpdate = state.find((player) => player.id === playerId);
+      if (playerToUpdate) {
+        dispatch({
+          type: "CHANGE_NAME",
+          payload: { ...playerToUpdate, name: playerName },
+        });
+      }
+    },
+  };
+
+  return { startingXI: state, dispatch, actions };
 };
 
 export default useStartersSelection;
