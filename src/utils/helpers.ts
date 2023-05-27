@@ -36,7 +36,7 @@ export const addPlayerLabels = (
   return name;
 };
 
-export const generateKickoffTweet = (
+export const generatePreMatchTweet = (
   stadium: string,
   homeTeamTwitter: string,
   awayTeamTwitter: string,
@@ -45,7 +45,15 @@ export const generateKickoffTweet = (
 ) => {
   return `It’s 30 minutes to kick-off here at ${stadium}.\n\n${homeTeamTwitter} host ${awayTeamTwitter} in ${division} action.${
     extraContext.length > 0 ? `\n\n${extraContext}` : ""
-  }\n\n#L1OLive #EveryPointMatters`;
+  }\n\n#EveryPointMatters`;
+};
+
+export const generateKickoffTweet = (
+  tweetContent: string,
+  homeTeamTwitter: string,
+  awayTeamTwitter: string
+) => {
+  return `${tweetContent}\n\n${homeTeamTwitter} vs ${awayTeamTwitter}\n\n#EveryPointMatters`;
 };
 
 export const generateMatchTweet = (
@@ -56,9 +64,53 @@ export const generateMatchTweet = (
   awayScore: number,
   midMatchTweet: string
 ) => {
-  return `${minute}' ${homeTeamTwitter} ${homeScore}-${awayScore} ${awayTeamTwitter}\n\n${midMatchTweet}\n\n#L1OLive${
-    minute === "HT" || minute === "FT" ? " #EveryPointMatters" : ""
-  }`;
+  return `${minute}' – ${midMatchTweet}\n\n${homeTeamTwitter} ${homeScore}-${awayScore} ${awayTeamTwitter}\n\n#EveryPointMatters`;
+};
+
+export const generateGoalTweet = (
+  goalTweet: string,
+  homeTeamTwitter: string,
+  homeTeamScore: number,
+  awayTeamTwitter: string,
+  awayTeamScore: number,
+  isHomeGoal: boolean,
+  minute: string
+) => {
+  return `${minute}' – GOAL for ${
+    isHomeGoal ? homeTeamTwitter : awayTeamTwitter
+  }\n\n${goalTweet}\n\n${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n#EveryPointMatters`;
+};
+
+export const generateRedCardTweet = (
+  redCardMinute: string,
+  redCardPlayer: string,
+  homeTeamTwitter: string,
+  homeTeamScore: number,
+  awayTeamTwitter: string,
+  awayTeamScore: number,
+  isHomeRedCard: boolean
+) => {
+  return `${redCardMinute} – RED CARD issued to ${
+    isHomeRedCard ? homeTeamTwitter : awayTeamTwitter
+  } ${redCardPlayer}\n\n${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n#EveryPointMatters`;
+};
+
+export const generateBreakTweet = (
+  stadium: string,
+  homeTeamTwitter: string,
+  homeTeamScore: number,
+  awayTeamTwitter: string,
+  awayTeamScore: number,
+  breakContent: string,
+  isFullTime: boolean
+) => {
+  return `${
+    isFullTime ? "Full-time" : "Half-time"
+  } at ${stadium}!\n\n${breakContent}\n\n${
+    isFullTime
+      ? ""
+      : `${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n`
+  }#EveryPointMatters`;
 };
 
 export const validatePlayerNumbers = (players: RosterPlayerType[]) => {
