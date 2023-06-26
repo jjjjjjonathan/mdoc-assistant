@@ -89,6 +89,30 @@ const TableRow = ({ player, actions, isSelected }: TableRowProps) => {
 };
 
 const Table = ({ data, actions, startingLineup }: TableProps) => {
+  const mappedRoster = data?.map((player) => (
+    <TableRow
+      key={player.id}
+      player={player}
+      actions={actions}
+      isSelected={
+        startingLineup.filter((starter) => starter.id === player.id).length ===
+        1
+      }
+    />
+  ));
+
+  const mappedLineup = startingLineup.map((player) => (
+    <TableRow
+      key={player.id}
+      player={player}
+      actions={actions}
+      isSelected={
+        startingLineup.filter((starter) => starter.id === player.id).length ===
+        1
+      }
+    />
+  ));
+
   return (
     <div className="overflow-x-auto">
       <table className="table-zebra table w-full">
@@ -102,17 +126,7 @@ const Table = ({ data, actions, startingLineup }: TableProps) => {
           </tr>
         </thead>
         <tbody>
-          {data?.map((player) => (
-            <TableRow
-              key={player.id}
-              player={player}
-              actions={actions}
-              isSelected={
-                startingLineup.filter((starter) => starter.id === player.id)
-                  .length === 1
-              }
-            />
-          ))}
+          {startingLineup.length === 11 ? mappedLineup : mappedRoster}
         </tbody>
       </table>
     </div>
