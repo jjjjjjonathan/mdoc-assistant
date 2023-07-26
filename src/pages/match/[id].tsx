@@ -100,6 +100,7 @@ const MatchPage: NextPage = () => {
               homeTeam={data.homeTeam.name}
               awayTeam={data.awayTeam.name}
               division={data.division.name}
+              divisionId={data.division.id}
             />
           </>
         )}

@@ -128,3 +128,20 @@ export const validateOneOrLessGoalkeeper = (players: RosterPlayerType[]) => {
 export const validateOneOrLessCaptain = (players: RosterPlayerType[]) => {
   return players.filter((player) => player.isCaptain).length <= 1;
 };
+
+export const getWinningTeamName = (
+  homeTeam: string,
+  awayTeam: string,
+  homeScore: number,
+  awayScore: number,
+  homePenalties: number,
+  awayPenalties: number
+) => {
+  if (homeScore === awayScore) {
+    return homePenalties > awayPenalties ? homeTeam : awayTeam;
+  } else if (homeScore > awayScore) {
+    return homeTeam;
+  } else {
+    return awayTeam;
+  }
+};

@@ -9,9 +9,15 @@ type SingleMatchProps = {
   homeTeam: string;
   awayTeam: string;
   division: string;
+  divisionId: number;
 };
 
-const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
+const SingleMatch = ({
+  homeTeam,
+  awayTeam,
+  division,
+  divisionId,
+}: SingleMatchProps) => {
   const [homeScore, setHomeScore] = useState(-1);
   const [awayScore, setAwayScore] = useState(-1);
   const [src, setSrc] = useState("");
@@ -46,6 +52,9 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
     });
   };
 
+  const homePenalties = 5;
+  const awayPenalties = 4;
+
   const generateTwitterGraphic = async (file: File) => {
     const base64String = await generateBase64(file);
     generateGraphic({
@@ -55,6 +64,9 @@ const SingleMatch = ({ homeTeam, awayTeam, division }: SingleMatchProps) => {
       homeTeam,
       awayTeam,
       division,
+      divisionId,
+      homePenalties,
+      awayPenalties,
     });
   };
 
