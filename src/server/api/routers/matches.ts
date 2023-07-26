@@ -208,9 +208,14 @@ export const matchesRouter = createTRPCRouter({
         input.homePenalties,
         input.awayPenalties
       );
+      const penaltyFont = await Jimp.loadFont(
+        `${env.STATIC_FILES}jimp-fonts/penalty.fnt`
+      );
       graphic.print(
         font,
-        -125,
+        input.divisionId > 2 && input.homeScore === input.awayScore
+          ? -155
+          : -125,
         55,
         {
           text: input.homeScore.toString(10),
@@ -221,9 +226,48 @@ export const matchesRouter = createTRPCRouter({
         1080
       );
 
+      if (
+        input.divisionId > 2 &&
+        input.homeScore === input.awayScore &&
+        input.homePenalties > -1 &&
+        input.awayPenalties > -1
+      ) {
+        graphic.print(
+          penaltyFont,
+          input.divisionId > 2 && input.homeScore === input.awayScore
+            ? -85
+            : -125,
+          55,
+          {
+            text: `(${input.homePenalties})`,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+          },
+          1080,
+          1080
+        );
+
+        graphic.print(
+          penaltyFont,
+          input.divisionId > 2 && input.homeScore === input.awayScore
+            ? -85
+            : -125,
+          285,
+          {
+            text: `(${input.awayPenalties})`,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+          },
+          1080,
+          1080
+        );
+      }
+
       graphic.print(
         font,
-        -125,
+        input.divisionId > 2 && input.homeScore === input.awayScore
+          ? -155
+          : -125,
         285,
         {
           text: input.awayScore.toString(10),

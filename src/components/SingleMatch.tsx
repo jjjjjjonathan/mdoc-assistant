@@ -23,6 +23,8 @@ const SingleMatch = ({
   const [src, setSrc] = useState("");
   const [altText, setAltText] = useState("");
   const [modalStatus, setModalStatus] = useState(false);
+  const [homePenalties, setHomePenalties] = useState(-1);
+  const [awayPenalties, setAwayPenalties] = useState(-1);
   const changeModalStatus = (checked: boolean) => {
     setModalStatus(checked);
   };
@@ -52,9 +54,6 @@ const SingleMatch = ({
     });
   };
 
-  const homePenalties = 5;
-  const awayPenalties = 4;
-
   const generateTwitterGraphic = async (file: File) => {
     const base64String = await generateBase64(file);
     generateGraphic({
@@ -80,6 +79,20 @@ const SingleMatch = ({
     Number.isNaN(score) ? setAwayScore(-1) : setAwayScore(score);
   };
 
+  const handleHomePenaltiesChange = (newHomePenalties: string) => {
+    const penalties = parseInt(newHomePenalties, 10);
+    Number.isNaN(penalties)
+      ? setHomePenalties(-1)
+      : setHomePenalties(penalties);
+  };
+
+  const handleAwayPenaltiesChange = (newAwayPenalties: string) => {
+    const penalties = parseInt(newAwayPenalties, 10);
+    Number.isNaN(penalties)
+      ? setAwayPenalties(-1)
+      : setAwayPenalties(penalties);
+  };
+
   return (
     <form>
       <div className="mx-auto flex w-full flex-col items-center gap-x-8 gap-y-4 px-2 sm:flex-row">
@@ -103,6 +116,37 @@ const SingleMatch = ({
             initialValue={NaN}
           />
         </div>
+        {divisionId > 2 ? (
+          <>
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">
+                  How many penalties for {homeTeam}? Leave blank if no
+                  penalties.
+                </span>
+              </label>
+              <NumberInput
+                handleChange={handleHomePenaltiesChange}
+                placeholder="Type home penalties here"
+                initialValue={NaN}
+              />
+            </div>
+
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">
+                  How many penalties for {awayTeam}? Leave blank if no
+                  penalties.
+                </span>
+              </label>
+              <NumberInput
+                handleChange={handleAwayPenaltiesChange}
+                placeholder="Type away penalties here"
+                initialValue={NaN}
+              />
+            </div>
+          </>
+        ) : null}
       </div>
 
       {homeScore >= 0 && awayScore >= 0 ? (
@@ -114,7 +158,17 @@ const SingleMatch = ({
             type="file"
             className="file-input-bordered file-input w-full max-w-xs"
             onChange={(event) => {
-              if (event.target.files && event.target.files[0]) {
+              if (
+                homePenalties > -1 &&
+                awayPenalties > -1 &&
+                homePenalties === awayPenalties
+              ) {
+                dispatchToast({
+                  type: "SET_ERROR",
+                  message:
+                    "Penalty values cannot be the same or else we can't determine a winner.",
+                });
+              } else if (event.target.files && event.target.files[0]) {
                 dispatchToast({
                   type: "SET_WARNING",
                   message: "Creating your final score graphic now...",
