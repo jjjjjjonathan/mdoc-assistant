@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, privateProcedure } from "~/server/api/trpc";
 import Jimp from "jimp";
 import { env } from "~/env.mjs";
+import { getWinningTeamName } from "~/utils/helpers";
 
 export const matchesRouter = createTRPCRouter({
   getUpcomingUserMatches: privateProcedure.query(async ({ ctx }) => {
@@ -119,6 +120,7 @@ export const matchesRouter = createTRPCRouter({
           division: {
             select: {
               name: true,
+              id: true,
             },
           },
         },
@@ -183,6 +185,9 @@ export const matchesRouter = createTRPCRouter({
         homeTeam: z.string(),
         awayTeam: z.string(),
         division: z.string(),
+        divisionId: z.number(),
+        homePenalties: z.number(),
+        awayPenalties: z.number(),
       })
     )
     .mutation(async ({ input }) => {
@@ -192,9 +197,25 @@ export const matchesRouter = createTRPCRouter({
       const font = await Jimp.loadFont(
         `${env.STATIC_FILES}jimp-fonts/leagueSpartanWhite.fnt`
       );
+      const finalsTextFont = await Jimp.loadFont(
+        `${env.STATIC_FILES}jimp-fonts/smallLeagueSpartan.fnt`
+      );
+      const winningTeam = getWinningTeamName(
+        input.homeTeam,
+        input.awayTeam,
+        input.homeScore,
+        input.awayScore,
+        input.homePenalties,
+        input.awayPenalties
+      );
+      const penaltyFont = await Jimp.loadFont(
+        `${env.STATIC_FILES}jimp-fonts/penalty.fnt`
+      );
       graphic.print(
         font,
-        -125,
+        input.divisionId > 2 && input.homeScore === input.awayScore
+          ? -155
+          : -125,
         55,
         {
           text: input.homeScore.toString(10),
@@ -204,9 +225,49 @@ export const matchesRouter = createTRPCRouter({
         1080,
         1080
       );
+
+      if (
+        input.divisionId > 2 &&
+        input.homeScore === input.awayScore &&
+        input.homePenalties > -1 &&
+        input.awayPenalties > -1
+      ) {
+        graphic.print(
+          penaltyFont,
+          input.divisionId > 2 && input.homeScore === input.awayScore
+            ? -85
+            : -125,
+          55,
+          {
+            text: `(${input.homePenalties})`,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+          },
+          1080,
+          1080
+        );
+
+        graphic.print(
+          penaltyFont,
+          input.divisionId > 2 && input.homeScore === input.awayScore
+            ? -85
+            : -125,
+          285,
+          {
+            text: `(${input.awayPenalties})`,
+            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+          },
+          1080,
+          1080
+        );
+      }
+
       graphic.print(
         font,
-        -125,
+        input.divisionId > 2 && input.homeScore === input.awayScore
+          ? -155
+          : -125,
         285,
         {
           text: input.awayScore.toString(10),
@@ -216,8 +277,44 @@ export const matchesRouter = createTRPCRouter({
         1080,
         1080
       );
+
+      if (input.divisionId > 2) {
+        graphic.print(
+          finalsTextFont,
+          0,
+          435,
+          {
+            text: `${winningTeam} advance to the semifinals`.toUpperCase(),
+            alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
+            alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
+          },
+          1080,
+          1080
+        );
+      }
+
       const base64 = await graphic.getBase64Async(Jimp.AUTO);
-      const altText = `Full time between ${input.homeTeam} and ${input.awayTeam} in League1 Ontario's ${input.division}. The final score is ${input.homeTeam}: ${input.homeScore}, ${input.awayTeam}: ${input.awayScore}.`;
+      const altText = `Full time between ${input.homeTeam} and ${
+        input.awayTeam
+      } in League1 Ontario's ${input.division}. The final score is ${
+        input.homeTeam
+      }: ${input.homeScore}, ${input.awayTeam}: ${input.awayScore}.${
+        input.divisionId > 2
+          ? ` ${winningTeam} advance to the semifinals${
+              input.homeScore === input.awayScore
+                ? ` after winning ${
+                    input.homePenalties > input.awayPenalties
+                      ? input.homePenalties
+                      : input.awayPenalties
+                  }-${
+                    input.homePenalties < input.awayPenalties
+                      ? input.homePenalties
+                      : input.awayPenalties
+                  } on penalty kicks`
+                : ""
+            }`
+          : ""
+      }.`;
       return { base64, altText };
     }),
 });

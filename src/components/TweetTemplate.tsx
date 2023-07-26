@@ -16,12 +16,14 @@ type TweetTemplateProps = {
   homeTeamTwitter: string;
   awayTeamTwitter: string;
   division: string;
+  divisionId: number;
 };
 
 const TweetTemplate = ({
   homeTeamTwitter,
   awayTeamTwitter,
   division,
+  divisionId,
 }: TweetTemplateProps) => {
   const [stadium, setStadium] = useState("");
   const [extraContext, setExtraContext] = useState("");
@@ -53,10 +55,18 @@ const TweetTemplate = ({
         homeTeamTwitter,
         awayTeamTwitter,
         division,
-        extraContext
+        extraContext,
+        divisionId
       )
     );
-  }, [stadium, extraContext, homeTeamTwitter, awayTeamTwitter, division]);
+  }, [
+    stadium,
+    extraContext,
+    homeTeamTwitter,
+    awayTeamTwitter,
+    division,
+    divisionId,
+  ]);
 
   useEffect(() => {
     setMatchTweet(
@@ -66,7 +76,8 @@ const TweetTemplate = ({
         awayTeamTwitter,
         homeScore,
         awayScore,
-        midMatchTweet
+        midMatchTweet,
+        divisionId
       )
     );
   }, [
@@ -76,13 +87,19 @@ const TweetTemplate = ({
     homeScore,
     awayScore,
     midMatchTweet,
+    divisionId,
   ]);
 
   useEffect(() => {
     setKickoffTweet(
-      generateKickoffTweet(kickoffContent, homeTeamTwitter, awayTeamTwitter)
+      generateKickoffTweet(
+        kickoffContent,
+        homeTeamTwitter,
+        awayTeamTwitter,
+        divisionId
+      )
     );
-  }, [kickoffContent, homeTeamTwitter, awayTeamTwitter]);
+  }, [kickoffContent, homeTeamTwitter, awayTeamTwitter, divisionId]);
 
   useEffect(() => {
     setGoalTweet(
@@ -93,7 +110,8 @@ const TweetTemplate = ({
         awayTeamTwitter,
         awayScore,
         isHomeGoal,
-        goalMinute
+        goalMinute,
+        divisionId
       )
     );
   }, [
@@ -104,6 +122,7 @@ const TweetTemplate = ({
     awayScore,
     isHomeGoal,
     goalMinute,
+    divisionId,
   ]);
 
   useEffect(() => {
@@ -115,7 +134,8 @@ const TweetTemplate = ({
         homeScore,
         awayTeamTwitter,
         awayScore,
-        isHomeRedCard
+        isHomeRedCard,
+        divisionId
       )
     );
   }, [
@@ -126,6 +146,7 @@ const TweetTemplate = ({
     homeScore,
     awayTeamTwitter,
     homeTeamTwitter,
+    divisionId,
   ]);
 
   useEffect(() => {
@@ -137,7 +158,8 @@ const TweetTemplate = ({
         awayTeamTwitter,
         awayScore,
         breakContent,
-        isFullTime
+        isFullTime,
+        divisionId
       )
     );
   }, [
@@ -148,6 +170,7 @@ const TweetTemplate = ({
     awayScore,
     breakContent,
     isFullTime,
+    divisionId,
   ]);
 
   const handleStadiumChange = (newStadium: string) => {
