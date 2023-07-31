@@ -4,11 +4,13 @@ import classNames from "classnames";
 type ClipboardCopyButtonProps = {
   textToCopy: string;
   textType: string;
+  disabled?: boolean;
 };
 
 const ClipboardCopyButton = ({
   textToCopy,
   textType,
+  disabled = false,
 }: ClipboardCopyButtonProps) => {
   const [copied, copy, setCopied] = useCopy(textToCopy);
 
@@ -31,6 +33,7 @@ const ClipboardCopyButton = ({
         event.preventDefault();
         copyText();
       }}
+      disabled={disabled}
     >
       {copied ? `Copied ${textType}!` : `Copy ${textType}`}
     </button>
