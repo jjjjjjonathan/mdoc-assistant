@@ -114,6 +114,8 @@ const MatchPage: NextPage = () => {
               awayTeamTwitter={data.awayTeam.twitterHandle}
               division={data.division.name}
               divisionId={data.division.id}
+              homeTeamName={data.homeTeam.name}
+              awayTeamName={data.awayTeam.name}
             />
           </>
         )}

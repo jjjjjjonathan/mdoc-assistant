@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import TextInput from "./Form/TextInput";
-import NumberInput from "./Form/NumberInput";
 import {
   generatePreMatchTweet,
   generateMatchTweet,
@@ -17,6 +16,8 @@ type TweetTemplateProps = {
   awayTeamTwitter: string;
   division: string;
   divisionId: number;
+  homeTeamName: string;
+  awayTeamName: string;
 };
 
 const TweetTemplate = ({
@@ -24,10 +25,12 @@ const TweetTemplate = ({
   awayTeamTwitter,
   division,
   divisionId,
+  homeTeamName,
+  awayTeamName,
 }: TweetTemplateProps) => {
   const [stadium, setStadium] = useState("");
   const [extraContext, setExtraContext] = useState("");
-  const [minute, setMinute] = useState("0");
+  const [minute, setMinute] = useState("");
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
   const [midMatchTweet, setMidMatchTweet] = useState("");
@@ -173,10 +176,6 @@ const TweetTemplate = ({
     divisionId,
   ]);
 
-  const handleStadiumChange = (newStadium: string) => {
-    setStadium(newStadium);
-  };
-
   const handleExtraContextChange = (newExtraContext: string) => {
     setExtraContext(newExtraContext);
   };
@@ -187,14 +186,6 @@ const TweetTemplate = ({
 
   const handleMidMatchTweetChange = (newTweet: string) => {
     setMidMatchTweet(newTweet);
-  };
-
-  const handleHomeScoreChange = (newScore: string) => {
-    setHomeScore(newScore.length === 0 ? 0 : parseInt(newScore, 10));
-  };
-
-  const handleAwayScoreChange = (newScore: string) => {
-    setAwayScore(newScore.length === 0 ? 0 : parseInt(newScore, 10));
   };
 
   const handleKickoffTweetChange = (newTweet: string) => {
@@ -213,161 +204,307 @@ const TweetTemplate = ({
     setRedCardPlayer(newPlayer);
   };
 
-  const handleBreakContentChange = (newTweet: string) => {
-    setBreakContent(newTweet);
+  const increaseScore = (isHomeTeam: boolean) => {
+    isHomeTeam
+      ? setHomeScore((prev) => prev + 1)
+      : setAwayScore((prev) => prev + 1);
+  };
+
+  const decreaseScore = (isHomeTeam: boolean) => {
+    isHomeTeam
+      ? setHomeScore((prev) => (prev <= 0 ? 0 : prev - 1))
+      : setAwayScore((prev) => (prev <= 0 ? 0 : prev - 1));
   };
 
   return (
-    <div className="flex w-1/2 flex-col items-center gap-4">
-      <h2 className="text-2xl font-semibold">Pre-match Tweet</h2>
-      <TextInput
-        handleChange={handleStadiumChange}
-        placeholder="Type the name of the field"
-        initialValue=""
-      />
-      <TextInput
-        handleChange={handleExtraContextChange}
-        placeholder="Optionally add context to the match"
-        initialValue=""
-      />
-      {stadium ? (
-        <>
-          <TextArea text={preMatchTweet} />
-          <ClipboardCopyButton
-            textToCopy={preMatchTweet}
-            textType="pre-match tweet"
+    <div className="grid w-3/4 grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Match details for tweets</h2>
+          <input
+            type="text"
+            placeholder="Write the name of the field."
+            className="input-bordered input w-full"
+            value={stadium}
+            onChange={(event) => setStadium(event.target.value)}
           />
-        </>
-      ) : null}
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Score for {homeTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                className="btn-secondary btn"
+                onClick={() => decreaseScore(true)}
+              >
+                -1
+              </button>
+              <p>{homeScore}</p>
+              <button
+                className="btn-accent btn"
+                onClick={() => increaseScore(true)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Score for {awayTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                className="btn-secondary btn"
+                onClick={() => decreaseScore(false)}
+              >
+                -1
+              </button>
+              <p>{awayScore}</p>
+              <button
+                className="btn-accent btn"
+                onClick={() => increaseScore(false)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Pre-match tweet</h2>
+          <textarea
+            className="textarea-bordered textarea"
+            placeholder="Add optional context to the pre-match tweet"
+            onChange={(event) => handleExtraContextChange(event.target.value)}
+          ></textarea>
+          {stadium.length <= 0 ? (
+            <TextArea text="Write the name of the field and a pre-match tweet will generate." />
+          ) : (
+            <TextArea text={preMatchTweet} />
+          )}
+          <div className="card-actions justify-end">
+            <ClipboardCopyButton
+              textToCopy={preMatchTweet}
+              textType="pre-match tweet"
+              disabled={stadium.length <= 0}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Kickoff tweet</h2>
+          <textarea
+            className="textarea-bordered textarea"
+            placeholder="Add context to the kickoff tweet"
+            onChange={(event) => handleKickoffTweetChange(event.target.value)}
+          ></textarea>
+          {kickoffContent.length <= 0 ? (
+            <TextArea text="Write something for kickoff and a tweet will generate." />
+          ) : (
+            <TextArea text={kickoffTweet} />
+          )}
+          <div className="card-actions justify-end">
+            <ClipboardCopyButton
+              textToCopy={kickoffTweet}
+              textType="kickoff tweet"
+              disabled={kickoffContent.length <= 0}
+            />
+          </div>
+        </div>
+      </div>
 
-      <h2 className="text-2xl font-semibold">Kickoff Tweet</h2>
-      <TextInput
-        handleChange={handleKickoffTweetChange}
-        placeholder="Type kickoff tweet content"
-        initialValue=""
-      />
-      {kickoffContent ? (
-        <>
-          <TextArea text={kickoffTweet} />
-          <ClipboardCopyButton
-            textToCopy={kickoffTweet}
-            textType="kickoff tweet"
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Mid-match update</h2>
+          <TextInput
+            handleChange={handleMinuteChange}
+            placeholder="Current minute of the match"
+            initialValue=""
           />
-        </>
-      ) : null}
-      <h2 className="text-2xl font-semibold">Match Update</h2>
-      <TextInput
-        handleChange={handleMinuteChange}
-        placeholder="Current minute of the match"
-        initialValue=""
-      />
-      <TextInput
-        handleChange={handleMidMatchTweetChange}
-        placeholder="What happened in the match?"
-        initialValue=""
-      />
-      <NumberInput
-        handleChange={handleHomeScoreChange}
-        placeholder={`Goals for ${homeTeamTwitter}`}
-        initialValue={NaN}
-      />
-      <NumberInput
-        handleChange={handleAwayScoreChange}
-        placeholder={`Goals for ${awayTeamTwitter}`}
-        initialValue={NaN}
-      />
-      {minute.length > 0 && minute !== "0" && midMatchTweet.length > 0 ? (
-        <>
-          <TextArea text={matchTweet} />
-          <ClipboardCopyButton textToCopy={matchTweet} textType="match tweet" />
-        </>
-      ) : null}
-      <h2 className="text-2xl font-semibold">Goal Tweet</h2>
-      <TextInput
-        handleChange={handleGoalMinuteChange}
-        placeholder={`Minute for goal`}
-        initialValue={""}
-      />
-      <div className="flex flex-row gap-x-2">
-        <label htmlFor="">
-          Check if it&apos;s a home goal, leave unchecked if it&apos;s an away
-          goal
-        </label>
-        <input
-          type="checkbox"
-          checked={isHomeGoal}
-          onChange={(event) => setIsHomeGoal(!!event.target.checked)}
-          className="checkbox-primary checkbox"
-        />
+          <textarea
+            className="textarea-bordered textarea"
+            placeholder="What happened in the match?"
+            onChange={(event) => handleMidMatchTweetChange(event.target.value)}
+          ></textarea>
+          {midMatchTweet.length <= 0 || minute.length <= 0 ? (
+            <TextArea text="Put down the minute and write a description of what happened in the match, and a tweet will generate." />
+          ) : (
+            <TextArea text={matchTweet} />
+          )}
+          <div className="card-actions justify-end">
+            <ClipboardCopyButton
+              textToCopy={matchTweet}
+              textType="match tweet"
+              disabled={midMatchTweet.length <= 0 || minute.length <= 0}
+            />
+          </div>
+        </div>
       </div>
-      <TextInput
-        handleChange={setGoalContent}
-        placeholder={`What happened in the goal?`}
-        initialValue={""}
-      />
-      {goalMinute.length > 0 && goalMinute !== "0" && goalTweet.length > 0 ? (
-        <>
-          <TextArea text={goalTweet} />
-          <ClipboardCopyButton textToCopy={goalTweet} textType="goal tweet" />
-        </>
-      ) : null}
-      <h2 className="text-2xl font-semibold">Red Card Tweet</h2>
-      <TextInput
-        handleChange={handleRedCardMinuteChange}
-        placeholder={`Minute for red card`}
-        initialValue={""}
-      />
-      <TextInput
-        handleChange={handleRedCardPlayerChange}
-        placeholder={`Player for red card`}
-        initialValue={""}
-      />
-      <div className="flex flex-row gap-x-2">
-        <label htmlFor="">
-          Check if it&apos;s a home red card, leave unchecked if it&apos;s an
-          away red card
-        </label>
-        <input
-          type="checkbox"
-          checked={isHomeRedCard}
-          onChange={(event) => setIsHomeRedCard(!!event.target.checked)}
-          className="checkbox-secondary checkbox"
-        />
-      </div>
-      {redCardMinute.length > 0 &&
-      redCardMinute !== "0" &&
-      redCardPlayer.length > 0 ? (
-        <>
-          <TextArea text={redCardTweet} />
-          <ClipboardCopyButton
-            textToCopy={redCardTweet}
-            textType="red card tweet"
+
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Goal tweet</h2>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">
+                Goal for {isHomeGoal ? homeTeamName : awayTeamName}
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-primary toggle"
+                checked={isHomeGoal}
+                onChange={(event) => setIsHomeGoal(!!event.target.checked)}
+              />
+            </label>
+          </div>
+
+          <TextInput
+            handleChange={handleGoalMinuteChange}
+            placeholder={`Minute for goal`}
+            initialValue={""}
           />
-        </>
-      ) : null}
-      <h2 className="text-2xl font-semibold">Break Tweet</h2>
-      <TextInput
-        handleChange={handleBreakContentChange}
-        placeholder={`Give context for tweet at HT/FT`}
-        initialValue={""}
-      />
-      <div className="flex flex-row gap-x-2">
-        <label htmlFor="">
-          Check if it&apos;s full-time, leave unchecked if it&apos;s half-time
-        </label>
-        <input
-          type="checkbox"
-          checked={isFullTime}
-          onChange={(event) => setIsFullTime(!!event.target.checked)}
-          className="checkbox-accent checkbox"
-        />
+          <textarea
+            className="textarea-bordered textarea"
+            placeholder="Describe the goal."
+            onChange={(event) => setGoalContent(event.target.value)}
+          ></textarea>
+
+          {goalContent.length <= 0 || goalMinute.length <= 0 ? (
+            <TextArea text="Write the minute and description of a goal, and a tweet will generate." />
+          ) : (
+            <TextArea text={goalTweet} />
+          )}
+
+          <div className="card-actions justify-end">
+            <ClipboardCopyButton
+              textToCopy={goalTweet}
+              textType="goal tweet"
+              disabled={goalContent.length <= 0 || goalMinute.length <= 0}
+            />
+          </div>
+        </div>
       </div>
-      {stadium.length > 0 && breakContent.length > 0 ? (
-        <>
-          <TextArea text={breakTweet} />
-          <ClipboardCopyButton textToCopy={breakTweet} textType="break tweet" />
-        </>
-      ) : null}
+
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Red card tweet</h2>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">
+                Red Card for {isHomeRedCard ? homeTeamName : awayTeamName}
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-primary toggle"
+                checked={isHomeRedCard}
+                onChange={(event) => setIsHomeRedCard(!!event.target.checked)}
+              />
+            </label>
+          </div>
+
+          <TextInput
+            handleChange={handleRedCardMinuteChange}
+            placeholder={`Minute for red card`}
+            initialValue={""}
+          />
+          <TextInput
+            handleChange={handleRedCardPlayerChange}
+            placeholder={`Player for red card`}
+            initialValue={""}
+          />
+
+          {redCardPlayer.length <= 0 || redCardMinute.length <= 0 ? (
+            <TextArea text="Write the minute and player name for a red card, and a tweet will generate." />
+          ) : (
+            <TextArea text={redCardTweet} />
+          )}
+
+          <div className="card-actions justify-end">
+            <ClipboardCopyButton
+              textToCopy={redCardTweet}
+              textType="red card tweet"
+              disabled={redCardPlayer.length <= 0 || redCardMinute.length <= 0}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="=bg-base-100 card shadow-xl">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Halftime/Fulltime Tweet</h2>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">
+                Tweet is for {isFullTime ? "full-time" : "half-time"}
+              </span>
+              <input
+                type="checkbox"
+                className="toggle-primary toggle"
+                checked={isFullTime}
+                onChange={(event) => setIsFullTime(!!event.target.checked)}
+              />
+            </label>
+          </div>
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Score for {homeTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                className="btn-secondary btn"
+                onClick={() => decreaseScore(true)}
+              >
+                -1
+              </button>
+              <p>{homeScore}</p>
+              <button
+                className="btn-accent btn"
+                onClick={() => increaseScore(true)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Score for {awayTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                className="btn-secondary btn"
+                onClick={() => decreaseScore(false)}
+              >
+                -1
+              </button>
+              <p>{awayScore}</p>
+              <button
+                className="btn-accent btn"
+                onClick={() => increaseScore(false)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+          <input
+            type="text"
+            placeholder="Write the name of the field."
+            className="input-bordered input w-full"
+            value={stadium}
+            onChange={(event) => setStadium(event.target.value)}
+          />
+          <textarea
+            className="textarea-bordered textarea"
+            placeholder="Describe the events of the half."
+            onChange={(event) => setBreakContent(event.target.value)}
+          ></textarea>
+          {stadium.length <= 0 || breakContent.length <= 0 ? (
+            <TextArea text="Write the minute and player name for a red card, and a tweet will generate." />
+          ) : (
+            <TextArea text={breakTweet} />
+          )}
+          <div className="card-actions justify-end">
+            <ClipboardCopyButton
+              textToCopy={breakTweet}
+              textType="break tweet"
+              disabled={stadium.length <= 0 || breakContent.length <= 0}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

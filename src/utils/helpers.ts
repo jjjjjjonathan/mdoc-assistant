@@ -118,8 +118,8 @@ export const generateBreakTweet = (
   isFullTime: boolean,
   divisionId: number
 ) => {
-  return `${
-    isFullTime ? "Full-time" : "Half-time"
+  return `${isFullTime ? "Full-time" : "Half-time"}${
+    isFullTime ? ` between ${homeTeamTwitter} and ${awayTeamTwitter}` : ""
   } at ${stadium}!\n\n${breakContent}\n\n${
     isFullTime
       ? ""
