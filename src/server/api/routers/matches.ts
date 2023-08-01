@@ -297,7 +297,7 @@ export const matchesRouter = createTRPCRouter({
           ? ` ${winningTeam} are the 2023 ${input.division.replace(
               "Playoffs",
               ""
-            )}champions${
+            )} champions${
               input.isMatchWithPenalties
                 ? ` after winning ${
                     input.homePenalties > input.awayPenalties
