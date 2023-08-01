@@ -188,6 +188,7 @@ export const matchesRouter = createTRPCRouter({
         divisionId: z.number(),
         homePenalties: z.number(),
         awayPenalties: z.number(),
+        isMatchWithPenalties: z.boolean(),
       })
     )
     .mutation(async ({ input }) => {
@@ -226,12 +227,7 @@ export const matchesRouter = createTRPCRouter({
         1080
       );
 
-      if (
-        input.divisionId > 2 &&
-        input.homeScore === input.awayScore &&
-        input.homePenalties > -1 &&
-        input.awayPenalties > -1
-      ) {
+      if (input.isMatchWithPenalties) {
         graphic.print(
           penaltyFont,
           input.divisionId > 2 && input.homeScore === input.awayScore
