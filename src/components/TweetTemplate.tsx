@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { api } from "~/utils/api";
 import TextInput from "./Form/TextInput";
 import {
   generatePreMatchTweet,
@@ -10,6 +11,9 @@ import {
 } from "~/utils/helpers";
 import TextArea from "./Form/TextArea";
 import ClipboardCopyButton from "./ClipboardCopyButton";
+import Toast from "./Toast";
+import useToast from "~/hooks/useToast";
+import TwitterGraphicModal from "./Modal/TwitterGraphic";
 
 type TweetTemplateProps = {
   homeTeamTwitter: string;
@@ -50,6 +54,57 @@ const TweetTemplate = ({
   const [breakContent, setBreakContent] = useState("");
   const [isFullTime, setIsFullTime] = useState(false);
   const [breakTweet, setBreakTweet] = useState("");
+
+  const [src, setSrc] = useState("");
+  const [altText, setAltText] = useState("");
+  const [modalStatus, setModalStatus] = useState(false);
+  const [homePenalties, setHomePenalties] = useState(0);
+  const [awayPenalties, setAwayPenalties] = useState(0);
+  const [isMatchWithPenalties, setIsMatchWithPenalties] = useState(false);
+  const changeModalStatus = (checked: boolean) => {
+    setModalStatus(checked);
+  };
+
+  const { toastStatus, toastMessage, dispatchToast, clearToast } = useToast();
+
+  const { mutate: generateGraphic } =
+    api.matches.createFullTimeGraphic.useMutation({
+      onSuccess: ({ base64, altText }) => {
+        clearToast();
+        setSrc(base64);
+        setAltText(altText);
+        setModalStatus(true);
+      },
+    });
+
+  const generateBase64 = (upload: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(upload);
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+        }
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const generateTwitterGraphic = async (file: File) => {
+    const base64String = await generateBase64(file);
+    generateGraphic({
+      homeScore,
+      awayScore,
+      base64: base64String,
+      homeTeam: homeTeamName,
+      awayTeam: awayTeamName,
+      division,
+      divisionId,
+      homePenalties,
+      awayPenalties,
+      isMatchWithPenalties,
+    });
+  };
 
   useEffect(() => {
     setPreMatchTweet(
@@ -216,9 +271,21 @@ const TweetTemplate = ({
       : setAwayScore((prev) => (prev <= 0 ? 0 : prev - 1));
   };
 
+  const increasePenalties = (isHomeTeam: boolean) => {
+    isHomeTeam
+      ? setHomePenalties((prev) => prev + 1)
+      : setAwayPenalties((prev) => prev + 1);
+  };
+
+  const decreasePenalties = (isHomeTeam: boolean) => {
+    isHomeTeam
+      ? setHomePenalties((prev) => (prev <= 0 ? 0 : prev - 1))
+      : setAwayPenalties((prev) => (prev <= 0 ? 0 : prev - 1));
+  };
+
   return (
     <div className="grid w-3/4 grid-cols-1 gap-4 md:grid-cols-2">
-      <div className="card bg-base-100 shadow-xl">
+      <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Match details for tweets</h2>
           <input
@@ -266,7 +333,7 @@ const TweetTemplate = ({
           </div>
         </div>
       </div>
-      <div className="card bg-base-100 shadow-xl">
+      <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Pre-match tweet</h2>
           <textarea
@@ -288,7 +355,7 @@ const TweetTemplate = ({
           </div>
         </div>
       </div>
-      <div className="card bg-base-100 shadow-xl">
+      <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Kickoff tweet</h2>
           <textarea
@@ -311,7 +378,7 @@ const TweetTemplate = ({
         </div>
       </div>
 
-      <div className="card bg-base-100 shadow-xl">
+      <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Mid-match update</h2>
           <TextInput
@@ -339,7 +406,7 @@ const TweetTemplate = ({
         </div>
       </div>
 
-      <div className="card bg-base-100 shadow-xl">
+      <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Goal tweet</h2>
           <div className="form-control">
@@ -383,7 +450,7 @@ const TweetTemplate = ({
         </div>
       </div>
 
-      <div className="card bg-base-100 shadow-xl">
+      <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Red card tweet</h2>
           <div className="form-control">
@@ -427,7 +494,7 @@ const TweetTemplate = ({
         </div>
       </div>
 
-      <div className="=bg-base-100 card shadow-xl">
+      <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Halftime/Fulltime Tweet</h2>
           <div className="form-control">
@@ -505,6 +572,161 @@ const TweetTemplate = ({
           </div>
         </div>
       </div>
+
+      <div className="card bg-neutral text-neutral-content">
+        <div className="card-body gap-y-4">
+          <h2 className="card-title">Final Score Graphic</h2>
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Score for {homeTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                className="btn-secondary btn"
+                onClick={() => decreaseScore(true)}
+              >
+                -1
+              </button>
+              <p>{homeScore}</p>
+              <button
+                className="btn-accent btn"
+                onClick={() => increaseScore(true)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Score for {awayTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                className="btn-secondary btn"
+                onClick={() => decreaseScore(false)}
+              >
+                -1
+              </button>
+              <p>{awayScore}</p>
+              <button
+                className="btn-accent btn"
+                onClick={() => increaseScore(false)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+          <div className="form-control">
+            <label className="label cursor-pointer">
+              <span className="label-text">
+                {divisionId <= 2
+                  ? "Penalties only for playoffs, ignore this toggle"
+                  : isMatchWithPenalties
+                  ? "Match went to penalties"
+                  : "Match did not go to penalties"}
+              </span>
+              <input
+                disabled={divisionId <= 2}
+                type="checkbox"
+                className="toggle-primary toggle"
+                checked={isMatchWithPenalties}
+                onChange={(event) => {
+                  setIsMatchWithPenalties(!!event.target.checked);
+                  setHomePenalties(0);
+                  setAwayPenalties(0);
+                }}
+              />
+            </label>
+          </div>
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Penalties for {homeTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                disabled={!isMatchWithPenalties}
+                className="btn-secondary btn"
+                onClick={() => decreasePenalties(true)}
+              >
+                -1
+              </button>
+              <p>{homePenalties}</p>
+              <button
+                disabled={!isMatchWithPenalties}
+                className="btn-accent btn"
+                onClick={() => increasePenalties(true)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
+            <p>Penalties for {awayTeamName}:</p>
+            <div className="flex flex-row items-center gap-x-4">
+              <button
+                disabled={!isMatchWithPenalties}
+                className="btn-secondary btn"
+                onClick={() => decreasePenalties(false)}
+              >
+                -1
+              </button>
+              <p>{awayPenalties}</p>
+              <button
+                disabled={!isMatchWithPenalties}
+                className="btn-accent btn"
+                onClick={() => increasePenalties(false)}
+              >
+                +1
+              </button>
+            </div>
+          </div>
+          <div className="card-actions justify-end">
+            <div className="form-control mx-auto w-full max-w-xs pt-10">
+              <label className="label">
+                <span className="label-text">
+                  Upload the final score graphic
+                </span>
+              </label>
+              <input
+                type="file"
+                className="file-input-bordered file-input-primary file-input w-full max-w-xs"
+                onChange={(event) => {
+                  if (isMatchWithPenalties && homeScore !== awayScore) {
+                    dispatchToast({
+                      type: "SET_ERROR",
+                      message:
+                        "Match can't go to penalties if regular score isn't identical.",
+                    });
+                  } else if (
+                    isMatchWithPenalties &&
+                    homePenalties === awayPenalties
+                  ) {
+                    dispatchToast({
+                      type: "SET_ERROR",
+                      message:
+                        "Penalty values cannot be the same or else we can't determine a winner.",
+                    });
+                  } else if (event.target.files && event.target.files[0]) {
+                    dispatchToast({
+                      type: "SET_WARNING",
+                      message: "Creating your final score graphic now...",
+                    });
+                    generateTwitterGraphic(event.target.files[0]).catch(
+                      (error) => console.error(error)
+                    );
+                  }
+                }}
+              />
+              <Toast
+                status={toastStatus}
+                message={toastMessage}
+                clearToast={clearToast}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      {src.length > 0 && modalStatus ? (
+        <TwitterGraphicModal
+          base64={src}
+          altText={altText}
+          changeModalStatus={changeModalStatus}
+        />
+      ) : null}
     </div>
   );
 };
