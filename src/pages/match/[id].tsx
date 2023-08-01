@@ -19,10 +19,6 @@ const MatchPage: NextPage = () => {
   if (isLoading) return <Loading />;
   if (!data) return <p>something went wrong</p>;
 
-  const finalScoreTabClasses = classNames("tab-bordered", "tab", {
-    "tab-active": tab === 2,
-  });
-
   const homeTeamTabClasses = classNames("tab-bordered", "tab", {
     "tab-active": tab === 1,
   });
@@ -32,7 +28,7 @@ const MatchPage: NextPage = () => {
   });
 
   const tweetTemplateTabClasses = classNames("tab-bordered", "tab", {
-    "tab-active": tab === 4,
+    "tab-active": tab === 2,
   });
 
   return (
