@@ -5,7 +5,6 @@ import { api } from "~/utils/api";
 import Roster from "~/components/Roster";
 import { useState } from "react";
 import classNames from "classnames";
-import SingleMatch from "~/components/SingleMatch";
 import TweetTemplate from "~/components/TweetTemplate";
 import Loading from "~/components/Loading";
 
