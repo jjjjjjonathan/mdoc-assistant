@@ -214,9 +214,7 @@ export const matchesRouter = createTRPCRouter({
       );
       graphic.print(
         font,
-        input.divisionId > 2 && input.homeScore === input.awayScore
-          ? -155
-          : -125,
+        input.divisionId > 2 && input.isMatchWithPenalties ? -155 : -125,
         55,
         {
           text: input.homeScore.toString(10),
@@ -261,9 +259,7 @@ export const matchesRouter = createTRPCRouter({
 
       graphic.print(
         font,
-        input.divisionId > 2 && input.homeScore === input.awayScore
-          ? -155
-          : -125,
+        input.divisionId > 2 && input.isMatchWithPenalties ? -155 : -125,
         285,
         {
           text: input.awayScore.toString(10),
@@ -280,7 +276,9 @@ export const matchesRouter = createTRPCRouter({
           0,
           435,
           {
-            text: `${winningTeam} advance to the semifinals`.toUpperCase(),
+            text: `${winningTeam} win the ${input.division}`
+              .replace("Playoffs", "")
+              .toUpperCase(),
             alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
             alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
           },
@@ -296,8 +294,11 @@ export const matchesRouter = createTRPCRouter({
         input.homeTeam
       }: ${input.homeScore}, ${input.awayTeam}: ${input.awayScore}.${
         input.divisionId > 2
-          ? ` ${winningTeam} advance to the semifinals${
-              input.homeScore === input.awayScore
+          ? ` ${winningTeam} are the 2023 ${input.division.replace(
+              "Playoffs",
+              ""
+            )}champions${
+              input.isMatchWithPenalties
                 ? ` after winning ${
                     input.homePenalties > input.awayPenalties
                       ? input.homePenalties
@@ -306,11 +307,11 @@ export const matchesRouter = createTRPCRouter({
                     input.homePenalties < input.awayPenalties
                       ? input.homePenalties
                       : input.awayPenalties
-                  } on penalty kicks`
-                : ""
+                  } on penalty kicks.`
+                : "."
             }`
           : ""
-      }.`;
+      }`;
       return { base64, altText };
     }),
 });

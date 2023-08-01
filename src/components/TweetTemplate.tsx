@@ -626,9 +626,11 @@ const TweetTemplate = ({
                 type="checkbox"
                 className="toggle-primary toggle"
                 checked={isMatchWithPenalties}
-                onChange={(event) =>
-                  setIsMatchWithPenalties(!!event.target.checked)
-                }
+                onChange={(event) => {
+                  setIsMatchWithPenalties(!!event.target.checked);
+                  setHomePenalties(0);
+                  setAwayPenalties(0);
+                }}
               />
             </label>
           </div>
@@ -683,7 +685,16 @@ const TweetTemplate = ({
                 type="file"
                 className="file-input-bordered file-input-primary file-input w-full max-w-xs"
                 onChange={(event) => {
-                  if (isMatchWithPenalties && homePenalties === awayPenalties) {
+                  if (isMatchWithPenalties && homeScore !== awayScore) {
+                    dispatchToast({
+                      type: "SET_ERROR",
+                      message:
+                        "Match can't go to penalties if regular score isn't identical.",
+                    });
+                  } else if (
+                    isMatchWithPenalties &&
+                    homePenalties === awayPenalties
+                  ) {
                     dispatchToast({
                       type: "SET_ERROR",
                       message:
