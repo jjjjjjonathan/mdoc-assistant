@@ -22,6 +22,7 @@ type TweetTemplateProps = {
   divisionId: number;
   homeTeamName: string;
   awayTeamName: string;
+  hashtags: string[];
 };
 
 const TweetTemplate = ({
@@ -31,6 +32,7 @@ const TweetTemplate = ({
   divisionId,
   homeTeamName,
   awayTeamName,
+  hashtags
 }: TweetTemplateProps) => {
   const [stadium, setStadium] = useState("");
   const [extraContext, setExtraContext] = useState("");
@@ -114,7 +116,7 @@ const TweetTemplate = ({
         awayTeamTwitter,
         division,
         extraContext,
-        divisionId
+        hashtags
       )
     );
   }, [
@@ -135,7 +137,7 @@ const TweetTemplate = ({
         homeScore,
         awayScore,
         midMatchTweet,
-        divisionId
+        hashtags
       )
     );
   }, [
@@ -154,7 +156,7 @@ const TweetTemplate = ({
         kickoffContent,
         homeTeamTwitter,
         awayTeamTwitter,
-        divisionId
+        hashtags
       )
     );
   }, [kickoffContent, homeTeamTwitter, awayTeamTwitter, divisionId]);
@@ -169,7 +171,7 @@ const TweetTemplate = ({
         awayScore,
         isHomeGoal,
         goalMinute,
-        divisionId
+        hashtags
       )
     );
   }, [
@@ -193,7 +195,7 @@ const TweetTemplate = ({
         awayTeamTwitter,
         awayScore,
         isHomeRedCard,
-        divisionId
+        hashtags
       )
     );
   }, [
@@ -217,7 +219,7 @@ const TweetTemplate = ({
         awayScore,
         breakContent,
         isFullTime,
-        divisionId
+        hashtags
       )
     );
   }, [

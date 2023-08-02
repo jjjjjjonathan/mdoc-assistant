@@ -12,12 +12,13 @@ datasource db {
 }
 
 model Division {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
+    id        Int       @id @default(autoincrement())
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
     name      String
     teams     Team[]
     matches   Match[]
+    hashtags  Hashtag[]
 
     @@map("divisions")
 }
@@ -56,4 +57,15 @@ model Match {
     scheduledTime DateTime @map("scheduled_time")
 
     @@map("matches")
+}
+
+model Hashtag {
+    id         Int      @id @default(autoincrement())
+    text       String
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+    divisionId Int      @map("division_id")
+    division   Division @relation(fields: [divisionId], references: [id])
+
+    @@map("hashtags")
 }
