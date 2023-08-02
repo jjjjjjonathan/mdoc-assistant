@@ -23,6 +23,8 @@ type TweetTemplateProps = {
   homeTeamName: string;
   awayTeamName: string;
   hashtags: string[];
+  isNeutral: boolean;
+  isForChampionship: boolean;
 };
 
 const TweetTemplate = ({
@@ -32,7 +34,9 @@ const TweetTemplate = ({
   divisionId,
   homeTeamName,
   awayTeamName,
-  hashtags
+  hashtags,
+  isNeutral,
+  isForChampionship,
 }: TweetTemplateProps) => {
   const [stadium, setStadium] = useState("");
   const [extraContext, setExtraContext] = useState("");
@@ -116,7 +120,9 @@ const TweetTemplate = ({
         awayTeamTwitter,
         division,
         extraContext,
-        hashtags
+        hashtags,
+        isNeutral,
+        isForChampionship
       )
     );
   }, [

@@ -96,6 +96,8 @@ const MatchPage: NextPage = () => {
               homeTeamName={data.homeTeam.name}
               awayTeamName={data.awayTeam.name}
               hashtags={data.division.hashtags.map((hashtag) => hashtag.text)}
+              isNeutral={data.isNeutral}
+              isForChampionship={data.isForChampionship}
             />
           </>
         )}
