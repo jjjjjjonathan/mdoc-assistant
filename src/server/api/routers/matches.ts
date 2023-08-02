@@ -94,6 +94,8 @@ export const matchesRouter = createTRPCRouter({
           id: input.matchId,
         },
         select: {
+          isNeutral: true,
+          isForChampionship: true,
           scheduledTime: true,
           homeTeam: {
             select: {
