@@ -121,6 +121,7 @@ export const matchesRouter = createTRPCRouter({
             select: {
               name: true,
               id: true,
+              hashtags: true,
             },
           },
         },

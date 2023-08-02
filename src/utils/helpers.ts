@@ -42,22 +42,20 @@ export const generatePreMatchTweet = (
   awayTeamTwitter: string,
   division: string,
   extraContext: string,
-  divisionId: number
+  hashtags: string[]
 ) => {
   return `It’s 30 minutes to kick-off here at ${stadium}.\n\n${homeTeamTwitter} host ${awayTeamTwitter} in ${division} action.${
     extraContext.length > 0 ? `\n\n${extraContext}` : ""
-  }\n\n${divisionId > 2 ? "#L1OLive" : "#EveryPointMatters"}`;
+  }\n\n${hashtags.join(' | ')}`;
 };
 
 export const generateKickoffTweet = (
   tweetContent: string,
   homeTeamTwitter: string,
   awayTeamTwitter: string,
-  divisionId: number
+  hashtags: string[]
 ) => {
-  return `${tweetContent}\n\n${homeTeamTwitter} vs ${awayTeamTwitter}\n\n${
-    divisionId > 2 ? "#L1OLive" : "#EveryPointMatters"
-  }`;
+  return `${tweetContent}\n\n${homeTeamTwitter} vs ${awayTeamTwitter}\n\n${hashtags.join(' | ')}`;
 };
 
 export const generateMatchTweet = (
@@ -67,11 +65,9 @@ export const generateMatchTweet = (
   homeScore: number,
   awayScore: number,
   midMatchTweet: string,
-  divisionId: number
+  hashtags: string[],
 ) => {
-  return `${minute}' – ${midMatchTweet}\n\n${homeTeamTwitter} ${homeScore}-${awayScore} ${awayTeamTwitter}\n\n${
-    divisionId > 2 ? "#L1OLive" : "#EveryPointMatters"
-  }`;
+  return `${minute}' – ${midMatchTweet}\n\n${homeTeamTwitter} ${homeScore}-${awayScore} ${awayTeamTwitter}\n\n${hashtags.join(' | ')}`;
 };
 
 export const generateGoalTweet = (
@@ -82,13 +78,11 @@ export const generateGoalTweet = (
   awayTeamScore: number,
   isHomeGoal: boolean,
   minute: string,
-  divisionId: number
+  hashtags: string[]
 ) => {
   return `${minute}' – GOAL for ${
     isHomeGoal ? homeTeamTwitter : awayTeamTwitter
-  }\n\n${goalTweet}\n\n${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n${
-    divisionId > 2 ? "#L1OLive" : "#EveryPointMatters"
-  }`;
+  }\n\n${goalTweet}\n\n${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n${hashtags.join(' | ')}`;
 };
 
 export const generateRedCardTweet = (
@@ -99,13 +93,11 @@ export const generateRedCardTweet = (
   awayTeamTwitter: string,
   awayTeamScore: number,
   isHomeRedCard: boolean,
-  divisionId: number
+  hashtags: string[]
 ) => {
   return `${redCardMinute}' – RED CARD issued to ${
     isHomeRedCard ? homeTeamTwitter : awayTeamTwitter
-  } ${redCardPlayer}\n\n${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n${
-    divisionId > 2 ? "#L1OLive" : "#EveryPointMatters"
-  }`;
+  } ${redCardPlayer}\n\n${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n${hashtags.join(' | ')}`;
 };
 
 export const generateBreakTweet = (
@@ -116,7 +108,7 @@ export const generateBreakTweet = (
   awayTeamScore: number,
   breakContent: string,
   isFullTime: boolean,
-  divisionId: number
+  hashtags: string[],
 ) => {
   return `${isFullTime ? "Full-time" : "Half-time"}${
     isFullTime ? ` between ${homeTeamTwitter} and ${awayTeamTwitter}` : ""
@@ -124,7 +116,7 @@ export const generateBreakTweet = (
     isFullTime
       ? ""
       : `${homeTeamTwitter} ${homeTeamScore}-${awayTeamScore} ${awayTeamTwitter}\n\n`
-  }${divisionId > 2 ? "#L1OLive" : "#EveryPointMatters"}`;
+  }${hashtags.join(' | ')}`;
 };
 
 export const validatePlayerNumbers = (players: RosterPlayerType[]) => {
