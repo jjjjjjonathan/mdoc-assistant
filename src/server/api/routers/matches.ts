@@ -56,6 +56,8 @@ export const matchesRouter = createTRPCRouter({
     const matches = await ctx.prisma.match.findMany({
       where: { userId },
       select: {
+        isNeutral: true,
+        isForChampionship: true,
         id: true,
         scheduledTime: true,
         e2eNumber: true,
@@ -141,6 +143,8 @@ export const matchesRouter = createTRPCRouter({
         e2eNumber: z.number(),
         scheduledTime: z.string(),
         matchId: z.number().optional(),
+        isNeutral: z.boolean(),
+        isForChampionship: z.boolean(),
       })
     )
     .mutation(async ({ ctx, input }) => {

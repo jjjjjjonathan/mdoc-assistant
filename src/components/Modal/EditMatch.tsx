@@ -2,6 +2,8 @@ import { useState } from "react";
 import { formatISO9075 } from "date-fns";
 
 type EditMatchModalProps = {
+  isNeutralMatch: boolean;
+  isChampionshipMatch: boolean;
   matchId: number;
   divisionId: number;
   homeTeamId: number;
@@ -14,7 +16,9 @@ type EditMatchModalProps = {
     homeTeamId: number,
     awayTeamId: number,
     e2eNumber: number,
-    scheduledTime: string
+    scheduledTime: string,
+    isNeutral: boolean,
+    isForChampionship: boolean
   ) => void;
   divisionsAndTeams:
     | {
@@ -42,6 +46,8 @@ const EditMatchModal = ({
   scheduledTimeDate,
   onEditMatch,
   divisionsAndTeams,
+  isNeutralMatch,
+  isChampionshipMatch,
 }: EditMatchModalProps) => {
   const [division, setDivision] = useState(divisionId);
   const [teamsList, setTeamsList] = useState<Team[] | undefined>(
@@ -53,6 +59,9 @@ const EditMatchModal = ({
   const [scheduledTime, setScheduledTime] = useState(
     scheduledTimeDate.toISOString()
   );
+  const [isNeutral, setIsNeutral] = useState(isNeutralMatch);
+  const [isForChampionship, setIsForChampionship] =
+    useState(isChampionshipMatch);
 
   return (
     <>
@@ -141,6 +150,35 @@ const EditMatchModal = ({
               }}
               value={formatISO9075(new Date(scheduledTime))}
             />
+            <div className="form-control">
+              <label className="label cursor-pointer gap-x-4">
+                <span className="label-text">
+                  Check if match on neutral field
+                </span>
+                <input
+                  type="checkbox"
+                  checked={isNeutral}
+                  className="checkbox-secondary checkbox"
+                  onChange={(event) => setIsNeutral(!!event.target.checked)}
+                />
+              </label>
+            </div>
+            <div className="form-control">
+              <label className="label cursor-pointer gap-x-4">
+                <span className="label-text">
+                  Check if match is championship final
+                </span>
+                <input
+                  type="checkbox"
+                  checked={isForChampionship}
+                  disabled={division <= 2}
+                  className="checkbox-accent checkbox"
+                  onChange={(event) =>
+                    setIsForChampionship(!!event.target.checked)
+                  }
+                />
+              </label>
+            </div>
           </form>
           <div className="modal-action">
             <label
@@ -153,7 +191,9 @@ const EditMatchModal = ({
                   homeTeam,
                   awayTeam,
                   parseInt(e2eNumber, 10),
-                  scheduledTime
+                  scheduledTime,
+                  isNeutral,
+                  isForChampionship
                 )
               }
             >

@@ -26,7 +26,9 @@ const MatchList: NextPage = () => {
     homeTeamId: number,
     awayTeamId: number,
     e2eNumber: number,
-    scheduledTime: string
+    scheduledTime: string,
+    isNeutral: boolean,
+    isForChampionship: boolean
   ) => {
     updateMatch({
       matchId,
@@ -35,6 +37,8 @@ const MatchList: NextPage = () => {
       awayTeamId,
       e2eNumber,
       scheduledTime,
+      isNeutral,
+      isForChampionship,
     });
   };
 
@@ -79,6 +83,8 @@ const MatchList: NextPage = () => {
               e2eNumber={match.e2eNumber}
               onEditMatch={updateCreatedMatch}
               divisionsAndTeams={divisionsTeamsData}
+              isNeutral={match.isNeutral}
+              isForChampionship={match.isForChampionship}
             />
           ))}
         </div>
