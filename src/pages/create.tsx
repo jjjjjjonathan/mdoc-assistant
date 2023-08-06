@@ -39,7 +39,15 @@ const CreateMatchPage: NextPage = () => {
     e2eNumber,
     scheduledTime,
   }: NewMatchInput) => {
-    mutate({ division, homeTeamId, awayTeamId, e2eNumber, scheduledTime });
+    mutate({
+      division,
+      homeTeamId,
+      awayTeamId,
+      e2eNumber,
+      scheduledTime,
+      isNeutral,
+      isForChampionship,
+    });
   };
 
   const displaySuccessToast = () => {
@@ -52,6 +60,8 @@ const CreateMatchPage: NextPage = () => {
   const [awayTeamId, setAwayTeamId] = useState(0);
   const [e2eNumber, setE2eNumber] = useState(NaN);
   const [scheduledTime, setScheduledTime] = useState("");
+  const [isNeutral, setIsNeutral] = useState(false);
+  const [isForChampionship, setIsForChampionship] = useState(false);
 
   const resetForm = () => {
     setDivision(0);
@@ -60,6 +70,8 @@ const CreateMatchPage: NextPage = () => {
     setAwayTeamId(0);
     setE2eNumber(NaN);
     setScheduledTime("");
+    setIsNeutral(false);
+    setIsForChampionship(false);
   };
 
   const resetToast = () => {
@@ -165,6 +177,31 @@ const CreateMatchPage: NextPage = () => {
           }}
           onFocus={() => resetToast()}
         />
+        <div className="form-control">
+          <label className="label cursor-pointer gap-x-4">
+            <span className="label-text">Check if match on neutral field</span>
+            <input
+              type="checkbox"
+              checked={isNeutral}
+              className="checkbox-secondary checkbox"
+              onChange={(event) => setIsNeutral(!!event.target.checked)}
+            />
+          </label>
+        </div>
+        <div className="form-control">
+          <label className="label cursor-pointer gap-x-4">
+            <span className="label-text">
+              Check if match is championship final
+            </span>
+            <input
+              type="checkbox"
+              checked={isForChampionship}
+              disabled={division <= 2}
+              className="checkbox-accent checkbox"
+              onChange={(event) => setIsForChampionship(!!event.target.checked)}
+            />
+          </label>
+        </div>
         <button
           disabled={
             division <= 0 ||

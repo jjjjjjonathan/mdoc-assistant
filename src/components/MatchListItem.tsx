@@ -5,6 +5,8 @@ import EditMatchModal from "./Modal/EditMatch";
 import DeleteMatchModal from "./Modal/DeleteMatch";
 
 type MatchListItemProps = {
+  isNeutral: boolean;
+  isForChampionship: boolean;
   homeTeam: {
     logo: string;
     name: string;
@@ -29,7 +31,9 @@ type MatchListItemProps = {
     homeTeamId: number,
     awayTeamId: number,
     e2eNumber: number,
-    scheduledTime: string
+    scheduledTime: string,
+    isNeutral: boolean,
+    isForChampionship: boolean
   ) => void;
   divisionsAndTeams:
     | {
@@ -53,6 +57,8 @@ const MatchListItem = ({
   e2eNumber,
   onEditMatch,
   divisionsAndTeams,
+  isNeutral,
+  isForChampionship,
 }: MatchListItemProps) => {
   return (
     <>
@@ -118,6 +124,8 @@ const MatchListItem = ({
         scheduledTimeDate={scheduledTime}
         onEditMatch={onEditMatch}
         divisionsAndTeams={divisionsAndTeams}
+        isNeutralMatch={isNeutral}
+        isChampionshipMatch={isForChampionship}
       />
       <DeleteMatchModal
         id={id}
