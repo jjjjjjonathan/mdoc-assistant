@@ -567,7 +567,7 @@ const TweetTemplate = ({
             onChange={(event) => setBreakContent(event.target.value)}
           ></textarea>
           {stadium.length <= 0 || breakContent.length <= 0 ? (
-            <TextArea text="Write the minute and player name for a red card, and a tweet will generate." />
+            <TextArea text="Write a description of the match and a tweet will generate." />
           ) : (
             <TextArea text={breakTweet} />
           )}
