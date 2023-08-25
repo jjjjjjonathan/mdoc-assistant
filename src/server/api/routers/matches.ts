@@ -157,6 +157,8 @@ export const matchesRouter = createTRPCRouter({
           homeTeamId: input.homeTeamId,
           awayTeamId: input.awayTeamId,
           scheduledTime: input.scheduledTime,
+          isNeutral: input.isNeutral,
+          isForChampionship: input.isForChampionship,
         },
         create: {
           userId,
@@ -165,6 +167,8 @@ export const matchesRouter = createTRPCRouter({
           homeTeamId: input.homeTeamId,
           awayTeamId: input.awayTeamId,
           scheduledTime: input.scheduledTime,
+          isNeutral: input.isNeutral,
+          isForChampionship: input.isForChampionship,
         },
       });
 
