@@ -225,8 +225,8 @@ export const matchesRouter = createTRPCRouter({
       );
       graphic.print(
         font,
-        input.divisionId > 2 && input.isMatchWithPenalties ? -155 : -125,
-        55,
+        input.divisionId > 2 && input.isMatchWithPenalties ? -165 : -135,
+        45,
         {
           text: input.homeScore.toString(10),
           alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
@@ -242,7 +242,7 @@ export const matchesRouter = createTRPCRouter({
           input.divisionId > 2 && input.homeScore === input.awayScore
             ? -85
             : -125,
-          55,
+          45,
           {
             text: `(${input.homePenalties})`,
             alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
@@ -257,7 +257,7 @@ export const matchesRouter = createTRPCRouter({
           input.divisionId > 2 && input.homeScore === input.awayScore
             ? -85
             : -125,
-          285,
+          290,
           {
             text: `(${input.awayPenalties})`,
             alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
@@ -270,8 +270,8 @@ export const matchesRouter = createTRPCRouter({
 
       graphic.print(
         font,
-        input.divisionId > 2 && input.isMatchWithPenalties ? -155 : -125,
-        285,
+        input.divisionId > 2 && input.isMatchWithPenalties ? -165 : -135,
+        290,
         {
           text: input.awayScore.toString(10),
           alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
