@@ -209,9 +209,7 @@ export const matchesRouter = createTRPCRouter({
       const font = await Jimp.loadFont(
         `${env.STATIC_FILES}jimp-fonts/leagueSpartanWhite.fnt`
       );
-      // const finalsTextFont = await Jimp.loadFont(
-      //   `${env.STATIC_FILES}jimp-fonts/smallLeagueSpartan.fnt`
-      // );
+
       const winningTeam = getWinningTeamName(
         input.homeTeam,
         input.awayTeam,
@@ -281,23 +279,6 @@ export const matchesRouter = createTRPCRouter({
         1080
       );
 
-      // if (input.divisionId > 2) {
-      //   graphic.print(
-      //     finalsTextFont,
-      //     0,
-      //     435,
-      //     {
-      //       text: `${winningTeam} win the ${input.division}`
-      //         .replace("Playoffs", "")
-      //         .toUpperCase(),
-      //       alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER,
-      //       alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
-      //     },
-      //     1080,
-      //     1080
-      //   );
-      // }
-
       const base64 = await graphic.getBase64Async(Jimp.AUTO);
       const altText = `Full time between ${input.homeTeam} and ${
         input.awayTeam
@@ -305,7 +286,10 @@ export const matchesRouter = createTRPCRouter({
         input.homeTeam
       }: ${input.homeScore}, ${input.awayTeam}: ${input.awayScore}.${
         input.divisionId > 2
-          ? ` ${winningTeam} advance to the 2023 ${input.division} final${
+          ? ` ${winningTeam} are the 2023 ${input.division.replace(
+              "Playoffs",
+              ""
+            )}champions${
               input.isMatchWithPenalties
                 ? ` after winning ${
                     input.homePenalties > input.awayPenalties
