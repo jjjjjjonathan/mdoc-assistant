@@ -4,8 +4,8 @@ const initialState = {
   stadium: "",
   minute: "",
   scores: {
-    home: 2,
-    away: 2,
+    home: 0,
+    away: 0,
   },
   penalties: {
     home: 0,

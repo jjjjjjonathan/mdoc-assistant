@@ -15,6 +15,7 @@ import Toast from "./Toast";
 import useMatchState from "~/hooks/useMatchState";
 import useToast from "~/hooks/useToast";
 import TwitterGraphicModal from "./Modal/TwitterGraphic";
+import ScoreUpdater from "./ScoreUpdater";
 
 type TweetTemplateProps = {
   homeTeamTwitter: string;
@@ -43,8 +44,6 @@ const TweetTemplate = ({
   const [stadium, setStadium] = useState("");
   const [extraContext, setExtraContext] = useState("");
   const [minute, setMinute] = useState("");
-  const [homeScore, setHomeScore] = useState(0);
-  const [awayScore, setAwayScore] = useState(0);
   const [midMatchTweet, setMidMatchTweet] = useState("");
   const [kickoffContent, setKickoffContent] = useState("");
 
@@ -95,8 +94,8 @@ const TweetTemplate = ({
   const generateTwitterGraphic = async (file: File) => {
     const base64String = await generateBase64(file);
     generateGraphic({
-      homeScore,
-      awayScore,
+      homeScore: state.scores.home,
+      awayScore: state.scores.away,
       base64: base64String,
       homeTeam: homeTeamName,
       awayTeam: awayTeamName,
@@ -130,8 +129,8 @@ const TweetTemplate = ({
     minute,
     homeTeamTwitter,
     awayTeamTwitter,
-    homeScore,
-    awayScore,
+    state.scores.home,
+    state.scores.away,
     midMatchTweet,
     hashtags
   );
@@ -139,9 +138,9 @@ const TweetTemplate = ({
   const goalTweet = generateGoalTweet(
     goalContent,
     homeTeamTwitter,
-    homeScore,
+    state.scores.home,
     awayTeamTwitter,
-    awayScore,
+    state.scores.away,
     isHomeGoal,
     goalMinute,
     hashtags
@@ -151,9 +150,9 @@ const TweetTemplate = ({
     redCardMinute,
     redCardPlayer,
     homeTeamTwitter,
-    homeScore,
+    state.scores.home,
     awayTeamTwitter,
-    awayScore,
+    state.scores.away,
     isHomeRedCard,
     hashtags
   );
@@ -161,9 +160,9 @@ const TweetTemplate = ({
   const breakTweet = generateBreakTweet(
     stadium,
     homeTeamTwitter,
-    homeScore,
+    state.scores.home,
     awayTeamTwitter,
-    awayScore,
+    state.scores.away,
     breakContent,
     isFullTime,
     hashtags
@@ -223,18 +222,6 @@ const TweetTemplate = ({
     });
   };
 
-  const increaseScore = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomeScore((prev) => prev + 1)
-      : setAwayScore((prev) => prev + 1);
-  };
-
-  const decreaseScore = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomeScore((prev) => (prev <= 0 ? 0 : prev - 1))
-      : setAwayScore((prev) => (prev <= 0 ? 0 : prev - 1));
-  };
-
   const increasePenalties = (isHomeTeam: boolean) => {
     isHomeTeam
       ? setHomePenalties((prev) => prev + 1)
@@ -259,44 +246,14 @@ const TweetTemplate = ({
             value={stadium}
             onChange={(event) => setStadium(event.target.value)}
           />
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {homeTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => handleScoreDecrease("home")}
-                disabled={state.scores.home <= 0}
-              >
-                -1
-              </button>
-              <p>{state.scores.home}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => handleScoreIncrease("home")}
-              >
-                +1
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {awayTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => handleScoreDecrease("away")}
-                disabled={state.scores.away <= 0}
-              >
-                -1
-              </button>
-              <p>{state.scores.away}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => handleScoreIncrease("away")}
-              >
-                +1
-              </button>
-            </div>
-          </div>
+          <ScoreUpdater
+            homeTeamName={homeTeamName}
+            awayTeamName={awayTeamName}
+            homeScore={state.scores.home}
+            awayScore={state.scores.away}
+            handleScoreDecrease={handleScoreDecrease}
+            handleScoreIncrease={handleScoreIncrease}
+          />
         </div>
       </div>
       <div className="card bg-neutral text-neutral-content">
@@ -476,42 +433,14 @@ const TweetTemplate = ({
               />
             </label>
           </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {homeTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(true)}
-              >
-                -1
-              </button>
-              <p>{homeScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(true)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {awayTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(false)}
-              >
-                -1
-              </button>
-              <p>{awayScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(false)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
+          <ScoreUpdater
+            homeTeamName={homeTeamName}
+            awayTeamName={awayTeamName}
+            homeScore={state.scores.home}
+            awayScore={state.scores.away}
+            handleScoreDecrease={handleScoreDecrease}
+            handleScoreIncrease={handleScoreIncrease}
+          />
           <input
             type="text"
             placeholder="Write the name of the field."
@@ -542,42 +471,14 @@ const TweetTemplate = ({
       <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Final Score Graphic</h2>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {homeTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(true)}
-              >
-                -1
-              </button>
-              <p>{homeScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(true)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {awayTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(false)}
-              >
-                -1
-              </button>
-              <p>{awayScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(false)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
+          <ScoreUpdater
+            homeTeamName={homeTeamName}
+            awayTeamName={awayTeamName}
+            homeScore={state.scores.home}
+            awayScore={state.scores.away}
+            handleScoreDecrease={handleScoreDecrease}
+            handleScoreIncrease={handleScoreIncrease}
+          />
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
@@ -651,7 +552,10 @@ const TweetTemplate = ({
                 type="file"
                 className="file-input-bordered file-input-primary file-input w-full max-w-xs"
                 onChange={(event) => {
-                  if (isMatchWithPenalties && homeScore !== awayScore) {
+                  if (
+                    isMatchWithPenalties &&
+                    state.scores.home !== state.scores.away
+                  ) {
                     dispatchToast({
                       type: "SET_ERROR",
                       message:
