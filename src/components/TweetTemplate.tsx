@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { api } from "~/utils/api";
 import TextInput from "./Form/TextInput";
 import {
@@ -12,6 +12,7 @@ import {
 import TextArea from "./Form/TextArea";
 import ClipboardCopyButton from "./ClipboardCopyButton";
 import Toast from "./Toast";
+import useMatchState from "~/hooks/useMatchState";
 import useToast from "~/hooks/useToast";
 import TwitterGraphicModal from "./Modal/TwitterGraphic";
 
@@ -38,28 +39,23 @@ const TweetTemplate = ({
   isNeutral,
   isForChampionship,
 }: TweetTemplateProps) => {
+  const { state, dispatch } = useMatchState();
   const [stadium, setStadium] = useState("");
   const [extraContext, setExtraContext] = useState("");
   const [minute, setMinute] = useState("");
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
   const [midMatchTweet, setMidMatchTweet] = useState("");
-  const [preMatchTweet, setPreMatchTweet] = useState("");
   const [kickoffContent, setKickoffContent] = useState("");
-  const [kickoffTweet, setKickoffTweet] = useState("");
-  const [matchTweet, setMatchTweet] = useState("");
 
   const [goalMinute, setGoalMinute] = useState("");
   const [isHomeGoal, setIsHomeGoal] = useState(false);
   const [goalContent, setGoalContent] = useState("");
-  const [goalTweet, setGoalTweet] = useState("");
   const [redCardPlayer, setRedCardPlayer] = useState("");
   const [isHomeRedCard, setIsHomeRedCard] = useState(false);
   const [redCardMinute, setRedCardMinute] = useState("");
-  const [redCardTweet, setRedCardTweet] = useState("");
   const [breakContent, setBreakContent] = useState("");
   const [isFullTime, setIsFullTime] = useState(false);
-  const [breakTweet, setBreakTweet] = useState("");
 
   const [src, setSrc] = useState("");
   const [altText, setAltText] = useState("");
@@ -112,75 +108,35 @@ const TweetTemplate = ({
     });
   };
 
-  useEffect(() => {
-    setPreMatchTweet(
-      generatePreMatchTweet(
-        stadium,
-        homeTeamTwitter,
-        awayTeamTwitter,
-        division,
-        extraContext,
-        hashtags,
-        isNeutral,
-        isForChampionship
-      )
-    );
-  }, [
+  const preMatchTweet = generatePreMatchTweet(
     stadium,
-    extraContext,
     homeTeamTwitter,
     awayTeamTwitter,
     division,
-    divisionId,
-  ]);
+    extraContext,
+    hashtags,
+    isNeutral,
+    isForChampionship
+  );
 
-  useEffect(() => {
-    setMatchTweet(
-      generateMatchTweet(
-        minute,
-        homeTeamTwitter,
-        awayTeamTwitter,
-        homeScore,
-        awayScore,
-        midMatchTweet,
-        hashtags
-      )
-    );
-  }, [
+  const kickoffTweet = generateKickoffTweet(
+    kickoffContent,
+    homeTeamTwitter,
+    awayTeamTwitter,
+    hashtags
+  );
+
+  const matchTweet = generateMatchTweet(
     minute,
     homeTeamTwitter,
     awayTeamTwitter,
     homeScore,
     awayScore,
     midMatchTweet,
-    divisionId,
-  ]);
+    hashtags
+  );
 
-  useEffect(() => {
-    setKickoffTweet(
-      generateKickoffTweet(
-        kickoffContent,
-        homeTeamTwitter,
-        awayTeamTwitter,
-        hashtags
-      )
-    );
-  }, [kickoffContent, homeTeamTwitter, awayTeamTwitter, divisionId]);
-
-  useEffect(() => {
-    setGoalTweet(
-      generateGoalTweet(
-        goalContent,
-        homeTeamTwitter,
-        homeScore,
-        awayTeamTwitter,
-        awayScore,
-        isHomeGoal,
-        goalMinute,
-        hashtags
-      )
-    );
-  }, [
+  const goalTweet = generateGoalTweet(
     goalContent,
     homeTeamTwitter,
     homeScore,
@@ -188,47 +144,21 @@ const TweetTemplate = ({
     awayScore,
     isHomeGoal,
     goalMinute,
-    divisionId,
-  ]);
+    hashtags
+  );
 
-  useEffect(() => {
-    setRedCardTweet(
-      generateRedCardTweet(
-        redCardMinute,
-        redCardPlayer,
-        homeTeamTwitter,
-        homeScore,
-        awayTeamTwitter,
-        awayScore,
-        isHomeRedCard,
-        hashtags
-      )
-    );
-  }, [
+  const redCardTweet = generateRedCardTweet(
     redCardMinute,
     redCardPlayer,
-    isHomeRedCard,
-    awayScore,
+    homeTeamTwitter,
     homeScore,
     awayTeamTwitter,
-    homeTeamTwitter,
-    divisionId,
-  ]);
+    awayScore,
+    isHomeRedCard,
+    hashtags
+  );
 
-  useEffect(() => {
-    setBreakTweet(
-      generateBreakTweet(
-        stadium,
-        homeTeamTwitter,
-        homeScore,
-        awayTeamTwitter,
-        awayScore,
-        breakContent,
-        isFullTime,
-        hashtags
-      )
-    );
-  }, [
+  const breakTweet = generateBreakTweet(
     stadium,
     homeTeamTwitter,
     homeScore,
@@ -236,8 +166,8 @@ const TweetTemplate = ({
     awayScore,
     breakContent,
     isFullTime,
-    divisionId,
-  ]);
+    hashtags
+  );
 
   const handleExtraContextChange = (newExtraContext: string) => {
     setExtraContext(newExtraContext);
@@ -265,6 +195,32 @@ const TweetTemplate = ({
 
   const handleRedCardPlayerChange = (newPlayer: string) => {
     setRedCardPlayer(newPlayer);
+  };
+
+  const handleScoreDecrease = (team: "home" | "away") => {
+    if (state.scores[team] > 0) {
+      dispatch({
+        type: "CHANGE_SCORE",
+        payload: {
+          scoreUpdate: {
+            team,
+            scoreChange: -1,
+          },
+        },
+      });
+    }
+  };
+
+  const handleScoreIncrease = (team: "home" | "away") => {
+    dispatch({
+      type: "CHANGE_SCORE",
+      payload: {
+        scoreUpdate: {
+          team,
+          scoreChange: 1,
+        },
+      },
+    });
   };
 
   const increaseScore = (isHomeTeam: boolean) => {
@@ -308,14 +264,15 @@ const TweetTemplate = ({
             <div className="flex flex-row items-center gap-x-4">
               <button
                 className="btn-secondary btn"
-                onClick={() => decreaseScore(true)}
+                onClick={() => handleScoreDecrease("home")}
+                disabled={state.scores.home <= 0}
               >
                 -1
               </button>
-              <p>{homeScore}</p>
+              <p>{state.scores.home}</p>
               <button
                 className="btn-accent btn"
-                onClick={() => increaseScore(true)}
+                onClick={() => handleScoreIncrease("home")}
               >
                 +1
               </button>
@@ -326,14 +283,15 @@ const TweetTemplate = ({
             <div className="flex flex-row items-center gap-x-4">
               <button
                 className="btn-secondary btn"
-                onClick={() => decreaseScore(false)}
+                onClick={() => handleScoreDecrease("away")}
+                disabled={state.scores.away <= 0}
               >
                 -1
               </button>
-              <p>{awayScore}</p>
+              <p>{state.scores.away}</p>
               <button
                 className="btn-accent btn"
-                onClick={() => increaseScore(false)}
+                onClick={() => handleScoreIncrease("away")}
               >
                 +1
               </button>
