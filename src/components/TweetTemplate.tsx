@@ -29,6 +29,28 @@ type TweetTemplateProps = {
   isForChampionship: boolean;
 };
 
+type MinuteInputProps = {
+  handleChange: (newMinute: string) => void;
+  value: string;
+  placeholder: string;
+};
+
+const MinuteInput = ({
+  handleChange,
+  value,
+  placeholder,
+}: MinuteInputProps) => {
+  return (
+    <input
+      type="text"
+      onChange={(event) => handleChange(event.target.value)}
+      placeholder={placeholder}
+      value={value}
+      className="input-bordered input w-full"
+    />
+  );
+};
+
 const TweetTemplate = ({
   homeTeamTwitter,
   awayTeamTwitter,
@@ -41,18 +63,15 @@ const TweetTemplate = ({
   isForChampionship,
 }: TweetTemplateProps) => {
   const { state, dispatch } = useMatchState();
-  const [stadium, setStadium] = useState("");
+  // const [stadium, setStadium] = useState("");
   const [extraContext, setExtraContext] = useState("");
-  const [minute, setMinute] = useState("");
   const [midMatchTweet, setMidMatchTweet] = useState("");
   const [kickoffContent, setKickoffContent] = useState("");
 
-  const [goalMinute, setGoalMinute] = useState("");
   const [isHomeGoal, setIsHomeGoal] = useState(false);
   const [goalContent, setGoalContent] = useState("");
   const [redCardPlayer, setRedCardPlayer] = useState("");
   const [isHomeRedCard, setIsHomeRedCard] = useState(false);
-  const [redCardMinute, setRedCardMinute] = useState("");
   const [breakContent, setBreakContent] = useState("");
   const [isFullTime, setIsFullTime] = useState(false);
 
@@ -108,7 +127,7 @@ const TweetTemplate = ({
   };
 
   const preMatchTweet = generatePreMatchTweet(
-    stadium,
+    state.stadium,
     homeTeamTwitter,
     awayTeamTwitter,
     division,
@@ -126,7 +145,7 @@ const TweetTemplate = ({
   );
 
   const matchTweet = generateMatchTweet(
-    minute,
+    state.minute,
     homeTeamTwitter,
     awayTeamTwitter,
     state.scores.home,
@@ -142,12 +161,12 @@ const TweetTemplate = ({
     awayTeamTwitter,
     state.scores.away,
     isHomeGoal,
-    goalMinute,
+    state.minute,
     hashtags
   );
 
   const redCardTweet = generateRedCardTweet(
-    redCardMinute,
+    state.minute,
     redCardPlayer,
     homeTeamTwitter,
     state.scores.home,
@@ -158,7 +177,7 @@ const TweetTemplate = ({
   );
 
   const breakTweet = generateBreakTweet(
-    stadium,
+    state.stadium,
     homeTeamTwitter,
     state.scores.home,
     awayTeamTwitter,
@@ -168,12 +187,26 @@ const TweetTemplate = ({
     hashtags
   );
 
+  const handleStadiumChange = (newStadium: string) => {
+    dispatch({
+      type: "CHANGE_STADIUM",
+      payload: {
+        newStadium,
+      },
+    });
+  };
+
   const handleExtraContextChange = (newExtraContext: string) => {
     setExtraContext(newExtraContext);
   };
 
   const handleMinuteChange = (newMinute: string) => {
-    setMinute(newMinute.length === 0 ? "0" : newMinute);
+    dispatch({
+      type: "CHANGE_MINUTE",
+      payload: {
+        newMinute,
+      },
+    });
   };
 
   const handleMidMatchTweetChange = (newTweet: string) => {
@@ -182,14 +215,6 @@ const TweetTemplate = ({
 
   const handleKickoffTweetChange = (newTweet: string) => {
     setKickoffContent(newTweet);
-  };
-
-  const handleGoalMinuteChange = (newMinute: string) => {
-    setGoalMinute(newMinute);
-  };
-
-  const handleRedCardMinuteChange = (newMinute: string) => {
-    setRedCardMinute(newMinute);
   };
 
   const handleRedCardPlayerChange = (newPlayer: string) => {
@@ -243,8 +268,8 @@ const TweetTemplate = ({
             type="text"
             placeholder="Write the name of the field."
             className="input-bordered input w-full"
-            value={stadium}
-            onChange={(event) => setStadium(event.target.value)}
+            value={state.stadium}
+            onChange={(event) => handleStadiumChange(event.target.value)}
           />
           <ScoreUpdater
             homeTeamName={homeTeamName}
@@ -264,7 +289,7 @@ const TweetTemplate = ({
             placeholder="Add optional context to the pre-match tweet"
             onChange={(event) => handleExtraContextChange(event.target.value)}
           ></textarea>
-          {stadium.length <= 0 ? (
+          {state.stadium.length <= 0 ? (
             <TextArea text="Write the name of the field and a pre-match tweet will generate." />
           ) : (
             <TextArea text={preMatchTweet} />
@@ -273,7 +298,7 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={preMatchTweet}
               textType="pre-match tweet"
-              disabled={stadium.length <= 0}
+              disabled={state.stadium.length <= 0}
             />
           </div>
         </div>
@@ -304,17 +329,29 @@ const TweetTemplate = ({
       <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Mid-match update</h2>
-          <TextInput
+          {/* <TextInput
             handleChange={handleMinuteChange}
             placeholder="Current minute of the match"
-            initialValue=""
+            initialValue={state.midMatchMinute}
+          /> */}
+          <MinuteInput
+            value={state.minute}
+            placeholder={"Current minute of the match"}
+            handleChange={handleMinuteChange}
           />
+          {/* <input
+            type="text"
+            onChange={handleMinuteChange}
+            placeholder="Current minute of the match"
+            value={state.minute}
+            className="input-bordered input w-full"
+          /> */}
           <textarea
             className="textarea-bordered textarea"
             placeholder="What happened in the match?"
             onChange={(event) => handleMidMatchTweetChange(event.target.value)}
           ></textarea>
-          {midMatchTweet.length <= 0 || minute.length <= 0 ? (
+          {midMatchTweet.length <= 0 || state.minute.length <= 0 ? (
             <TextArea text="Put down the minute and write a description of what happened in the match, and a tweet will generate." />
           ) : (
             <TextArea text={matchTweet} />
@@ -323,7 +360,7 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={matchTweet}
               textType="match tweet"
-              disabled={midMatchTweet.length <= 0 || minute.length <= 0}
+              disabled={midMatchTweet.length <= 0 || state.minute.length <= 0}
             />
           </div>
         </div>
@@ -346,10 +383,15 @@ const TweetTemplate = ({
             </label>
           </div>
 
-          <TextInput
-            handleChange={handleGoalMinuteChange}
+          {/* <TextInput
+            handleChange={handleMinuteChange}
             placeholder={`Minute for goal`}
-            initialValue={""}
+            initialValue={state.midMatchMinute}
+          /> */}
+          <MinuteInput
+            value={state.minute}
+            placeholder={"Minute for goal"}
+            handleChange={handleMinuteChange}
           />
           <textarea
             className="textarea-bordered textarea"
@@ -357,7 +399,7 @@ const TweetTemplate = ({
             onChange={(event) => setGoalContent(event.target.value)}
           ></textarea>
 
-          {goalContent.length <= 0 || goalMinute.length <= 0 ? (
+          {goalContent.length <= 0 || state.minute.length <= 0 ? (
             <TextArea text="Write the minute and description of a goal, and a tweet will generate." />
           ) : (
             <TextArea text={goalTweet} />
@@ -367,7 +409,7 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={goalTweet}
               textType="goal tweet"
-              disabled={goalContent.length <= 0 || goalMinute.length <= 0}
+              disabled={goalContent.length <= 0 || state.goalMinute.length <= 0}
             />
           </div>
         </div>
@@ -390,10 +432,15 @@ const TweetTemplate = ({
             </label>
           </div>
 
-          <TextInput
-            handleChange={handleRedCardMinuteChange}
+          {/* <TextInput
+            handleChange={handleMinuteChange}
             placeholder={`Minute for red card`}
-            initialValue={""}
+            initialValue={state.minute}
+          /> */}
+          <MinuteInput
+            value={state.minute}
+            placeholder={"Minute for red card"}
+            handleChange={handleMinuteChange}
           />
           <TextInput
             handleChange={handleRedCardPlayerChange}
@@ -401,7 +448,7 @@ const TweetTemplate = ({
             initialValue={""}
           />
 
-          {redCardPlayer.length <= 0 || redCardMinute.length <= 0 ? (
+          {redCardPlayer.length <= 0 || state.minute.length <= 0 ? (
             <TextArea text="Write the minute and player name for a red card, and a tweet will generate." />
           ) : (
             <TextArea text={redCardTweet} />
@@ -411,7 +458,9 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={redCardTweet}
               textType="red card tweet"
-              disabled={redCardPlayer.length <= 0 || redCardMinute.length <= 0}
+              disabled={
+                redCardPlayer.length <= 0 || state.redCardMinute.length <= 0
+              }
             />
           </div>
         </div>
@@ -445,15 +494,15 @@ const TweetTemplate = ({
             type="text"
             placeholder="Write the name of the field."
             className="input-bordered input w-full"
-            value={stadium}
-            onChange={(event) => setStadium(event.target.value)}
+            value={state.stadium}
+            onChange={(event) => handleStadiumChange(event.target.value)}
           />
           <textarea
             className="textarea-bordered textarea"
             placeholder="Describe the events of the half."
             onChange={(event) => setBreakContent(event.target.value)}
           ></textarea>
-          {stadium.length <= 0 || breakContent.length <= 0 ? (
+          {state.stadium.length <= 0 || breakContent.length <= 0 ? (
             <TextArea text="Write a description of the match and a tweet will generate." />
           ) : (
             <TextArea text={breakTweet} />
@@ -462,7 +511,7 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={breakTweet}
               textType="break tweet"
-              disabled={stadium.length <= 0 || breakContent.length <= 0}
+              disabled={state.stadium.length <= 0 || breakContent.length <= 0}
             />
           </div>
         </div>

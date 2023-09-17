@@ -3,6 +3,8 @@ import { useReducer } from "react";
 const initialState = {
   stadium: "",
   minute: "",
+  goalMinute: "",
+  redCardMinute: "",
   scores: {
     home: 0,
     away: 0,
@@ -24,18 +26,15 @@ const initialState = {
 type State = typeof initialState;
 
 type ReducerActions = {
-  type: "CHANGE_SCORE" | "DEFAULT";
+  type: "CHANGE_SCORE" | "DEFAULT" | "CHANGE_MINUTE" | "CHANGE_STADIUM";
   payload?: {
     scoreUpdate?: {
       team: "home" | "away";
       scoreChange: 1 | -1;
     };
+    newMinute?: string;
+    newStadium?: string;
   };
-};
-
-type Reducers = {
-  CHANGE_SCORE: (state: State, action: ReducerActions) => State;
-  DEFAULT: (state: State) => State;
 };
 
 const useMatchState = () => {
@@ -50,6 +49,27 @@ const useMatchState = () => {
               state.scores[action.payload?.scoreUpdate?.team] +
               action.payload.scoreUpdate.scoreChange,
           },
+        };
+      }
+      return state;
+    },
+    CHANGE_MINUTE(state: State, action: ReducerActions) {
+      if (action.payload && action.payload.newMinute !== undefined) {
+        return {
+          ...state,
+          minute:
+            action.payload.newMinute.length !== 0
+              ? action.payload.newMinute
+              : "",
+        };
+      }
+      return state;
+    },
+    CHANGE_STADIUM(state: State, action: ReducerActions) {
+      if (action.payload && action.payload.newStadium !== undefined) {
+        return {
+          ...state,
+          stadium: action.payload.newStadium,
         };
       }
       return state;
