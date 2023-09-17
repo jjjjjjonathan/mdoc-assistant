@@ -26,7 +26,12 @@ const initialState = {
 type State = typeof initialState;
 
 type ReducerActions = {
-  type: "CHANGE_SCORE" | "DEFAULT" | "CHANGE_MINUTE" | "CHANGE_STADIUM";
+  type:
+    | "CHANGE_SCORE"
+    | "DEFAULT"
+    | "CHANGE_MINUTE"
+    | "CHANGE_STADIUM"
+    | "CHANGE_TWEET_CONTENT";
   payload?: {
     scoreUpdate?: {
       team: "home" | "away";
@@ -34,6 +39,16 @@ type ReducerActions = {
     };
     newMinute?: string;
     newStadium?: string;
+    tweetContentUpdate?: {
+      type:
+        | "preMatch"
+        | "kickoff"
+        | "midMatch"
+        | "goal"
+        | "redCard"
+        | "halfOrFullTime";
+      content: string;
+    };
   };
 };
 
@@ -74,12 +89,25 @@ const useMatchState = () => {
       }
       return state;
     },
+    CHANGE_TWEET_CONTENT(state: State, action: ReducerActions) {
+      if (action.payload && action.payload.tweetContentUpdate) {
+        return {
+          ...state,
+          tweetContent: {
+            ...state.tweetContent,
+            [action.payload.tweetContentUpdate.type]:
+              action.payload.tweetContentUpdate.content,
+          },
+        };
+      }
+      return state;
+    },
     DEFAULT(state: State) {
       return state;
     },
   };
   const reducer = (state: State, action: ReducerActions): State => {
-    return reducers[action.type](state, action);
+    return reducers[action.type || "DEFAULT"](state, action) || state;
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
