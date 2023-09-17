@@ -3,8 +3,6 @@ import { useReducer } from "react";
 const initialState = {
   stadium: "",
   minute: "",
-  goalMinute: "",
-  redCardMinute: "",
   scores: {
     home: 0,
     away: 0,
@@ -21,6 +19,17 @@ const initialState = {
     redCard: "",
     halfOrFullTime: "",
   },
+  statuses: {
+    isHomeGoal: false,
+    isHomeRedCard: false,
+    isFullTime: false,
+    isMatchWithPenalties: false,
+    isModalOpen: false,
+  },
+  modal: {
+    src: "",
+    altText: "",
+  },
 };
 
 type State = typeof initialState;
@@ -33,7 +42,9 @@ type ReducerActions = {
     | "CHANGE_STADIUM"
     | "CHANGE_TWEET_CONTENT"
     | "CHANGE_PENALTIES"
-    | "RESET_PENALTIES";
+    | "RESET_PENALTIES"
+    | "CHANGE_STATUS"
+    | "SET_GRAPHIC_MODAL";
   payload?: {
     scoreUpdate?: {
       team: "home" | "away";
@@ -54,6 +65,19 @@ type ReducerActions = {
         | "redCard"
         | "halfOrFullTime";
       content: string;
+    };
+    statusUpdates?: {
+      type:
+        | "isHomeGoal"
+        | "isHomeRedCard"
+        | "isFullTime"
+        | "isMatchWithPenalties"
+        | "isModalOpen";
+      statusValue: boolean;
+    };
+    graphicUpdate?: {
+      src: string;
+      altText: string;
     };
   };
 };
@@ -130,6 +154,35 @@ const useMatchState = () => {
         ...state,
         penalties: initialState.penalties,
       };
+    },
+    CHANGE_STATUS(state: State, action: ReducerActions) {
+      if (action.payload && action.payload.statusUpdates) {
+        return {
+          ...state,
+          statuses: {
+            ...state.statuses,
+            [action.payload.statusUpdates.type]:
+              action.payload.statusUpdates.statusValue,
+          },
+        };
+      }
+      return state;
+    },
+    SET_GRAPHIC_MODAL(state: State, action: ReducerActions) {
+      if (action.payload && action.payload.graphicUpdate) {
+        return {
+          ...state,
+          statuses: {
+            ...state.statuses,
+            isModalOpen: true,
+          },
+          modal: {
+            src: action.payload.graphicUpdate.src,
+            altText: action.payload.graphicUpdate.altText,
+          },
+        };
+      }
+      return state;
     },
   };
   const reducer = (state: State, action: ReducerActions): State => {

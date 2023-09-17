@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { api } from "~/utils/api";
 import TextInput from "./Form/TextInput";
 import {
@@ -64,27 +63,21 @@ const TweetTemplate = ({
 }: TweetTemplateProps) => {
   const { state, dispatch } = useMatchState();
 
-  const [isHomeGoal, setIsHomeGoal] = useState(false);
-  const [isHomeRedCard, setIsHomeRedCard] = useState(false);
-  const [isFullTime, setIsFullTime] = useState(false);
-
-  const [src, setSrc] = useState("");
-  const [altText, setAltText] = useState("");
-  const [modalStatus, setModalStatus] = useState(false);
-  const [isMatchWithPenalties, setIsMatchWithPenalties] = useState(false);
-  const changeModalStatus = (checked: boolean) => {
-    setModalStatus(checked);
-  };
-
   const { toastStatus, toastMessage, dispatchToast, clearToast } = useToast();
 
   const { mutate: generateGraphic } =
     api.matches.createFullTimeGraphic.useMutation({
       onSuccess: ({ base64, altText }) => {
         clearToast();
-        setSrc(base64);
-        setAltText(altText);
-        setModalStatus(true);
+        dispatch({
+          type: "SET_GRAPHIC_MODAL",
+          payload: {
+            graphicUpdate: {
+              src: base64,
+              altText,
+            },
+          },
+        });
       },
     });
 
@@ -113,7 +106,7 @@ const TweetTemplate = ({
       divisionId,
       homePenalties: state.penalties.home,
       awayPenalties: state.penalties.away,
-      isMatchWithPenalties,
+      isMatchWithPenalties: state.statuses.isMatchWithPenalties,
     });
   };
 
@@ -151,7 +144,7 @@ const TweetTemplate = ({
     state.scores.home,
     awayTeamTwitter,
     state.scores.away,
-    isHomeGoal,
+    state.statuses.isHomeGoal,
     state.minute,
     hashtags
   );
@@ -163,7 +156,7 @@ const TweetTemplate = ({
     state.scores.home,
     awayTeamTwitter,
     state.scores.away,
-    isHomeRedCard,
+    state.statuses.isHomeRedCard,
     hashtags
   );
 
@@ -174,7 +167,7 @@ const TweetTemplate = ({
     awayTeamTwitter,
     state.scores.away,
     state.tweetContent.halfOrFullTime,
-    isFullTime,
+    state.statuses.isFullTime,
     hashtags
   );
 
@@ -324,6 +317,66 @@ const TweetTemplate = ({
     dispatch({ type: "RESET_PENALTIES" });
   };
 
+  const handleGoalStatusChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isHomeGoal",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleRedCardStatusChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isHomeRedCard",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleBreakChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isFullTime",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleMatchWithPenaltiesChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isMatchWithPenalties",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleModalStatusChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isModalOpen",
+          statusValue,
+        },
+      },
+    });
+  };
+
   return (
     <div className="grid w-3/4 grid-cols-1 gap-4 md:grid-cols-2">
       <div className="card bg-neutral text-neutral-content">
@@ -429,13 +482,16 @@ const TweetTemplate = ({
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
-                Goal for {isHomeGoal ? homeTeamName : awayTeamName}
+                Goal for{" "}
+                {state.statuses.isHomeGoal ? homeTeamName : awayTeamName}
               </span>
               <input
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isHomeGoal}
-                onChange={(event) => setIsHomeGoal(!!event.target.checked)}
+                checked={state.statuses.isHomeGoal}
+                onChange={(event) =>
+                  handleGoalStatusChange(!!event.target.checked)
+                }
               />
             </label>
           </div>
@@ -474,13 +530,16 @@ const TweetTemplate = ({
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
-                Red Card for {isHomeRedCard ? homeTeamName : awayTeamName}
+                Red Card for{" "}
+                {state.statuses.isHomeRedCard ? homeTeamName : awayTeamName}
               </span>
               <input
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isHomeRedCard}
-                onChange={(event) => setIsHomeRedCard(!!event.target.checked)}
+                checked={state.statuses.isHomeRedCard}
+                onChange={(event) =>
+                  handleRedCardStatusChange(!!event.target.checked)
+                }
               />
             </label>
           </div>
@@ -508,7 +567,7 @@ const TweetTemplate = ({
               textType="red card tweet"
               disabled={
                 state.tweetContent.redCard.length <= 0 ||
-                state.redCardMinute.length <= 0
+                state.minute.length <= 0
               }
             />
           </div>
@@ -521,13 +580,14 @@ const TweetTemplate = ({
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
-                Tweet is for {isFullTime ? "full-time" : "half-time"}
+                Tweet is for{" "}
+                {state.statuses.isFullTime ? "full-time" : "half-time"}
               </span>
               <input
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isFullTime}
-                onChange={(event) => setIsFullTime(!!event.target.checked)}
+                checked={state.statuses.isFullTime}
+                onChange={(event) => handleBreakChange(!!event.target.checked)}
               />
             </label>
           </div>
@@ -586,7 +646,7 @@ const TweetTemplate = ({
               <span className="label-text">
                 {divisionId <= 2
                   ? "Penalties only for playoffs, ignore this toggle"
-                  : isMatchWithPenalties
+                  : state.statuses.isMatchWithPenalties
                   ? "Match went to penalties"
                   : "Match did not go to penalties"}
               </span>
@@ -594,9 +654,9 @@ const TweetTemplate = ({
                 disabled={divisionId <= 2}
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isMatchWithPenalties}
+                checked={state.statuses.isMatchWithPenalties}
                 onChange={(event) => {
-                  setIsMatchWithPenalties(!!event.target.checked);
+                  handleMatchWithPenaltiesChange(!!event.target.checked);
                   resetPenalties();
                 }}
               />
@@ -606,7 +666,10 @@ const TweetTemplate = ({
             <p>Penalties for {homeTeamName}:</p>
             <div className="flex flex-row items-center gap-x-4">
               <button
-                disabled={!isMatchWithPenalties || state.penalties.home <= 0}
+                disabled={
+                  !state.statuses.isMatchWithPenalties ||
+                  state.penalties.home <= 0
+                }
                 className="btn-secondary btn"
                 onClick={() => handlePenaltiesDecrease("home")}
               >
@@ -614,7 +677,7 @@ const TweetTemplate = ({
               </button>
               <p>{state.penalties.home}</p>
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={!state.statuses.isMatchWithPenalties}
                 className="btn-accent btn"
                 onClick={() => handlePenaltiesIncrease("home")}
               >
@@ -626,7 +689,10 @@ const TweetTemplate = ({
             <p>Penalties for {awayTeamName}:</p>
             <div className="flex flex-row items-center gap-x-4">
               <button
-                disabled={!isMatchWithPenalties || state.penalties.away <= 0}
+                disabled={
+                  !state.statuses.isMatchWithPenalties ||
+                  state.penalties.away <= 0
+                }
                 className="btn-secondary btn"
                 onClick={() => handlePenaltiesDecrease("away")}
               >
@@ -634,7 +700,7 @@ const TweetTemplate = ({
               </button>
               <p>{state.penalties.away}</p>
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={!state.statuses.isMatchWithPenalties}
                 className="btn-accent btn"
                 onClick={() => handlePenaltiesIncrease("away")}
               >
@@ -654,7 +720,7 @@ const TweetTemplate = ({
                 className="file-input-bordered file-input-primary file-input w-full max-w-xs"
                 onChange={(event) => {
                   if (
-                    isMatchWithPenalties &&
+                    state.statuses.isMatchWithPenalties &&
                     state.scores.home !== state.scores.away
                   ) {
                     dispatchToast({
@@ -663,7 +729,7 @@ const TweetTemplate = ({
                         "Match can't go to penalties if regular score isn't identical.",
                     });
                   } else if (
-                    isMatchWithPenalties &&
+                    state.statuses.isMatchWithPenalties &&
                     state.penalties.home === state.penalties.away
                   ) {
                     dispatchToast({
@@ -691,11 +757,11 @@ const TweetTemplate = ({
           </div>
         </div>
       </div>
-      {src.length > 0 && modalStatus ? (
+      {state.modal.src.length > 0 && state.statuses.isModalOpen ? (
         <TwitterGraphicModal
-          base64={src}
-          altText={altText}
-          changeModalStatus={changeModalStatus}
+          base64={state.modal.src}
+          altText={state.modal.altText}
+          changeModalStatus={handleModalStatusChange}
         />
       ) : null}
     </div>
