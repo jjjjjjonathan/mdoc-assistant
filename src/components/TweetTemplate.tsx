@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import TextInput from "./Form/TextInput";
 import {
@@ -12,8 +11,10 @@ import {
 import TextArea from "./Form/TextArea";
 import ClipboardCopyButton from "./ClipboardCopyButton";
 import Toast from "./Toast";
+import useMatchState from "~/hooks/useMatchState";
 import useToast from "~/hooks/useToast";
 import TwitterGraphicModal from "./Modal/TwitterGraphic";
+import ScoreUpdater from "./ScoreUpdater";
 
 type TweetTemplateProps = {
   homeTeamTwitter: string;
@@ -27,6 +28,28 @@ type TweetTemplateProps = {
   isForChampionship: boolean;
 };
 
+type MinuteInputProps = {
+  handleChange: (newMinute: string) => void;
+  value: string;
+  placeholder: string;
+};
+
+const MinuteInput = ({
+  handleChange,
+  value,
+  placeholder,
+}: MinuteInputProps) => {
+  return (
+    <input
+      type="text"
+      onChange={(event) => handleChange(event.target.value)}
+      placeholder={placeholder}
+      value={value}
+      className="input-bordered input w-full"
+    />
+  );
+};
+
 const TweetTemplate = ({
   homeTeamTwitter,
   awayTeamTwitter,
@@ -38,38 +61,7 @@ const TweetTemplate = ({
   isNeutral,
   isForChampionship,
 }: TweetTemplateProps) => {
-  const [stadium, setStadium] = useState("");
-  const [extraContext, setExtraContext] = useState("");
-  const [minute, setMinute] = useState("");
-  const [homeScore, setHomeScore] = useState(0);
-  const [awayScore, setAwayScore] = useState(0);
-  const [midMatchTweet, setMidMatchTweet] = useState("");
-  const [preMatchTweet, setPreMatchTweet] = useState("");
-  const [kickoffContent, setKickoffContent] = useState("");
-  const [kickoffTweet, setKickoffTweet] = useState("");
-  const [matchTweet, setMatchTweet] = useState("");
-
-  const [goalMinute, setGoalMinute] = useState("");
-  const [isHomeGoal, setIsHomeGoal] = useState(false);
-  const [goalContent, setGoalContent] = useState("");
-  const [goalTweet, setGoalTweet] = useState("");
-  const [redCardPlayer, setRedCardPlayer] = useState("");
-  const [isHomeRedCard, setIsHomeRedCard] = useState(false);
-  const [redCardMinute, setRedCardMinute] = useState("");
-  const [redCardTweet, setRedCardTweet] = useState("");
-  const [breakContent, setBreakContent] = useState("");
-  const [isFullTime, setIsFullTime] = useState(false);
-  const [breakTweet, setBreakTweet] = useState("");
-
-  const [src, setSrc] = useState("");
-  const [altText, setAltText] = useState("");
-  const [modalStatus, setModalStatus] = useState(false);
-  const [homePenalties, setHomePenalties] = useState(0);
-  const [awayPenalties, setAwayPenalties] = useState(0);
-  const [isMatchWithPenalties, setIsMatchWithPenalties] = useState(false);
-  const changeModalStatus = (checked: boolean) => {
-    setModalStatus(checked);
-  };
+  const { state, dispatch } = useMatchState();
 
   const { toastStatus, toastMessage, dispatchToast, clearToast } = useToast();
 
@@ -77,9 +69,15 @@ const TweetTemplate = ({
     api.matches.createFullTimeGraphic.useMutation({
       onSuccess: ({ base64, altText }) => {
         clearToast();
-        setSrc(base64);
-        setAltText(altText);
-        setModalStatus(true);
+        dispatch({
+          type: "SET_GRAPHIC_MODAL",
+          payload: {
+            graphicUpdate: {
+              src: base64,
+              altText,
+            },
+          },
+        });
       },
     });
 
@@ -99,196 +97,284 @@ const TweetTemplate = ({
   const generateTwitterGraphic = async (file: File) => {
     const base64String = await generateBase64(file);
     generateGraphic({
-      homeScore,
-      awayScore,
+      homeScore: state.scores.home,
+      awayScore: state.scores.away,
       base64: base64String,
       homeTeam: homeTeamName,
       awayTeam: awayTeamName,
       division,
       divisionId,
-      homePenalties,
-      awayPenalties,
-      isMatchWithPenalties,
+      homePenalties: state.penalties.home,
+      awayPenalties: state.penalties.away,
+      isMatchWithPenalties: state.statuses.isMatchWithPenalties,
     });
   };
 
-  useEffect(() => {
-    setPreMatchTweet(
-      generatePreMatchTweet(
-        stadium,
-        homeTeamTwitter,
-        awayTeamTwitter,
-        division,
-        extraContext,
-        hashtags,
-        isNeutral,
-        isForChampionship
-      )
-    );
-  }, [
-    stadium,
-    extraContext,
+  const preMatchTweet = generatePreMatchTweet(
+    state.stadium,
     homeTeamTwitter,
     awayTeamTwitter,
     division,
-    divisionId,
-  ]);
+    state.tweetContent.preMatch,
+    hashtags,
+    isNeutral,
+    isForChampionship
+  );
 
-  useEffect(() => {
-    setMatchTweet(
-      generateMatchTweet(
-        minute,
-        homeTeamTwitter,
-        awayTeamTwitter,
-        homeScore,
-        awayScore,
-        midMatchTweet,
-        hashtags
-      )
-    );
-  }, [
-    minute,
+  const kickoffTweet = generateKickoffTweet(
+    state.tweetContent.kickoff,
     homeTeamTwitter,
     awayTeamTwitter,
-    homeScore,
-    awayScore,
-    midMatchTweet,
-    divisionId,
-  ]);
+    hashtags
+  );
 
-  useEffect(() => {
-    setKickoffTweet(
-      generateKickoffTweet(
-        kickoffContent,
-        homeTeamTwitter,
-        awayTeamTwitter,
-        hashtags
-      )
-    );
-  }, [kickoffContent, homeTeamTwitter, awayTeamTwitter, divisionId]);
-
-  useEffect(() => {
-    setGoalTweet(
-      generateGoalTweet(
-        goalContent,
-        homeTeamTwitter,
-        homeScore,
-        awayTeamTwitter,
-        awayScore,
-        isHomeGoal,
-        goalMinute,
-        hashtags
-      )
-    );
-  }, [
-    goalContent,
+  const matchTweet = generateMatchTweet(
+    state.minute,
     homeTeamTwitter,
-    homeScore,
     awayTeamTwitter,
-    awayScore,
-    isHomeGoal,
-    goalMinute,
-    divisionId,
-  ]);
+    state.scores.home,
+    state.scores.away,
+    state.tweetContent.midMatch,
+    hashtags
+  );
 
-  useEffect(() => {
-    setRedCardTweet(
-      generateRedCardTweet(
-        redCardMinute,
-        redCardPlayer,
-        homeTeamTwitter,
-        homeScore,
-        awayTeamTwitter,
-        awayScore,
-        isHomeRedCard,
-        hashtags
-      )
-    );
-  }, [
-    redCardMinute,
-    redCardPlayer,
-    isHomeRedCard,
-    awayScore,
-    homeScore,
-    awayTeamTwitter,
+  const goalTweet = generateGoalTweet(
+    state.tweetContent.goal,
     homeTeamTwitter,
-    divisionId,
-  ]);
-
-  useEffect(() => {
-    setBreakTweet(
-      generateBreakTweet(
-        stadium,
-        homeTeamTwitter,
-        homeScore,
-        awayTeamTwitter,
-        awayScore,
-        breakContent,
-        isFullTime,
-        hashtags
-      )
-    );
-  }, [
-    stadium,
-    homeTeamTwitter,
-    homeScore,
+    state.scores.home,
     awayTeamTwitter,
-    awayScore,
-    breakContent,
-    isFullTime,
-    divisionId,
-  ]);
+    state.scores.away,
+    state.statuses.isHomeGoal,
+    state.minute,
+    hashtags
+  );
 
-  const handleExtraContextChange = (newExtraContext: string) => {
-    setExtraContext(newExtraContext);
+  const redCardTweet = generateRedCardTweet(
+    state.minute,
+    state.tweetContent.redCard,
+    homeTeamTwitter,
+    state.scores.home,
+    awayTeamTwitter,
+    state.scores.away,
+    state.statuses.isHomeRedCard,
+    hashtags
+  );
+
+  const breakTweet = generateBreakTweet(
+    state.stadium,
+    homeTeamTwitter,
+    state.scores.home,
+    awayTeamTwitter,
+    state.scores.away,
+    state.tweetContent.halfOrFullTime,
+    state.statuses.isFullTime,
+    hashtags
+  );
+
+  const handleStadiumChange = (newStadium: string) => {
+    dispatch({
+      type: "CHANGE_STADIUM",
+      payload: {
+        newStadium,
+      },
+    });
+  };
+
+  const handlePreMatchTweet = (content: string) => {
+    dispatch({
+      type: "CHANGE_TWEET_CONTENT",
+      payload: {
+        tweetContentUpdate: {
+          type: "preMatch",
+          content,
+        },
+      },
+    });
   };
 
   const handleMinuteChange = (newMinute: string) => {
-    setMinute(newMinute.length === 0 ? "0" : newMinute);
+    dispatch({
+      type: "CHANGE_MINUTE",
+      payload: {
+        newMinute,
+      },
+    });
   };
 
-  const handleMidMatchTweetChange = (newTweet: string) => {
-    setMidMatchTweet(newTweet);
+  const handleMidMatchTweetChange = (content: string) => {
+    dispatch({
+      type: "CHANGE_TWEET_CONTENT",
+      payload: {
+        tweetContentUpdate: {
+          type: "midMatch",
+          content,
+        },
+      },
+    });
   };
 
-  const handleKickoffTweetChange = (newTweet: string) => {
-    setKickoffContent(newTweet);
+  const handleKickoffTweetChange = (content: string) => {
+    dispatch({
+      type: "CHANGE_TWEET_CONTENT",
+      payload: {
+        tweetContentUpdate: {
+          type: "kickoff",
+          content,
+        },
+      },
+    });
   };
 
-  const handleGoalMinuteChange = (newMinute: string) => {
-    setGoalMinute(newMinute);
+  const handleRedCardPlayerChange = (content: string) => {
+    dispatch({
+      type: "CHANGE_TWEET_CONTENT",
+      payload: {
+        tweetContentUpdate: {
+          type: "redCard",
+          content,
+        },
+      },
+    });
   };
 
-  const handleRedCardMinuteChange = (newMinute: string) => {
-    setRedCardMinute(newMinute);
+  const handleGoalTweetChange = (content: string) => {
+    dispatch({
+      type: "CHANGE_TWEET_CONTENT",
+      payload: {
+        tweetContentUpdate: {
+          type: "goal",
+          content,
+        },
+      },
+    });
   };
 
-  const handleRedCardPlayerChange = (newPlayer: string) => {
-    setRedCardPlayer(newPlayer);
+  const handleBreakTweetChange = (content: string) => {
+    dispatch({
+      type: "CHANGE_TWEET_CONTENT",
+      payload: {
+        tweetContentUpdate: {
+          type: "halfOrFullTime",
+          content,
+        },
+      },
+    });
   };
 
-  const increaseScore = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomeScore((prev) => prev + 1)
-      : setAwayScore((prev) => prev + 1);
+  const handleScoreDecrease = (team: "home" | "away") => {
+    if (state.scores[team] > 0) {
+      dispatch({
+        type: "CHANGE_SCORE",
+        payload: {
+          scoreUpdate: {
+            team,
+            scoreChange: -1,
+          },
+        },
+      });
+    }
   };
 
-  const decreaseScore = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomeScore((prev) => (prev <= 0 ? 0 : prev - 1))
-      : setAwayScore((prev) => (prev <= 0 ? 0 : prev - 1));
+  const handleScoreIncrease = (team: "home" | "away") => {
+    dispatch({
+      type: "CHANGE_SCORE",
+      payload: {
+        scoreUpdate: {
+          team,
+          scoreChange: 1,
+        },
+      },
+    });
   };
 
-  const increasePenalties = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomePenalties((prev) => prev + 1)
-      : setAwayPenalties((prev) => prev + 1);
+  const handlePenaltiesDecrease = (team: "home" | "away") => {
+    if (state.penalties[team] > 0) {
+      dispatch({
+        type: "CHANGE_PENALTIES",
+        payload: {
+          penaltiesUpdate: {
+            team,
+            penaltiesChange: -1,
+          },
+        },
+      });
+    }
   };
 
-  const decreasePenalties = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomePenalties((prev) => (prev <= 0 ? 0 : prev - 1))
-      : setAwayPenalties((prev) => (prev <= 0 ? 0 : prev - 1));
+  const handlePenaltiesIncrease = (team: "home" | "away") => {
+    dispatch({
+      type: "CHANGE_PENALTIES",
+      payload: {
+        penaltiesUpdate: {
+          team,
+          penaltiesChange: 1,
+        },
+      },
+    });
+  };
+
+  const resetPenalties = () => {
+    dispatch({ type: "RESET_PENALTIES" });
+  };
+
+  const handleGoalStatusChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isHomeGoal",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleRedCardStatusChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isHomeRedCard",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleBreakChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isFullTime",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleMatchWithPenaltiesChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isMatchWithPenalties",
+          statusValue,
+        },
+      },
+    });
+  };
+
+  const handleModalStatusChange = (statusValue: boolean) => {
+    dispatch({
+      type: "CHANGE_STATUS",
+      payload: {
+        statusUpdates: {
+          type: "isModalOpen",
+          statusValue,
+        },
+      },
+    });
   };
 
   return (
@@ -300,45 +386,17 @@ const TweetTemplate = ({
             type="text"
             placeholder="Write the name of the field."
             className="input-bordered input w-full"
-            value={stadium}
-            onChange={(event) => setStadium(event.target.value)}
+            value={state.stadium}
+            onChange={(event) => handleStadiumChange(event.target.value)}
           />
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {homeTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(true)}
-              >
-                -1
-              </button>
-              <p>{homeScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(true)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {awayTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(false)}
-              >
-                -1
-              </button>
-              <p>{awayScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(false)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
+          <ScoreUpdater
+            homeTeamName={homeTeamName}
+            awayTeamName={awayTeamName}
+            homeScore={state.scores.home}
+            awayScore={state.scores.away}
+            handleScoreDecrease={handleScoreDecrease}
+            handleScoreIncrease={handleScoreIncrease}
+          />
         </div>
       </div>
       <div className="card bg-neutral text-neutral-content">
@@ -347,9 +405,9 @@ const TweetTemplate = ({
           <textarea
             className="textarea-bordered textarea"
             placeholder="Add optional context to the pre-match tweet"
-            onChange={(event) => handleExtraContextChange(event.target.value)}
+            onChange={(event) => handlePreMatchTweet(event.target.value)}
           ></textarea>
-          {stadium.length <= 0 ? (
+          {state.stadium.length <= 0 ? (
             <TextArea text="Write the name of the field and a pre-match tweet will generate." />
           ) : (
             <TextArea text={preMatchTweet} />
@@ -358,7 +416,7 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={preMatchTweet}
               textType="pre-match tweet"
-              disabled={stadium.length <= 0}
+              disabled={state.stadium.length <= 0}
             />
           </div>
         </div>
@@ -371,7 +429,7 @@ const TweetTemplate = ({
             placeholder="Add context to the kickoff tweet"
             onChange={(event) => handleKickoffTweetChange(event.target.value)}
           ></textarea>
-          {kickoffContent.length <= 0 ? (
+          {state.tweetContent.kickoff.length <= 0 ? (
             <TextArea text="Write something for kickoff and a tweet will generate." />
           ) : (
             <TextArea text={kickoffTweet} />
@@ -380,7 +438,7 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={kickoffTweet}
               textType="kickoff tweet"
-              disabled={kickoffContent.length <= 0}
+              disabled={state.tweetContent.kickoff.length <= 0}
             />
           </div>
         </div>
@@ -389,17 +447,18 @@ const TweetTemplate = ({
       <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Mid-match update</h2>
-          <TextInput
+          <MinuteInput
+            value={state.minute}
+            placeholder={"Current minute of the match"}
             handleChange={handleMinuteChange}
-            placeholder="Current minute of the match"
-            initialValue=""
           />
           <textarea
             className="textarea-bordered textarea"
             placeholder="What happened in the match?"
             onChange={(event) => handleMidMatchTweetChange(event.target.value)}
           ></textarea>
-          {midMatchTweet.length <= 0 || minute.length <= 0 ? (
+          {state.tweetContent.midMatch.length <= 0 ||
+          state.minute.length <= 0 ? (
             <TextArea text="Put down the minute and write a description of what happened in the match, and a tweet will generate." />
           ) : (
             <TextArea text={matchTweet} />
@@ -408,7 +467,10 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={matchTweet}
               textType="match tweet"
-              disabled={midMatchTweet.length <= 0 || minute.length <= 0}
+              disabled={
+                state.tweetContent.midMatch.length <= 0 ||
+                state.minute.length <= 0
+              }
             />
           </div>
         </div>
@@ -420,29 +482,31 @@ const TweetTemplate = ({
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
-                Goal for {isHomeGoal ? homeTeamName : awayTeamName}
+                Goal for{" "}
+                {state.statuses.isHomeGoal ? homeTeamName : awayTeamName}
               </span>
               <input
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isHomeGoal}
-                onChange={(event) => setIsHomeGoal(!!event.target.checked)}
+                checked={state.statuses.isHomeGoal}
+                onChange={(event) =>
+                  handleGoalStatusChange(!!event.target.checked)
+                }
               />
             </label>
           </div>
-
-          <TextInput
-            handleChange={handleGoalMinuteChange}
-            placeholder={`Minute for goal`}
-            initialValue={""}
+          <MinuteInput
+            value={state.minute}
+            placeholder={"Minute for goal"}
+            handleChange={handleMinuteChange}
           />
           <textarea
             className="textarea-bordered textarea"
             placeholder="Describe the goal."
-            onChange={(event) => setGoalContent(event.target.value)}
+            onChange={(event) => handleGoalTweetChange(event.target.value)}
           ></textarea>
 
-          {goalContent.length <= 0 || goalMinute.length <= 0 ? (
+          {state.tweetContent.goal.length <= 0 || state.minute.length <= 0 ? (
             <TextArea text="Write the minute and description of a goal, and a tweet will generate." />
           ) : (
             <TextArea text={goalTweet} />
@@ -452,7 +516,9 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={goalTweet}
               textType="goal tweet"
-              disabled={goalContent.length <= 0 || goalMinute.length <= 0}
+              disabled={
+                state.tweetContent.goal.length <= 0 || state.minute.length <= 0
+              }
             />
           </div>
         </div>
@@ -464,21 +530,23 @@ const TweetTemplate = ({
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
-                Red Card for {isHomeRedCard ? homeTeamName : awayTeamName}
+                Red Card for{" "}
+                {state.statuses.isHomeRedCard ? homeTeamName : awayTeamName}
               </span>
               <input
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isHomeRedCard}
-                onChange={(event) => setIsHomeRedCard(!!event.target.checked)}
+                checked={state.statuses.isHomeRedCard}
+                onChange={(event) =>
+                  handleRedCardStatusChange(!!event.target.checked)
+                }
               />
             </label>
           </div>
-
-          <TextInput
-            handleChange={handleRedCardMinuteChange}
-            placeholder={`Minute for red card`}
-            initialValue={""}
+          <MinuteInput
+            value={state.minute}
+            placeholder={"Minute for red card"}
+            handleChange={handleMinuteChange}
           />
           <TextInput
             handleChange={handleRedCardPlayerChange}
@@ -486,7 +554,8 @@ const TweetTemplate = ({
             initialValue={""}
           />
 
-          {redCardPlayer.length <= 0 || redCardMinute.length <= 0 ? (
+          {state.tweetContent.redCard.length <= 0 ||
+          state.minute.length <= 0 ? (
             <TextArea text="Write the minute and player name for a red card, and a tweet will generate." />
           ) : (
             <TextArea text={redCardTweet} />
@@ -496,7 +565,10 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={redCardTweet}
               textType="red card tweet"
-              disabled={redCardPlayer.length <= 0 || redCardMinute.length <= 0}
+              disabled={
+                state.tweetContent.redCard.length <= 0 ||
+                state.minute.length <= 0
+              }
             />
           </div>
         </div>
@@ -508,65 +580,39 @@ const TweetTemplate = ({
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
-                Tweet is for {isFullTime ? "full-time" : "half-time"}
+                Tweet is for{" "}
+                {state.statuses.isFullTime ? "full-time" : "half-time"}
               </span>
               <input
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isFullTime}
-                onChange={(event) => setIsFullTime(!!event.target.checked)}
+                checked={state.statuses.isFullTime}
+                onChange={(event) => handleBreakChange(!!event.target.checked)}
               />
             </label>
           </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {homeTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(true)}
-              >
-                -1
-              </button>
-              <p>{homeScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(true)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {awayTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(false)}
-              >
-                -1
-              </button>
-              <p>{awayScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(false)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
+          <ScoreUpdater
+            homeTeamName={homeTeamName}
+            awayTeamName={awayTeamName}
+            homeScore={state.scores.home}
+            awayScore={state.scores.away}
+            handleScoreDecrease={handleScoreDecrease}
+            handleScoreIncrease={handleScoreIncrease}
+          />
           <input
             type="text"
             placeholder="Write the name of the field."
             className="input-bordered input w-full"
-            value={stadium}
-            onChange={(event) => setStadium(event.target.value)}
+            value={state.stadium}
+            onChange={(event) => handleStadiumChange(event.target.value)}
           />
           <textarea
             className="textarea-bordered textarea"
             placeholder="Describe the events of the half."
-            onChange={(event) => setBreakContent(event.target.value)}
+            onChange={(event) => handleBreakTweetChange(event.target.value)}
           ></textarea>
-          {stadium.length <= 0 || breakContent.length <= 0 ? (
+          {state.stadium.length <= 0 ||
+          state.tweetContent.halfOrFullTime.length <= 0 ? (
             <TextArea text="Write a description of the match and a tweet will generate." />
           ) : (
             <TextArea text={breakTweet} />
@@ -575,7 +621,10 @@ const TweetTemplate = ({
             <ClipboardCopyButton
               textToCopy={breakTweet}
               textType="break tweet"
-              disabled={stadium.length <= 0 || breakContent.length <= 0}
+              disabled={
+                state.stadium.length <= 0 ||
+                state.tweetContent.halfOrFullTime.length <= 0
+              }
             />
           </div>
         </div>
@@ -584,48 +633,20 @@ const TweetTemplate = ({
       <div className="card bg-neutral text-neutral-content">
         <div className="card-body gap-y-4">
           <h2 className="card-title">Final Score Graphic</h2>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {homeTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(true)}
-              >
-                -1
-              </button>
-              <p>{homeScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(true)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-between text-lg sm:flex-row md:flex-col xl:flex-row">
-            <p>Score for {awayTeamName}:</p>
-            <div className="flex flex-row items-center gap-x-4">
-              <button
-                className="btn-secondary btn"
-                onClick={() => decreaseScore(false)}
-              >
-                -1
-              </button>
-              <p>{awayScore}</p>
-              <button
-                className="btn-accent btn"
-                onClick={() => increaseScore(false)}
-              >
-                +1
-              </button>
-            </div>
-          </div>
+          <ScoreUpdater
+            homeTeamName={homeTeamName}
+            awayTeamName={awayTeamName}
+            homeScore={state.scores.home}
+            awayScore={state.scores.away}
+            handleScoreDecrease={handleScoreDecrease}
+            handleScoreIncrease={handleScoreIncrease}
+          />
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="label-text">
                 {divisionId <= 2
                   ? "Penalties only for playoffs, ignore this toggle"
-                  : isMatchWithPenalties
+                  : state.statuses.isMatchWithPenalties
                   ? "Match went to penalties"
                   : "Match did not go to penalties"}
               </span>
@@ -633,11 +654,10 @@ const TweetTemplate = ({
                 disabled={divisionId <= 2}
                 type="checkbox"
                 className="toggle-primary toggle"
-                checked={isMatchWithPenalties}
+                checked={state.statuses.isMatchWithPenalties}
                 onChange={(event) => {
-                  setIsMatchWithPenalties(!!event.target.checked);
-                  setHomePenalties(0);
-                  setAwayPenalties(0);
+                  handleMatchWithPenaltiesChange(!!event.target.checked);
+                  resetPenalties();
                 }}
               />
             </label>
@@ -646,17 +666,20 @@ const TweetTemplate = ({
             <p>Penalties for {homeTeamName}:</p>
             <div className="flex flex-row items-center gap-x-4">
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={
+                  !state.statuses.isMatchWithPenalties ||
+                  state.penalties.home <= 0
+                }
                 className="btn-secondary btn"
-                onClick={() => decreasePenalties(true)}
+                onClick={() => handlePenaltiesDecrease("home")}
               >
                 -1
               </button>
-              <p>{homePenalties}</p>
+              <p>{state.penalties.home}</p>
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={!state.statuses.isMatchWithPenalties}
                 className="btn-accent btn"
-                onClick={() => increasePenalties(true)}
+                onClick={() => handlePenaltiesIncrease("home")}
               >
                 +1
               </button>
@@ -666,17 +689,20 @@ const TweetTemplate = ({
             <p>Penalties for {awayTeamName}:</p>
             <div className="flex flex-row items-center gap-x-4">
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={
+                  !state.statuses.isMatchWithPenalties ||
+                  state.penalties.away <= 0
+                }
                 className="btn-secondary btn"
-                onClick={() => decreasePenalties(false)}
+                onClick={() => handlePenaltiesDecrease("away")}
               >
                 -1
               </button>
-              <p>{awayPenalties}</p>
+              <p>{state.penalties.away}</p>
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={!state.statuses.isMatchWithPenalties}
                 className="btn-accent btn"
-                onClick={() => increasePenalties(false)}
+                onClick={() => handlePenaltiesIncrease("away")}
               >
                 +1
               </button>
@@ -693,15 +719,18 @@ const TweetTemplate = ({
                 type="file"
                 className="file-input-bordered file-input-primary file-input w-full max-w-xs"
                 onChange={(event) => {
-                  if (isMatchWithPenalties && homeScore !== awayScore) {
+                  if (
+                    state.statuses.isMatchWithPenalties &&
+                    state.scores.home !== state.scores.away
+                  ) {
                     dispatchToast({
                       type: "SET_ERROR",
                       message:
                         "Match can't go to penalties if regular score isn't identical.",
                     });
                   } else if (
-                    isMatchWithPenalties &&
-                    homePenalties === awayPenalties
+                    state.statuses.isMatchWithPenalties &&
+                    state.penalties.home === state.penalties.away
                   ) {
                     dispatchToast({
                       type: "SET_ERROR",
@@ -728,11 +757,11 @@ const TweetTemplate = ({
           </div>
         </div>
       </div>
-      {src.length > 0 && modalStatus ? (
+      {state.modal.src.length > 0 && state.statuses.isModalOpen ? (
         <TwitterGraphicModal
-          base64={src}
-          altText={altText}
-          changeModalStatus={changeModalStatus}
+          base64={state.modal.src}
+          altText={state.modal.altText}
+          changeModalStatus={handleModalStatusChange}
         />
       ) : null}
     </div>
