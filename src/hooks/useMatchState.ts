@@ -34,17 +34,19 @@ const initialState = {
 
 type State = typeof initialState;
 
+type ReducerTypes =
+  | "CHANGE_SCORE"
+  | "DEFAULT"
+  | "CHANGE_MINUTE"
+  | "CHANGE_STADIUM"
+  | "CHANGE_TWEET_CONTENT"
+  | "CHANGE_PENALTIES"
+  | "RESET_PENALTIES"
+  | "CHANGE_STATUS"
+  | "SET_GRAPHIC_MODAL";
+
 type ReducerActions = {
-  type:
-    | "CHANGE_SCORE"
-    | "DEFAULT"
-    | "CHANGE_MINUTE"
-    | "CHANGE_STADIUM"
-    | "CHANGE_TWEET_CONTENT"
-    | "CHANGE_PENALTIES"
-    | "RESET_PENALTIES"
-    | "CHANGE_STATUS"
-    | "SET_GRAPHIC_MODAL";
+  type: ReducerTypes;
   payload?: {
     scoreUpdate?: {
       team: "home" | "away";
@@ -84,10 +86,10 @@ type ReducerActions = {
 
 const useMatchState = () => {
   const reducers = {
-    DEFAULT(state: State) {
+    DEFAULT(state: State): State {
       return state;
     },
-    CHANGE_SCORE(state: State, action: ReducerActions) {
+    CHANGE_SCORE(state: State, action: ReducerActions): State {
       if (action.payload && action.payload.scoreUpdate) {
         return {
           ...state,
@@ -101,7 +103,7 @@ const useMatchState = () => {
       }
       return state;
     },
-    CHANGE_MINUTE(state: State, action: ReducerActions) {
+    CHANGE_MINUTE(state: State, action: ReducerActions): State {
       if (action.payload && action.payload.newMinute !== undefined) {
         return {
           ...state,
@@ -113,7 +115,7 @@ const useMatchState = () => {
       }
       return state;
     },
-    CHANGE_STADIUM(state: State, action: ReducerActions) {
+    CHANGE_STADIUM(state: State, action: ReducerActions): State {
       if (action.payload && action.payload.newStadium !== undefined) {
         return {
           ...state,
@@ -122,7 +124,7 @@ const useMatchState = () => {
       }
       return state;
     },
-    CHANGE_TWEET_CONTENT(state: State, action: ReducerActions) {
+    CHANGE_TWEET_CONTENT(state: State, action: ReducerActions): State {
       if (action.payload && action.payload.tweetContentUpdate) {
         return {
           ...state,
@@ -135,7 +137,7 @@ const useMatchState = () => {
       }
       return state;
     },
-    CHANGE_PENALTIES(state: State, action: ReducerActions) {
+    CHANGE_PENALTIES(state: State, action: ReducerActions): State {
       if (action.payload && action.payload.penaltiesUpdate) {
         return {
           ...state,
@@ -149,13 +151,13 @@ const useMatchState = () => {
       }
       return state;
     },
-    RESET_PENALTIES(state: State) {
+    RESET_PENALTIES(state: State): State {
       return {
         ...state,
         penalties: initialState.penalties,
       };
     },
-    CHANGE_STATUS(state: State, action: ReducerActions) {
+    CHANGE_STATUS(state: State, action: ReducerActions): State {
       if (action.payload && action.payload.statusUpdates) {
         return {
           ...state,
@@ -168,7 +170,7 @@ const useMatchState = () => {
       }
       return state;
     },
-    SET_GRAPHIC_MODAL(state: State, action: ReducerActions) {
+    SET_GRAPHIC_MODAL(state: State, action: ReducerActions): State {
       if (action.payload && action.payload.graphicUpdate) {
         return {
           ...state,
