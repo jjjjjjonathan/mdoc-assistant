@@ -71,8 +71,6 @@ const TweetTemplate = ({
   const [src, setSrc] = useState("");
   const [altText, setAltText] = useState("");
   const [modalStatus, setModalStatus] = useState(false);
-  const [homePenalties, setHomePenalties] = useState(0);
-  const [awayPenalties, setAwayPenalties] = useState(0);
   const [isMatchWithPenalties, setIsMatchWithPenalties] = useState(false);
   const changeModalStatus = (checked: boolean) => {
     setModalStatus(checked);
@@ -113,8 +111,8 @@ const TweetTemplate = ({
       awayTeam: awayTeamName,
       division,
       divisionId,
-      homePenalties,
-      awayPenalties,
+      homePenalties: state.penalties.home,
+      awayPenalties: state.penalties.away,
       isMatchWithPenalties,
     });
   };
@@ -296,16 +294,34 @@ const TweetTemplate = ({
     });
   };
 
-  const increasePenalties = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomePenalties((prev) => prev + 1)
-      : setAwayPenalties((prev) => prev + 1);
+  const handlePenaltiesDecrease = (team: "home" | "away") => {
+    if (state.penalties[team] > 0) {
+      dispatch({
+        type: "CHANGE_PENALTIES",
+        payload: {
+          penaltiesUpdate: {
+            team,
+            penaltiesChange: -1,
+          },
+        },
+      });
+    }
   };
 
-  const decreasePenalties = (isHomeTeam: boolean) => {
-    isHomeTeam
-      ? setHomePenalties((prev) => (prev <= 0 ? 0 : prev - 1))
-      : setAwayPenalties((prev) => (prev <= 0 ? 0 : prev - 1));
+  const handlePenaltiesIncrease = (team: "home" | "away") => {
+    dispatch({
+      type: "CHANGE_PENALTIES",
+      payload: {
+        penaltiesUpdate: {
+          team,
+          penaltiesChange: 1,
+        },
+      },
+    });
+  };
+
+  const resetPenalties = () => {
+    dispatch({ type: "RESET_PENALTIES" });
   };
 
   return (
@@ -581,8 +597,7 @@ const TweetTemplate = ({
                 checked={isMatchWithPenalties}
                 onChange={(event) => {
                   setIsMatchWithPenalties(!!event.target.checked);
-                  setHomePenalties(0);
-                  setAwayPenalties(0);
+                  resetPenalties();
                 }}
               />
             </label>
@@ -591,17 +606,17 @@ const TweetTemplate = ({
             <p>Penalties for {homeTeamName}:</p>
             <div className="flex flex-row items-center gap-x-4">
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={!isMatchWithPenalties || state.penalties.home <= 0}
                 className="btn-secondary btn"
-                onClick={() => decreasePenalties(true)}
+                onClick={() => handlePenaltiesDecrease("home")}
               >
                 -1
               </button>
-              <p>{homePenalties}</p>
+              <p>{state.penalties.home}</p>
               <button
                 disabled={!isMatchWithPenalties}
                 className="btn-accent btn"
-                onClick={() => increasePenalties(true)}
+                onClick={() => handlePenaltiesIncrease("home")}
               >
                 +1
               </button>
@@ -611,17 +626,17 @@ const TweetTemplate = ({
             <p>Penalties for {awayTeamName}:</p>
             <div className="flex flex-row items-center gap-x-4">
               <button
-                disabled={!isMatchWithPenalties}
+                disabled={!isMatchWithPenalties || state.penalties.away <= 0}
                 className="btn-secondary btn"
-                onClick={() => decreasePenalties(false)}
+                onClick={() => handlePenaltiesDecrease("away")}
               >
                 -1
               </button>
-              <p>{awayPenalties}</p>
+              <p>{state.penalties.away}</p>
               <button
                 disabled={!isMatchWithPenalties}
                 className="btn-accent btn"
-                onClick={() => increasePenalties(false)}
+                onClick={() => handlePenaltiesIncrease("away")}
               >
                 +1
               </button>
@@ -649,7 +664,7 @@ const TweetTemplate = ({
                     });
                   } else if (
                     isMatchWithPenalties &&
-                    homePenalties === awayPenalties
+                    state.penalties.home === state.penalties.away
                   ) {
                     dispatchToast({
                       type: "SET_ERROR",

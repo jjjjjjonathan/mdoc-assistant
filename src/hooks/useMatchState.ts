@@ -31,11 +31,17 @@ type ReducerActions = {
     | "DEFAULT"
     | "CHANGE_MINUTE"
     | "CHANGE_STADIUM"
-    | "CHANGE_TWEET_CONTENT";
+    | "CHANGE_TWEET_CONTENT"
+    | "CHANGE_PENALTIES"
+    | "RESET_PENALTIES";
   payload?: {
     scoreUpdate?: {
       team: "home" | "away";
       scoreChange: 1 | -1;
+    };
+    penaltiesUpdate?: {
+      team: "home" | "away";
+      penaltiesChange: 1 | -1;
     };
     newMinute?: string;
     newStadium?: string;
@@ -54,14 +60,17 @@ type ReducerActions = {
 
 const useMatchState = () => {
   const reducers = {
+    DEFAULT(state: State) {
+      return state;
+    },
     CHANGE_SCORE(state: State, action: ReducerActions) {
       if (action.payload && action.payload.scoreUpdate) {
         return {
           ...state,
           scores: {
             ...state.scores,
-            [action.payload?.scoreUpdate?.team]:
-              state.scores[action.payload?.scoreUpdate?.team] +
+            [action.payload.scoreUpdate.team]:
+              state.scores[action.payload.scoreUpdate.team] +
               action.payload.scoreUpdate.scoreChange,
           },
         };
@@ -102,8 +111,25 @@ const useMatchState = () => {
       }
       return state;
     },
-    DEFAULT(state: State) {
+    CHANGE_PENALTIES(state: State, action: ReducerActions) {
+      if (action.payload && action.payload.penaltiesUpdate) {
+        return {
+          ...state,
+          penalties: {
+            ...state.penalties,
+            [action.payload.penaltiesUpdate.team]:
+              state.penalties[action.payload.penaltiesUpdate.team] +
+              action.payload.penaltiesUpdate.penaltiesChange,
+          },
+        };
+      }
       return state;
+    },
+    RESET_PENALTIES(state: State) {
+      return {
+        ...state,
+        penalties: initialState.penalties,
+      };
     },
   };
   const reducer = (state: State, action: ReducerActions): State => {
